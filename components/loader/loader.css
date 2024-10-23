@@ -1,0 +1,276 @@
+@keyframes device-a {
+    from,
+    to {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      left: 0;
+      width: 4em;
+      height: 2.5em;
+      transform: translateY(0);
+    }
+    12.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 0;
+      width: 4em;
+      height: 2.5em;
+      transform: translateY(1.5em);
+    }
+    25% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      left: 0;
+      width: 4em;
+      height: 2.5em;
+      transform: translateY(0.375em);
+    }
+    37.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 0;
+      width: 4em;
+      height: 2.5em;
+      transform: translateY(1.5em);
+    }
+    50% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      left: 1em;
+      width: 2em;
+      height: 3em;
+      transform: translateY(0.125em);
+    }
+    62.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 1em;
+      width: 2em;
+      height: 3em;
+      transform: translateY(1em);
+    }
+    75% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      left: 1em;
+      width: 2em;
+      height: 2em;
+      transform: translateY(0.625em);
+    }
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 1em;
+      width: 2em;
+      height: 2em;
+      transform: translateY(1.375em);
+    }
+  }
+  
+  @keyframes device-a-1 {
+    from {
+      animation-timing-function: steps(1,end);
+      left: 1.5em;
+      width: 1em;
+      transform: translateY(0);
+      visibility: hidden;
+    }
+    12.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 1.5em;
+      width: 1em;
+      transform: translateY(0);
+      visibility: visible;
+    }
+    25%,
+    37.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 1.5em;
+      width: 1em;
+      transform: translateY(-0.5em);
+      visibility: visible;
+    }
+    50%,
+    62.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 0.875em;
+      width: 0.25em;
+      transform: translateY(0);
+      visibility: visible;
+    }
+    75%,
+    to {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      left: 0.875em;
+      width: 0.25em;
+      transform: translateY(-0.5em);
+      visibility: hidden;
+    }
+  }
+  
+  @keyframes device-a-2 {
+    from {
+      animation-timing-function: steps(1,end);
+      transform: translate(0,0.375em);
+      visibility: hidden;
+    }
+    62.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translate(0,0.375em);
+      visibility: visible;
+    }
+    75%,
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translate(0.375em,0);
+      visibility: visible;
+    }
+    to {
+      transform: translate(0,0.25em);
+      visibility: visible;
+    }
+  }
+  
+  @keyframes device-b {
+    from,
+    to {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      transform: translateY(0);
+      visibility: visible;
+    }
+    10%,
+    12.5% {
+      animation-timing-function: steps(1,start);
+      transform: translateY(0.75em);
+      visibility: visible;
+    }
+    25% {
+      animation-timing-function: steps(1,start);
+      transform: translateY(0.75em);
+      visibility: hidden;
+    }
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(0.75em);
+      visibility: hidden;
+    }
+  }
+  
+  @keyframes device-c {
+    from,
+    to {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      transform: translateY(0);
+      visibility: visible;
+    }
+    10%,
+    12.5% {
+      animation-timing-function: steps(1,start);
+      transform: translateY(0.75em);
+      visibility: visible;
+    }
+    25% {
+      animation-timing-function: steps(1,start);
+      transform: translateY(0.75em);
+      visibility: hidden;
+    }
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(0.75em);
+      visibility: hidden;
+    }
+  }
+  
+  @keyframes device-d {
+    from {
+      animation-timing-function: steps(1,end);
+      transform: translateY(0.25em);
+      visibility: hidden;
+    }
+    62.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(0.25em);
+      visibility: visible;
+    }
+    75% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      transform: translateY(-0.75em);
+    }
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-0.75em);
+    }
+  }
+  
+  @keyframes device-e {
+    from {
+      animation-timing-function: steps(1,end);
+      transform: translateY(1.5em);
+      visibility: hidden;
+    }
+    62.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(1.5em);
+      visibility: visible;
+    }
+    75% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      transform: translateY(0.75em);
+    }
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      transform: translateY(1.5em);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes device-f {
+    from {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      filter: blur(0.375em);
+    }
+    12.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      filter: blur(0.1875em);
+      opacity: 0.5;
+    }
+    25%,
+    to {
+      filter: blur(0.375em);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes device-g {
+    from,
+    12.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      filter: blur(0.1875em);
+      opacity: 0;
+    }
+    25% {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      filter: blur(0.375em);
+      opacity: 0.5;
+    }
+    37.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      filter: blur(0.1875em);
+      opacity: 0.5;
+      left: 0;
+      width: 4em;
+    }
+    50%,
+    75%,
+    to {
+      animation-timing-function: cubic-bezier(0.33,0,0.67,0);
+      filter: blur(0.375em);
+      opacity: 0.5;
+      left: 1em;
+      width: 2em;
+    }
+    62.5%,
+    87.5% {
+      animation-timing-function: cubic-bezier(0.33,1,0.67,1);
+      filter: blur(0.1875em);
+      opacity: 0.5;
+      left: 1em;
+      width: 2em;
+    }
+  }
