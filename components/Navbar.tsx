@@ -36,9 +36,14 @@ export default function Navbar() {
       <MaxWidthWrapper className="relative">
         <div className="flex h-16 items-center justify-between">
           {/* Brand Logo */}
-          <Link href="/" className="text-2xl font-bold text-gray-900">
-            ImaginAi
-          </Link>
+          <Link href="/" className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">Ai</span>
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                  ImaginAi
+                </span>
+              </Link>
 
           {/* Desktop Links - Now centered and with login/signup */}
           <div className="hidden lg:flex flex-1 items-center justify-center ">
