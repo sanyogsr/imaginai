@@ -72,9 +72,11 @@ const PricingPage = () => {
               >
                 Monthly
               </span>
+
+              {/* Updated toggle button */}
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
-                className="relative w-16 h-8 bg-purple-100 rounded-full p-1 transition-colors duration-200 ease-in-out"
+                className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 overflow-hidden transition-colors duration-200 ease-in-out"
               >
                 <div
                   className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
@@ -82,6 +84,7 @@ const PricingPage = () => {
                   }`}
                 />
               </button>
+
               <span
                 className={`text-sm ${
                   isAnnual ? "text-gray-900" : "text-gray-500"

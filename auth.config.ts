@@ -1,7 +1,7 @@
 import { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
-const publicRoutes = ["/", "/pricing", "/tutorials", "/dashboard"];
+const publicRoutes = ["/", "/pricing", "/upgrade", "/tutorials", "/dashboard"];
 const authRoutes = ["/login", "/register"];
 
 export default {

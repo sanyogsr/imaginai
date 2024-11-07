@@ -7,9 +7,6 @@ import OldMan from "../assets/oldMan.png";
 // const models = ["Flux Dev", "Flux Schnell", "Flux Pro"];
 
 const HeroCard: React.FC = () => {
-//   const handleModelSelect = (model: string) => {
-//     console.log("Selected model:", model);
-//   };
 
   const handleGenerate = () => {
     console.log("Generate button clicked");

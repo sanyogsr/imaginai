@@ -1,9 +1,92 @@
 "use client";
 import React, { useState } from "react";
 import { Check, Sparkles, Zap } from "lucide-react";
+import { useSession } from "next-auth/react";
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const amount = 100;
+  const [isProcessing, setIsProcessing] = useState(false);
+  const session = useSession();
+  const handlePaymesnt = async () => {
+    setIsProcessing(true);
+    try {
+      const response = await fetch("/api/create-order", { method: "POST" });
+      const data = await response.json();
+
+      if (!data.orderId) {
+        throw new Error("Order ID is missing from the response.");
+      }
+      const options = {
+        key: process.env.RAZORPAY_KEY_SECRET,
+        amount: amount * 100,
+        currency: "INR",
+        description: "Your company name",
+        order_id: data.orderId,
+        notes: { user_id: session.data?.user?.id },
+        handler: function (response: any) {
+          console.log("Payment successful", response);
+        },
+        prefill: {
+          name: "john doe",
+          email: "sanyogsr@gmail.com",
+          number: "9999999999",
+        },
+        theme: "#3399cc",
+      };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error("error: ", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    try {
+      const response = await fetch("/api/create-order", { method: "POST" });
+      const data = await response.json();
+
+      if (!data.orderId) {
+        throw new Error("Order ID is missing from the response.");
+      }
+
+      const options = {
+        key: process.env.RAZORPAY_KEY_ID, // Use the public key here
+        amount: amount * 100,
+        currency: "INR",
+        description: "Your company name",
+        order_id: data.orderId,
+        handler: function (response: any) {
+          console.log("Payment successful", response);
+        },
+        prefill: {
+          name: "john doe",
+          email: "sanyogsr@gmail.com",
+          contact: "9999999999",
+        },
+        theme: "#3399cc",
+      };
+      const rzp1 = new window.Razorpay(options);
+
+      rzp1.on("payment.failed", function (response: any) {
+        console.error("Payment failed", response.error);
+      });
+
+      rzp1.open();
+    } catch (error) {
+      console.error("Error initializing Razorpay:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const plans = [
     {
@@ -50,6 +133,7 @@ const PricingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-20 px-4">
+      <script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -128,6 +212,8 @@ const PricingPage = () => {
                 </ul>
 
                 <button
+                  onClick={handlePayment}
+                  disabled={isProcessing}
                   className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
                     plan.popular
                       ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"

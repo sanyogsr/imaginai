@@ -1,17 +1,6 @@
-// store/useHistoryStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-export interface HistoryItem {
-  id: number;
-  imageUrl: string;
-  prompt: string;
-  timestamp: string;
-  model: string;
-  size: string;
-  quality: string;
-  style: string;
-}
+import { HistoryItem } from "@/types";
 
 interface HistoryState {
   history: HistoryItem[];
@@ -24,18 +13,25 @@ export const useHistoryStore = create<HistoryState>()(
   persist(
     (set) => ({
       history: [],
+
+      // Add image to history
       addToHistory: (item) =>
         set((state) => ({
           history: [item, ...state.history],
         })),
+
+      // Remove image from history
       removeFromHistory: (id) =>
         set((state) => ({
           history: state.history.filter((item) => item.id !== id),
         })),
+
+      // Clear history
       clearHistory: () => set({ history: [] }),
     }),
     {
-      name: "ai-image-history",
+      name: "history-storage",
     }
   )
 );
+export type { HistoryItem };

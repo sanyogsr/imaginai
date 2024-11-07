@@ -3,7 +3,13 @@ import { Clock, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useHistoryStore } from "@/store/useHistoryStore";
 
-export const HistoryPanel: React.FC = () => {
+interface HistoryPanelProps {
+  onImageSelect: (imageUrl: string) => void;
+}
+
+export const HistoryPanel: React.FC<HistoryPanelProps> = ({
+  onImageSelect,
+}) => {
   const { history, removeFromHistory } = useHistoryStore();
 
   return (
@@ -23,12 +29,13 @@ export const HistoryPanel: React.FC = () => {
           history.map((item) => (
             <div
               key={item.id}
-              className="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all"
+              className="group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all cursor-pointer"
+              onClick={() => onImageSelect(item.imageUrls[0])}
             >
               <div className="flex items-start space-x-3">
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden">
                   <Image
-                    src={item.imageUrl}
+                    src={item.imageUrls[0]}
                     alt={item.prompt}
                     fill
                     sizes="64px"
@@ -36,8 +43,12 @@ export const HistoryPanel: React.FC = () => {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-800 line-clamp-2">{item.prompt}</p>
-                  <span className="text-xs text-gray-500">{item.timestamp}</span>
+                  <p className="text-sm text-gray-800 line-clamp-2">
+                    {item.prompt}
+                  </p>
+                  <span className="text-xs text-gray-500">
+                    {item.timestamp}
+                  </span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     <span className="px-2 py-0.5 bg-purple-100 text-purple-600 rounded-full text-xs">
                       {item.model}
@@ -48,7 +59,10 @@ export const HistoryPanel: React.FC = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => removeFromHistory(item.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFromHistory(item.id);
+                  }}
                   className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded-lg"
                 >
                   <Trash2 size={16} className="text-red-500" />

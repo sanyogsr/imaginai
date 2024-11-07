@@ -1,9 +1,14 @@
-"use client";
+import { auth } from "@/auth";
+
 import LandingPage from "@/components/LandingPage";
-export default function Home() {
-  return (
-    <>
-      <LandingPage />
-    </>
-  );
+import { redirect } from "next/navigation";
+export default async function Home() {
+  const session = await auth();
+
+  if (session) {
+    redirect("/dashboard");
+    // return null;
+  }
+
+  return <LandingPage />;
 }

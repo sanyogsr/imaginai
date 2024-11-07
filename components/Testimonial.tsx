@@ -37,7 +37,7 @@ export default function Testimonials() {
         {testimonials.map((testimonial, index) => (
           <div
             key={index}
-            className="p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300"
+            className="p-8 bg-white rounded-xl border border-black hover:shadow-2xl transition duration-300"
           >
             <p className="text-lg text-gray-700 italic mb-4">
               {testimonial.feedback}

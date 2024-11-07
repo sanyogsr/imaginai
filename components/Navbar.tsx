@@ -77,7 +77,7 @@ export default function Navbar({ className }: NavbarProps) {
               {navItems.map(({ name, href, hasDropdown }) => (
                 <div
                   key={name}
-                  className="relative group"
+                  className=""
                   onMouseEnter={() =>
                     setShowProductDropdown(hasDropdown ?? false)
                   }

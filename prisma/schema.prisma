@@ -1,0 +1,262 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // New relations
+  subscriptions    Subscription[]
+  credits          UserCredit?
+  generatedContent GeneratedContent[]
+  payments         Payment[]
+  usageHistory     UsageHistory[]
+  favorites        Favorite[]
+  collections      Collection[]
+  apiKeys          ApiKey[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// New models for AI Generation Platform
+
+enum ContentType {
+  IMAGE
+  VIDEO
+  AUDIO
+  THREE_D
+  TEXT
+}
+
+enum ContentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model GeneratedContent {
+  id              String           @id @default(cuid())
+  userId          String
+  type            ContentType
+  status          ContentStatus    @default(PENDING)
+  prompt          String           @db.Text
+  negativePrompt  String?          @db.Text
+  modelId         String
+  model           AIModel          @relation(fields: [modelId], references: [id])
+  width           Int?
+  height          Int?
+  duration        Float? // For video/audio content
+  outputUrls      String[] // Array of URLs for generated content
+  metadata        Json? // Additional generation parameters
+  creditsUsed     Int
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favorites       Favorite[]
+  collectionItems CollectionItem[]
+
+  @@index([userId, type])
+  @@index([status])
+}
+
+model AIModel {
+  id               String             @id @default(cuid())
+  name             String
+  type             ContentType
+  description      String             @db.Text
+  baseCredits      Int // Base credit cost per generation
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  generatedContent GeneratedContent[]
+}
+
+model UserCredit {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  credits         Int       @default(0)
+  lifetimeCredits Int       @default(0)
+  lastRefillAt    DateTime?
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PAST_DUE
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  lemonSqueezyId     String             @unique // External subscription ID
+  status             SubscriptionStatus
+  planId             String
+  plan               SubscriptionPlan   @relation(fields: [planId], references: [id])
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SubscriptionPlan {
+  id             String         @id @default(cuid())
+  name           String
+  description    String         @db.Text
+  monthlyCredits Int
+  priceId        String // Lemon Squeezy price ID
+  price          Decimal        @db.Decimal(10, 2)
+  currency       String         @default("USD")
+  isActive       Boolean        @default(true)
+  features       Json // Array of included features
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  subscriptions  Subscription[]
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  userId         String
+  lemonSqueezyId String   @unique // External payment ID
+  amount         Decimal  @db.Decimal(10, 2)
+  currency       String
+  status         String
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model UsageHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String // e.g., "generation", "credit_purchase", "subscription_renewal"
+  creditsUsed Int
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, action])
+  @@index([createdAt])
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  userId      String
+  name        String
+  description String?          @db.Text
+  isPublic    Boolean          @default(false)
+  items       CollectionItem[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CollectionItem {
+  id           String           @id @default(cuid())
+  collectionId String
+  contentId    String
+  order        Int              @default(0)
+  collection   Collection       @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  content      GeneratedContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime         @default(now())
+
+  @@index([collectionId])
+  @@index([contentId])
+}
+
+model Favorite {
+  id        String           @id @default(cuid())
+  userId    String
+  contentId String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   GeneratedContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+
+  @@unique([userId, contentId])
+  @@index([userId])
+  @@index([contentId])
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  key       String    @unique
+  lastUsed  DateTime?
+  expiresAt DateTime?
+  rateLimit Int       @default(100) // Requests per hour
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([key])
+}

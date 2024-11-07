@@ -69,7 +69,7 @@ const ImageHistoryPage = () => {
               Your AI-generated masterpiece collection
             </p>
           </div>
-          
+
           {history.length > 0 && (
             <button
               onClick={() => {
@@ -78,7 +78,7 @@ const ImageHistoryPage = () => {
                   setSelectedImage(null);
                 }
               }}
-              className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-red-600 text-white rounded-full 
+              className="flex items-center gap-2 px-6 py-3 bg-black hover:bg-red-600 text-white rounded-full
                          transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <Trash2 className="w-5 h-5" />
@@ -102,7 +102,7 @@ const ImageHistoryPage = () => {
             {history.map((item, index) => (
               <div
                 key={item.id}
-                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 
+                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300
                          transform hover:-translate-y-1"
               >
                 <div
@@ -110,18 +110,18 @@ const ImageHistoryPage = () => {
                   onClick={() => handleImageClick(item, index)}
                 >
                   <img
-                    src={item.imageUrl}
+                    src={item.imageUrls[0]}
                     alt={item.prompt}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
 
                 {/* Overlay Controls */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300
                               rounded-t-2xl flex items-center justify-center">
                   <div className="flex gap-3">
                     {[
-                      { icon: <Download className="w-5 h-5" />, action: (e: React.MouseEvent) => { e.stopPropagation(); handleDownload(item.imageUrl); } },
+                      { icon: <Download className="w-5 h-5" />, action: (e: React.MouseEvent) => { e.stopPropagation(); handleDownload(item.imageUrls[0]); } },
                       { icon: <ZoomIn className="w-5 h-5" />, action: (e: React.MouseEvent) => { e.stopPropagation(); handleImageClick(item, index); } },
                       { icon: <Trash2 className="w-5 h-5 text-red-500" />, action: (e: React.MouseEvent) => handleDeleteImage(item.id, e) }
                     ].map((button, idx) => (
@@ -151,7 +151,7 @@ const ImageHistoryPage = () => {
                     ].map((tag, idx) => (
                       <span
                         key={idx}
-                        className={`px-3 py-1 bg-${tag.color}-100 text-${tag.color}-600 
+                        className={`px-3 py-1 bg-${tag.color}-100 text-${tag.color}-600
                                   rounded-full text-sm font-medium transition-transform hover:scale-105`}
                       >
                         {tag.label}
@@ -177,8 +177,8 @@ const ImageHistoryPage = () => {
                 <button
                   key={direction}
                   onClick={() => handleNavigate(direction as "prev" | "next")}
-                  className={`absolute ${direction === "prev" ? "left-4" : "right-4"} 
-                             p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 
+                  className={`absolute ${direction === "prev" ? "left-4" : "right-4"}
+                             p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300
                              transform hover:scale-110 z-10`}
                 >
                   {direction === "prev" ? (
@@ -192,7 +192,7 @@ const ImageHistoryPage = () => {
               {/* Close Button */}
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full 
+                className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full
                            transition-all duration-300 transform hover:scale-110 z-10"
               >
                 <X className="w-6 h-6 text-white" />
@@ -202,7 +202,7 @@ const ImageHistoryPage = () => {
               {selectedImage && (
                 <>
                   <img
-                    src={selectedImage.imageUrl}
+                    src={selectedImage.imageUrls[0]}
                     alt={selectedImage.prompt}
                     className="max-h-full max-w-full object-contain px-4"
                   />
@@ -212,8 +212,8 @@ const ImageHistoryPage = () => {
                     </p>
                     <div className="flex flex-wrap gap-4 items-center">
                       <button
-                        onClick={() => handleDownload(selectedImage.imageUrl)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full 
+                        onClick={() => handleDownload(selectedImage.imageUrls[0])}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full
                                  hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
                       >
                         <Download className="w-4 h-4" />
@@ -221,7 +221,7 @@ const ImageHistoryPage = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteImage(selectedImage.id)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-full 
+                        className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-full
                                  hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
                       >
                         <Trash2 className="w-4 h-4" />

@@ -36,7 +36,7 @@ export default function SocialShareSection() {
   }
 
   return (
-    <div className="relative grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 mt-5 md:p-10">
+    <div className="relative grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-5 p-4 mt-5 md:p-10">
       {boxes.map((box, index) => (
         <div
           key={index}
