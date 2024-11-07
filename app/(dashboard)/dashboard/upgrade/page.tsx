@@ -48,7 +48,7 @@ const PricingPage = () => {
           contact: "9999999999",
         },
         notes: {
-          userId: session.data?.user?.id, // Replace 'USER_ID' with the actual user ID you want to pass
+          user_id: session.data?.user?.id, // Replace 'USER_ID' with the actual user ID you want to pass
         },
         theme: "#3399cc",
       };
