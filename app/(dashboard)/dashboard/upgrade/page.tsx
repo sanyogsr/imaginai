@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Check, Sparkles, Zap } from "lucide-react";
-// import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Script from "next/script";
 declare global {
   interface Window {
@@ -13,7 +13,7 @@ declare global {
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  // const session = useSession();
+  const session = useSession();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePayment = async (plan: any) => {
     setIsProcessing(true);
@@ -46,6 +46,9 @@ const PricingPage = () => {
           name: "john doe",
           email: "sanyogsr@gmail.com",
           contact: "9999999999",
+        },
+        notes: {
+          userId: session.data?.user?.id, // Replace 'USER_ID' with the actual user ID you want to pass
         },
         theme: "#3399cc",
       };
