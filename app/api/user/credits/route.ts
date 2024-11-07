@@ -17,7 +17,7 @@ export async function GET() {
   const userId = session.user?.id;
 
   try {
-    const user = await prisma.UserCredit.findUnique({
+    const user = await prisma.userCredit.findUnique({
       where: { userId: userId },
       select: {
         credits: true,
