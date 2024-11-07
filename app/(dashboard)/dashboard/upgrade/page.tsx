@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { Check, Sparkles, Zap } from "lucide-react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import Script from "next/script";
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
 }
@@ -12,41 +14,7 @@ const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const amount = 100;
   const [isProcessing, setIsProcessing] = useState(false);
-  const session = useSession();
-  const handlePaymesnt = async () => {
-    setIsProcessing(true);
-    try {
-      const response = await fetch("/api/create-order", { method: "POST" });
-      const data = await response.json();
-
-      if (!data.orderId) {
-        throw new Error("Order ID is missing from the response.");
-      }
-      const options = {
-        key: process.env.RAZORPAY_KEY_SECRET,
-        amount: amount * 100,
-        currency: "INR",
-        description: "Your company name",
-        order_id: data.orderId,
-        notes: { user_id: session.data?.user?.id },
-        handler: function (response: any) {
-          console.log("Payment successful", response);
-        },
-        prefill: {
-          name: "john doe",
-          email: "sanyogsr@gmail.com",
-          number: "9999999999",
-        },
-        theme: "#3399cc",
-      };
-      const rzp1 = new window.Razorpay(options);
-      rzp1.open();
-    } catch (error) {
-      console.error("error: ", error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  // const session = useSession();
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -64,6 +32,7 @@ const PricingPage = () => {
         currency: "INR",
         description: "Your company name",
         order_id: data.orderId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: function (response: any) {
           console.log("Payment successful", response);
         },
@@ -75,7 +44,7 @@ const PricingPage = () => {
         theme: "#3399cc",
       };
       const rzp1 = new window.Razorpay(options);
-
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
         console.error("Payment failed", response.error);
       });
@@ -133,7 +102,10 @@ const PricingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-20 px-4">
-      <script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

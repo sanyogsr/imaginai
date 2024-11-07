@@ -4,7 +4,9 @@ import { auth } from "@/auth";
 import Together from "together-ai";
 import z from "zod";
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-
+type ExtendedImageParams = Parameters<typeof together.images.create>[0] & {
+  response_format: string;
+};
 // Together AI API response type
 export async function POST(req: NextRequest) {
   try {
@@ -30,9 +32,9 @@ export async function POST(req: NextRequest) {
       height: height,
       steps: 4,
       n: 1,
-      response_format: "b64_json",
-    });
-   
+      response_format: "b64_json", // Required parameter
+    } as ExtendedImageParams);
+
     console.log(response.data[0].b64_json);
     return NextResponse.json({ response: response });
   } catch (err) {
