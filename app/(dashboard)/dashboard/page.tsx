@@ -13,6 +13,7 @@ import { useImageStore } from "@/store/useImageStore";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import axios from "axios";
+import { userCreditsStore } from "@/store/useCreditStore";
 
 interface Settings {
   model: string;
@@ -54,6 +55,7 @@ export default function Dashboard() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<string | undefined>();
+  const { credits, deductCredits } = userCreditsStore();
 
   const [currentPhase, setCurrentPhase] = useState<GenerationPhase>({
     phase: 0,
@@ -97,6 +99,11 @@ export default function Dashboard() {
   const handlePromptSubmit = async (prompt: string) => {
     if (!prompt.trim()) return;
 
+    if (credits === null || credits <= 0) {
+      router.push("/dashboard/upgrade"); // Redirect to upgrade page if credits are zero
+      return;
+    }
+
     setIsGenerating(true);
     clearGeneratedImages();
     const stopProgress = simulateProgress();
@@ -113,7 +120,7 @@ export default function Dashboard() {
       if (response.status !== 200) throw new Error("Image generation failed");
 
       const data = response.data;
-
+      await deductCredits(2);
       if (data.response && data.response.data) {
         const generatedImages = data.response.data.map(
           (imageData: { b64_json: string }) =>

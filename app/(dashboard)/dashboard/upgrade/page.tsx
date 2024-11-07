@@ -12,14 +12,19 @@ declare global {
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
-  const amount = 100;
   const [isProcessing, setIsProcessing] = useState(false);
   // const session = useSession();
-
-  const handlePayment = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePayment = async (plan: any) => {
     setIsProcessing(true);
     try {
-      const response = await fetch("/api/create-order", { method: "POST" });
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ price: plan.price, credits: plan.credits }),
+      });
       const data = await response.json();
 
       if (!data.orderId) {
@@ -28,8 +33,9 @@ const PricingPage = () => {
 
       const options = {
         key: process.env.RAZORPAY_KEY_ID, // Use the public key here
-        amount: amount * 100,
+        amount: plan.price * 400,
         currency: "INR",
+        name: "Imagin Ai",
         description: "Your company name",
         order_id: data.orderId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,43 +66,45 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Hobby",
-      price: isAnnual ? 29 : 39,
+      price: isAnnual ? 90 : 100,
       features: [
-        "100 AI generations per month",
-        "Basic style customization",
-        "Standard resolution images",
+        "150 AI image generations ",
+
+        "Best resolution images",
         "24/7 email support",
       ],
+      credits: 300,
       cta: "Get Started",
       popular: false,
     },
     {
       name: "Pro",
-      price: isAnnual ? 79 : 89,
+      price: isAnnual ? 190 : 200,
+      credits: 700,
+
       features: [
-        "Unlimited AI generations",
+        "350 AI image generations",
         "Advanced style controls",
-        "HD resolution images",
-        "Priority support",
-        "Commercial usage rights",
-        "API access",
+        "Best resolution images",
       ],
-      cta: "Upgrade to Pro",
-      popular: true,
+      cta: "Get Started",
+      popular: false,
     },
     {
-      name: "Enterprise",
-      price: isAnnual ? 199 : 249,
+      name: "Value for money",
+      price: isAnnual ? 380 : 400,
+      credits: 1600,
+
       features: [
-        "Custom AI model training",
+        "800 AI image generation",
         "Dedicated account manager",
-        "4K resolution images",
+        "Best resolution images",
         "White-label options",
         "Custom API integration",
         "SSO & team management",
       ],
-      cta: "Contact Sales",
-      popular: false,
+      cta: "Upgraded to pro",
+      popular: true,
     },
   ];
 
@@ -127,7 +135,7 @@ const PricingPage = () => {
             </span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
-              className="relative w-16 h-8 bg-purple-100 rounded-full p-1 transition-colors duration-200 ease-in-out"
+              className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 overflow-hidden transition-colors duration-200 ease-in-out"
             >
               <div
                 className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
@@ -169,7 +177,7 @@ const PricingPage = () => {
                 </h3>
                 <div className="flex items-baseline mb-6">
                   <span className="text-4xl font-bold text-gray-900">
-                    ${plan.price}
+                    ₹{plan.price}
                   </span>
                   <span className="text-gray-500 ml-1">/month</span>
                 </div>
@@ -184,7 +192,7 @@ const PricingPage = () => {
                 </ul>
 
                 <button
-                  onClick={handlePayment}
+                  onClick={() => handlePayment(plan)}
                   disabled={isProcessing}
                   className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
                     plan.popular

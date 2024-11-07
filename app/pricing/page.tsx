@@ -6,14 +6,15 @@ import Navbar from "@/components/Navbar";
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
 
+  
   const plans = [
     {
       name: "Hobby",
-      price: isAnnual ? 29 : 39,
+      price: isAnnual ? 90 : 100,
       features: [
-        "100 AI generations per month",
-        "Basic style customization",
-        "Standard resolution images",
+        "150 AI image generations ",
+
+        "Best resolution images",
         "24/7 email support",
       ],
       cta: "Get Started",
@@ -21,34 +22,30 @@ const PricingPage = () => {
     },
     {
       name: "Pro",
-      price: isAnnual ? 79 : 89,
+      price: isAnnual ? 190 : 200,
       features: [
-        "Unlimited AI generations",
+        "350 AI image generations",
         "Advanced style controls",
-        "HD resolution images",
-        "Priority support",
-        "Commercial usage rights",
-        "API access",
+        "Best resolution images",
       ],
-      cta: "Upgrade to Pro",
-      popular: true,
+      cta: "Get Started",
+      popular: false,
     },
     {
       name: "Enterprise",
-      price: isAnnual ? 199 : 249,
+      price: isAnnual ? 380 : 400,
       features: [
-        "Custom AI model training",
+        "800 AI image generation",
         "Dedicated account manager",
-        "4K resolution images",
+        "Best resolution images",
         "White-label options",
         "Custom API integration",
         "SSO & team management",
       ],
-      cta: "Contact Sales",
-      popular: false,
+      cta: "Upgraded to pro",
+      popular: true,
     },
   ];
-
   return (
     <>
       <Navbar />
@@ -119,7 +116,7 @@ const PricingPage = () => {
                   </h3>
                   <div className="flex items-baseline mb-6">
                     <span className="text-4xl font-bold text-gray-900">
-                      ${plan.price}
+                      ₹{plan.price}
                     </span>
                     <span className="text-gray-500 ml-1">/month</span>
                   </div>

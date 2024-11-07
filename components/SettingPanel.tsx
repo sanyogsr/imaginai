@@ -1,17 +1,26 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import { Settings as SettingsIcon } from "lucide-react";
 import { Select } from "./Select";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { userCreditsStore } from "@/store/useCreditStore";
+import { useSession } from "next-auth/react";
 
 interface SettingsPanelProps {
   creditsLeft: number;
   daysUntilRenewal: number;
 }
 
-export const SettingsPanel: React.FC<SettingsPanelProps> = ({
-  creditsLeft,
-  daysUntilRenewal,
-}) => {
+export const SettingsPanel: React.FC<SettingsPanelProps> = ({}) => {
+  const { credits, fetchCredits } = userCreditsStore();
+  const session = useSession();
+
+  useEffect(() => {
+    if (session.data?.user) {
+      fetchCredits(); // Fetch credits when session is available
+    }
+  }, [fetchCredits]);
+
   const {
     model,
     size,
@@ -24,8 +33,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   const modelOptions = [
     { value: "black-forest-labs/FLUX.1-schnell", label: "Flux schnell" },
-    { value: "black-forest-labs/FLUX.1-schnell", label: "Flux Dev" },
-    { value: "black-forest-labs/FLUX.1-schnell", label: "Flux Pro" },
+    // { value: "black-forest-labs/FLUX.1-schnell", label: "Flux Dev" },
+    // { value: "black-forest-labs/FLUX.1-schnell", label: "Flux Pro" },
   ];
 
   const sizeOptions = [
@@ -37,7 +46,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const qualityOptions = [
     { value: "hd", label: "HD" },
     { value: "standard", label: "Standard" },
-    { value: "draft", label: "Draft" },
   ];
 
   const styleOptions = [
@@ -101,12 +109,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div className="text-sm font-medium text-purple-800">
             Credits Left
           </div>
-          <div className="text-2xl font-bold text-purple-900">
-            {creditsLeft}
-          </div>
-          <div className="text-xs text-purple-700">
-            Renews in {daysUntilRenewal} days
-          </div>
+          <div className="text-2xl font-bold text-purple-900">{credits}</div>
         </div>
       </div>
     </div>

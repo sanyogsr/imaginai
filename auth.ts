@@ -17,4 +17,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  events: {
+    async createUser({ user }) {
+      try {
+        await prisma.userCredit.create({
+          data: {
+            userId: user.id as string,
+            credits: 5,
+          },
+        });
+      } catch (error) {
+        console.error("Error initializing the user credits : ", error);
+      }
+    },
+  },
 });

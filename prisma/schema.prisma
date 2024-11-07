@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -24,7 +18,7 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // New relations
+  // Relations
   subscriptions    Subscription[]
   credits          UserCredit?
   generatedContent GeneratedContent[]
@@ -71,7 +65,7 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-// New models for AI Generation Platform
+// Models for AI Generation Platform
 
 enum ContentType {
   IMAGE
@@ -118,7 +112,7 @@ model AIModel {
   name             String
   type             ContentType
   description      String             @db.Text
-  baseCredits      Int // Base credit cost per generation
+  baseCredits      Int
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -146,7 +140,7 @@ enum SubscriptionStatus {
 model Subscription {
   id                 String             @id @default(cuid())
   userId             String
-  lemonSqueezyId     String             @unique // External subscription ID
+  razorpaySubscriptionId String         @unique // Razorpay subscription ID
   status             SubscriptionStatus
   planId             String
   plan               SubscriptionPlan   @relation(fields: [planId], references: [id])
@@ -166,9 +160,9 @@ model SubscriptionPlan {
   name           String
   description    String         @db.Text
   monthlyCredits Int
-  priceId        String // Lemon Squeezy price ID
+  priceId        String // Razorpay plan ID
   price          Decimal        @db.Decimal(10, 2)
-  currency       String         @default("USD")
+  currency       String         @default("INR")
   isActive       Boolean        @default(true)
   features       Json // Array of included features
   createdAt      DateTime       @default(now())
@@ -179,7 +173,7 @@ model SubscriptionPlan {
 model Payment {
   id             String   @id @default(cuid())
   userId         String
-  lemonSqueezyId String   @unique // External payment ID
+  razorpayPaymentId String @unique // Razorpay payment ID
   amount         Decimal  @db.Decimal(10, 2)
   currency       String
   status         String

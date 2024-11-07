@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { prisma } from "@/utils/prisma";
 
 const RAZORPAY_SECRET = process.env.RAZORPAY_SECRET || "";
 
@@ -25,12 +26,16 @@ export async function POST(req: NextRequest) {
 
     // Handle the `payment.captured` event
     if (event === "payment.captured") {
-      const amount = payload.payment.entity.amount; // Amount is in paise
+      const amount = payload.payment.entity.amount / 100; // Amount is in Rs
       const userId = payload.payment.entity.notes?.user_id; // Retrieve user ID if passed during order creation
+      let credits = 0;
 
+      if (amount === 100) credits = 300; // Hobby plan
+      else if (amount === 200) credits = 700; // Pro plan
+      else if (amount === 400) credits = 1600; // Value for money plan
       try {
         // Add credits to user's account based on payment
-        await addCreditsToUserAccount(userId, amount / 100); // Convert amount to rupees
+        await addCreditsToUserAccount(userId, credits); // Convert amount to rupees
         return NextResponse.json({ status: "Credits added successfully." });
       } catch (error) {
         console.error("Error adding credits:", error);
@@ -52,10 +57,40 @@ export async function POST(req: NextRequest) {
 
 // Example function to add credits to a user's account
 async function addCreditsToUserAccount(userId: string, credits: number) {
-  // Replace with actual database update logic
-  console.log(`Adding ${credits} credits to user account with ID: ${userId}`);
+  try {
+    // Fetch the existing UserCredit record
+    let userCredit = await prisma.userCredit.findUnique({
+      where: { userId },
+    });
 
-  return {
-    message: `Successfully added ${credits} credits to user ${userId}.`,
-  };
+    if (!userCredit) {
+      // If no UserCredit record exists, create a new one
+      userCredit = await prisma.userCredit.create({
+        data: {
+          userId,
+          credits,
+          lifetimeCredits: credits,
+        },
+      });
+    } else {
+      // If a UserCredit record exists, update the credits
+      userCredit = await prisma.userCredit.update({
+        where: { userId },
+        data: {
+          credits: userCredit.credits + credits,
+          lifetimeCredits: userCredit.lifetimeCredits + credits,
+        },
+      });
+    }
+
+    console.log(`Successfully added ${credits} credits to user ${userId}.`);
+
+    return {
+      message: `Successfully added ${credits} credits to user ${userId}.`,
+      userCredit,
+    };
+  } catch (error) {
+    console.error("Error updating user credits:", error);
+    throw new Error("Failed to add credits to user account.");
+  }
 }
