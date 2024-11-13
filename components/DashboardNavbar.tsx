@@ -12,7 +12,7 @@ import {
   Sparkles,
   Instagram,
   Twitter,
-  Video,
+  
   X,
   LucideIcon,
 } from "lucide-react";
@@ -33,7 +33,7 @@ interface NavItem {
 const tools: Tool[] = [
   {
     name: "Ads Creator",
-    href: "/tutorials",
+    href: "/tools/ad-creator",
     icon: Sparkles,
     description: "Create compelling ad content with AI",
   },
@@ -48,12 +48,6 @@ const tools: Tool[] = [
     href: "/tools/twitter-post-creator",
     icon: Twitter,
     description: "Craft viral tweets with AI assistance",
-  },
-  {
-    name: "AI Shorts Generator",
-    href: "/tools/ai-shorts-generator",
-    icon: Video,
-    description: "Generate viral short-form videos",
   },
 ];
 

@@ -3,13 +3,13 @@ import Input from "./Input";
 import Button from "./Button";
 import Image from "next/image";
 import OldMan from "../assets/oldMan.png";
-
+import { useRouter } from "next/navigation";
 // const models = ["Flux Dev", "Flux Schnell", "Flux Pro"];
 
 const HeroCard: React.FC = () => {
-
+  const router = useRouter();
   const handleGenerate = () => {
-    console.log("Generate button clicked");
+    router.push("/login");
   };
 
   return (

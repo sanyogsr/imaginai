@@ -113,15 +113,9 @@ export default function Navbar({ className }: NavbarProps) {
           <div className="hidden lg:flex items-center space-x-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-gray-700 hover:text-black transition-colors px-4 py-2 rounded-full hover:bg-gray-50"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/register"
               className="text-sm font-medium bg-black text-white px-6 py-2.5 rounded-full transition-all hover:bg-gray-900 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
             >
-              Sign Up
+              Sign in
             </Link>
           </div>
 
@@ -169,16 +163,9 @@ export default function Navbar({ className }: NavbarProps) {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full text-center text-gray-900 px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => setMenuOpen(false)}
                 className="block w-full text-center bg-black text-white px-4 py-3 rounded-xl hover:bg-gray-900 transition-colors"
               >
-                Sign Up
+                Sign in{" "}
               </Link>
             </div>
           </div>

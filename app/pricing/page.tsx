@@ -2,17 +2,17 @@
 import React, { useState } from "react";
 import { Check, Sparkles, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
-
-  
+  const router = useRouter();
   const plans = [
     {
       name: "Hobby",
-      price: isAnnual ? 90 : 100,
+      price: isAnnual ? 50 : 60,
       features: [
-        "150 AI image generations ",
+        "70 AI image generations ",
 
         "Best resolution images",
         "24/7 email support",
@@ -24,7 +24,7 @@ const PricingPage = () => {
       name: "Pro",
       price: isAnnual ? 190 : 200,
       features: [
-        "350 AI image generations",
+        "300 AI image generations",
         "Advanced style controls",
         "Best resolution images",
       ],
@@ -131,6 +131,7 @@ const PricingPage = () => {
                   </ul>
 
                   <button
+                    onClick={() => router.push("/login")}
                     className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
                       plan.popular
                         ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"

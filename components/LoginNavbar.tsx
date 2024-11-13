@@ -6,17 +6,12 @@ import { usePathname } from "next/navigation";
 import { MaxWidthWrapper } from "./MaxWidthWrapper";
 import { Menu, X } from "lucide-react";
 
-const navItems = [
-  { name: "Product", href: "/product", hasDropdown: true },
-  { name: "Pricing", href: "/pricing" },
-  { name: "Tutorials", href: "/tutorials" },
-];
+const navItems = [{ name: "Pricing", href: "/pricing" }];
 
 export default function LoginNavbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showProductDropdown, setShowProductDropdown] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -46,15 +41,8 @@ export default function LoginNavbar() {
 
           {/* Desktop Links aligned to the right */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map(({ name, href, hasDropdown }) => (
-              <div
-                key={name}
-                className="relative group"
-                onMouseEnter={() =>
-                  setShowProductDropdown(hasDropdown ?? false)
-                }
-                onMouseLeave={() => setShowProductDropdown(false)}
-              >
+            {navItems.map(({ name, href }) => (
+              <div key={name} className="relative group">
                 <Link
                   href={href}
                   className={`text-sm font-medium transition-colors rounded-md px-3 py-2 ${
@@ -66,29 +54,7 @@ export default function LoginNavbar() {
                   {name}
                 </Link>
 
-                {/* Dropdown for 'Product' */}
-                {hasDropdown && (
-                  <div
-                    className={`absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 shadow-lg rounded-md p-4 transition-opacity transform duration-300 ease-in-out z-50 ${
-                      showProductDropdown
-                        ? "opacity-100 visible"
-                        : "opacity-0 invisible"
-                    }`}
-                  >
-                    <Link
-                      href="/product/feature-1"
-                      className="block text-sm text-gray-600 hover:text-black dark:text-gray-300"
-                    >
-                      Feature 1
-                    </Link>
-                    <Link
-                      href="/product/feature-2"
-                      className="block text-sm text-gray-600 hover:text-black dark:text-gray-300"
-                    >
-                      Feature 2
-                    </Link>
-                  </div>
-                )}
+         
               </div>
             ))}
           </div>
