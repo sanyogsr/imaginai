@@ -32,7 +32,6 @@ export const useHistoryStore = create<HistoryState>()(
       setHistory: (history) => set({ history }),
 
       addToHistory: (item) => {
-        console.log("Adding to history:", item);
         set((state) => ({
           history: [item, ...state.history],
         }));
@@ -49,7 +48,6 @@ export const useHistoryStore = create<HistoryState>()(
         set({ isLoading: true });
         try {
           const response = await axios.get(`/api/image/fetch-image/${userId}`);
-          console.log("Raw API response:", response.data);
 
           if (response.data.images && Array.isArray(response.data.images)) {
             // Transform the array of URLs into HistoryItem objects
@@ -66,14 +64,13 @@ export const useHistoryStore = create<HistoryState>()(
               })
             );
 
-            console.log("Transformed history items:", historyItems);
             set({
               history: historyItems,
               isLoading: false,
             });
           }
         } catch (error) {
-          console.error("Error fetching history:", error);
+          // console.error("Error fetching history:", error);
           set({ isLoading: false });
         }
       },
