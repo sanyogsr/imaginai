@@ -89,8 +89,7 @@ model GeneratedContent {
   status          ContentStatus    @default(PENDING)
   prompt          String           @db.Text
   negativePrompt  String?          @db.Text
-  modelId         String
-  model           AIModel          @relation(fields: [modelId], references: [id])
+  model           String
   width           Int?
   height          Int?
   duration        Float? // For video/audio content
@@ -102,22 +101,13 @@ model GeneratedContent {
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   favorites       Favorite[]
   collectionItems CollectionItem[]
+  aIModelId       String?
 
   @@index([userId, type])
   @@index([status])
 }
 
-model AIModel {
-  id               String             @id @default(cuid())
-  name             String
-  type             ContentType
-  description      String             @db.Text
-  baseCredits      Int
-  isActive         Boolean            @default(true)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  generatedContent GeneratedContent[]
-}
+
 
 model UserCredit {
   id              String    @id @default(cuid())
@@ -138,18 +128,18 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id                 String             @id @default(cuid())
-  userId             String
-  razorpaySubscriptionId String         @unique // Razorpay subscription ID
-  status             SubscriptionStatus
-  planId             String
-  plan               SubscriptionPlan   @relation(fields: [planId], references: [id])
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                     String             @id @default(cuid())
+  userId                 String
+  razorpaySubscriptionId String             @unique // Razorpay subscription ID
+  status                 SubscriptionStatus
+  planId                 String
+  plan                   SubscriptionPlan   @relation(fields: [planId], references: [id])
+  currentPeriodStart     DateTime
+  currentPeriodEnd       DateTime
+  cancelAtPeriodEnd      Boolean            @default(false)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -171,16 +161,16 @@ model SubscriptionPlan {
 }
 
 model Payment {
-  id             String   @id @default(cuid())
-  userId         String
-  razorpayPaymentId String @unique // Razorpay payment ID
-  amount         Decimal  @db.Decimal(10, 2)
-  currency       String
-  status         String
-  metadata       Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String   @id @default(cuid())
+  userId            String
+  razorpayPaymentId String   @unique // Razorpay payment ID
+  amount            Decimal  @db.Decimal(10, 2)
+  currency          String
+  status            String
+  metadata          Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

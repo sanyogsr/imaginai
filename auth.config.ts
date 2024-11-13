@@ -1,7 +1,15 @@
 import { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
-const publicRoutes = ["/", "/pricing", "/upgrade", "/tutorials", "/dashboard"];
+const publicRoutes = [
+  "/",
+  "/pricing",
+  "/tutorials",
+  "/dashboard",
+  "/dashboard/profile",
+  "/dashboard/upgrade",
+  "/dashboard/history",
+];
 const authRoutes = ["/login", "/register"];
 
 export default {
@@ -25,7 +33,7 @@ export default {
       return isLoggedIn;
     },
   },
- 
+
   pages: {
     signIn: "/",
   },

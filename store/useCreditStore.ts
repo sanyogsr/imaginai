@@ -5,7 +5,7 @@ import { devtools } from "zustand/middleware";
 interface UserState {
   credits: number | null;
   fetchCredits: () => Promise<void>;
-  deductCredits: (amount: number) => Promise<void>;
+  deductCredits: (numberOfImages: number) => Promise<void>;
 }
 
 export const userCreditsStore = create<UserState>()(
@@ -19,13 +19,14 @@ export const userCreditsStore = create<UserState>()(
         console.error("error fetchinh credits : ", error);
       }
     },
-    deductCredits: async (amount) => {
+    deductCredits: async (numberOfImages) => {
       try {
         const response = await axios.post("/api/user/credits/deduct", {
-          amount,
+          numberOfImages,
         });
         set((state) => ({
-          credits: state.credits !== null ? state.credits - amount : null,
+          credits:
+            state.credits !== null ? state.credits - numberOfImages * 2 : null,
         }));
       } catch (error) {
         console.error("error deducting credits : ", error);

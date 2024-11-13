@@ -33,7 +33,7 @@ interface NavItem {
 const tools: Tool[] = [
   {
     name: "Ads Creator",
-    href: "/tools/ads-creator",
+    href: "/tutorials",
     icon: Sparkles,
     description: "Create compelling ad content with AI",
   },

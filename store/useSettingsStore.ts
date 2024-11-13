@@ -18,7 +18,7 @@ interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  model: "dall-e-3",
+  model: "",
   size: "1024x1024",
   quality: "standard",
   style: "natural",

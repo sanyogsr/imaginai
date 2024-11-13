@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { Camera, Edit2, CreditCard, Download } from "lucide-react";
+import { Camera, CreditCard, Download } from "lucide-react";
 import { Progress } from "@/components/ProgressBar";
 import { userCreditsStore } from "@/store/useCreditStore";
-import { useSession } from "next-auth/react";
-
+import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 const ProfilePage = () => {
   const session = useSession();
   const { credits } = userCreditsStore();
@@ -15,11 +15,18 @@ const ProfilePage = () => {
         <div className="bg-white rounded-2xl p-8 mb-8 border  border-black relative">
           <div className="flex items-start gap-8">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-2xl overflow-hidden">
-                <img
+              <div className="w-24 h-24 rounded-full overflow-hidden">
+                {/* <img
                   src="/api/placeholder/150/150"
                   alt="Profile"
                   className="w-full h-full object-cover"
+                /> */}
+                <Image
+                  src={session.data?.user?.image as string}
+                  alt="Profile"
+                  width={25}
+                  height={25}
+                  className="w-full h-full  object-cover"
                 />
               </div>
               <button className="absolute bottom-0 right-0 bg-purple-500 p-2 rounded-lg shadow-lg text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -32,8 +39,11 @@ const ProfilePage = () => {
                 <h1 className="text-2xl font-bold text-gray-900">
                   {session?.data?.user?.name}
                 </h1>
-                <button className="text-gray-500 hover:text-gray-700">
-                  <Edit2 size={20} />
+                <button
+                  onClick={() => signOut({ redirectTo: "/" })}
+                  className="text-white bg-red-500 px-3 py-2 rounded-lg hover:text-gray-100"
+                >
+                  Logout
                 </button>
               </div>
               <p className="text-gray-600 mb-4">
@@ -67,30 +77,6 @@ const ProfilePage = () => {
 
         {/* Settings Sections */}
         <div className=" border rounded-lg border-black">
-          {/* <div className="bg-white rounded-2xl p-8">
-            <h2 className="text-lg font-semibold mb-6">Account Settings</h2>
-            <div className="space-y-4">
-              <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                <Key className="text-gray-500" size={20} />
-                <div className="text-left">
-                  <div className="font-medium">Password & Security</div>
-                  <div className="text-sm text-gray-500">
-                    Manage your password and 2FA
-                  </div>
-                </div>
-              </button>
-              <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                <Bell className="text-gray-500" size={20} />
-                <div className="text-left">
-                  <div className="font-medium">Notifications</div>
-                  <div className="text-sm text-gray-500">
-                    Configure email notifications
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div> */}
-
           <div className="bg-white rounded-2xl p-8">
             <h2 className="text-lg font-semibold mb-6">Billing</h2>
             <div className="space-y-4">

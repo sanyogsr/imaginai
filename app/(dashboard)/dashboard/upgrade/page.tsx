@@ -69,7 +69,7 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Hobby",
-      price: isAnnual ? 90 : 100,
+      price: isAnnual ? 5 : 10,
       features: [
         "150 AI image generations ",
 

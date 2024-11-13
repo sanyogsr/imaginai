@@ -8,6 +8,8 @@ const nextConfig = {
       "placekitten.com",
       "placeimg.com",
       "images.unsplash.com",
+      "d17d8sfx13z6g2.cloudfront.net",
+      "lh3.googleusercontent.com",
     ],
     remotePatterns: [
       {
