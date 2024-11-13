@@ -31,7 +31,7 @@ const ImageHistoryPage = () => {
       fetchHistory(session.data.user.id);
       console.log("history mine:", history);
     }
-  }, [fetchHistory, session, history]);
+  }, [fetchHistory, session]);
 
   const handleImageClick = (image: HistoryItem, index: number) => {
     setSelectedImage(image);
