@@ -29,7 +29,6 @@ const ImageHistoryPage = () => {
   useEffect(() => {
     if (session.status === "authenticated" && session.data?.user?.id) {
       fetchHistory(session.data.user.id);
-      console.log("history mine:", history);
     }
   }, [fetchHistory, session]);
 
