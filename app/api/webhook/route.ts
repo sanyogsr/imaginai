@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       const userId = payload.payment.entity.notes?.user_id; // Retrieve user ID if passed during order creation
       let credits = 0;
 
-      if (amount === 5) credits = 10; // Hobby plan
+      if (amount === 1) credits = 2; // Hobby plan
       else if (amount === 200) credits = 700; // Pro plan
       else if (amount === 400) credits = 1600; // Value for money plan
       try {
