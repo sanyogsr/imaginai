@@ -18,7 +18,7 @@ interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  model: "",
+  model: "black-forest-labs/FLUX.1-schnell",
   size: "1024x1024",
   quality: "standard",
   style: "natural",
