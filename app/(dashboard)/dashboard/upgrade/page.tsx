@@ -285,7 +285,7 @@ const PricingPage = () => {
         amount: plan.price * 400,
         currency: "INR",
         name: "Imagin Ai",
-        description: "Your company name",
+        description: "Imagin Ai",
         order_id: data.orderId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: function (response: any) {
