@@ -48,6 +48,15 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
+model PaymentFailureLog {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  amount     Float
+  reason     String?
+  paymentId  String
+  createdAt  DateTime @default(now())
+}
+
 model Session {
   sessionToken String   @unique
   userId       String

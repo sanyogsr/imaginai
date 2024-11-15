@@ -100,18 +100,61 @@ import { prisma } from "@/utils/prisma";
 
 const RAZORPAY_SECRET = process.env.RAZORPAY_SECRET || "";
 
+// export async function POST(req: NextRequest) {
+//   const signature = req.headers.get("x-razorpay-signature");
+//   const body = await req.json();
+
+//   if (!signature) {
+//     return NextResponse.json(
+//       { error: "Missing Razorpay signature." },
+//       { status: 403 }
+//     );
+//   }
+
+//   // Verify Razorpay signature
+//   const expectedSignature = crypto
+//     .createHmac("sha256", RAZORPAY_SECRET)
+//     .update(JSON.stringify(body))
+//     .digest("hex");
+
+//   if (signature !== expectedSignature) {
+//     return NextResponse.json({ error: "Invalid signature." }, { status: 403 });
+//   }
+
+//   const { event, payload } = body;
+//   const userId = payload.payment.entity.notes?.user_id;
+//   const amount = payload.payment.entity.amount / 100;
+
+//   if (!userId || !amount) {
+//     return NextResponse.json({ error: "Invalid payload." }, { status: 400 });
+//   }
+
+//   if (event === "payment.captured") {
+//     const credits = calculateCredits(amount);
+
+//     try {
+//       await addCreditsToUserAccount(userId, credits);
+//       return NextResponse.json({ status: "Credits added successfully." });
+//     } catch (error) {
+//       console.error("Error adding credits:", error);
+//       return NextResponse.json(
+//         { error: "Error adding credits to account." },
+//         { status: 500 }
+//       );
+//     }
+//   }
+
+//   console.log("Unhandled event type:", event);
+//   return NextResponse.json({ error: "Unhandled event type." }, { status: 400 });
+// }
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-razorpay-signature");
   const body = await req.json();
 
   if (!signature) {
-    return NextResponse.json(
-      { error: "Missing Razorpay signature." },
-      { status: 403 }
-    );
+    return NextResponse.json({ error: "Missing Razorpay signature." }, { status: 403 });
   }
 
-  // Verify Razorpay signature
   const expectedSignature = crypto
     .createHmac("sha256", RAZORPAY_SECRET)
     .update(JSON.stringify(body))
@@ -122,14 +165,12 @@ export async function POST(req: NextRequest) {
   }
 
   const { event, payload } = body;
-  const userId = payload.payment.entity.notes?.user_id;
-  const amount = payload.payment.entity.amount / 100;
 
-  if (!userId || !amount) {
-    return NextResponse.json({ error: "Invalid payload." }, { status: 400 });
-  }
+  console.log(`Received Razorpay event: ${event}`);
 
   if (event === "payment.captured") {
+    const userId = payload.payment.entity.notes?.user_id;
+    const amount = payload.payment.entity.amount / 100;
     const credits = calculateCredits(amount);
 
     try {
@@ -137,15 +178,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: "Credits added successfully." });
     } catch (error) {
       console.error("Error adding credits:", error);
+      return NextResponse.json({ error: "Error adding credits to account." }, { status: 500 });
+    }
+  } else if (event === "payment.failed") {
+    const failureReason = payload.payment.entity.error_reason;
+    const userId = payload.payment.entity.notes?.user_id;
+    const amount = payload.payment.entity.amount / 100;
+
+    console.log(`Payment failed for user: ${userId}, Amount: ${amount}, Reason: ${failureReason}`);
+
+    try {
+      await prisma.paymentFailureLog.create({
+        data: {
+          userId,
+          amount,
+          reason: failureReason,
+          paymentId: payload.payment.entity.id,
+          createdAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({ status: "Payment failure logged successfully." });
+    } catch (error) {
+      console.error("Error logging payment failure:", error);
       return NextResponse.json(
-        { error: "Error adding credits to account." },
+        { error: "Error logging payment failure." },
         { status: 500 }
       );
     }
+  } else {
+    console.log(`Unhandled event type: ${event}`);
+    return NextResponse.json({ error: "Unhandled event type." }, { status: 400 });
   }
-
-  console.log("Unhandled event type:", event);
-  return NextResponse.json({ error: "Unhandled event type." }, { status: 400 });
 }
 
 function calculateCredits(amount: number) {
