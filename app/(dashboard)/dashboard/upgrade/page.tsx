@@ -303,7 +303,7 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Creative Explorer",
-      price: isAnnual ? 50 : 60,
+      price: isAnnual ? 1 : 1,
       credits: 150,
       features: [
         "70 AI masterpiece generations",
