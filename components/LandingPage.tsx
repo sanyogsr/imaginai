@@ -3,7 +3,6 @@
 import Footer from "./Footer";
 import HeroSection from "./HeroSection";
 import Navbar from "./Navbar";
-// import RainbowButton from "./rainbowButton/RainbowButton";
 import Testimonials from "./Testimonial";
 
 export default function LandingPage() {
@@ -14,7 +13,6 @@ export default function LandingPage() {
         <HeroSection />
         <Testimonials />
         <Footer />
-        {/* <RainbowButton /> */}
       </main>
     </div>
   );

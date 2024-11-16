@@ -16,11 +16,7 @@ const ProfilePage = () => {
           <div className="flex items-start gap-8">
             <div className="relative group">
               <div className="w-24 h-24 rounded-full overflow-hidden">
-                {/* <img
-                  src="/api/placeholder/150/150"
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                /> */}
+           
                 <Image
                   src={session.data?.user?.image as string}
                   alt="Profile"

@@ -1,66 +1,106 @@
 "use client";
 import React, { useState } from "react";
-import { Check, Sparkles, Zap } from "lucide-react";
-import Navbar from "@/components/Navbar";
+import {
+  Check,
+  Sparkles,
+  Wand2,
+  Palette,
+  Camera,
+  PenTool,
+  Layers,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const router = useRouter();
+
   const plans = [
     {
-      name: "Hobby",
+      name: "Creative Explorer",
       price: isAnnual ? 50 : 60,
       features: [
-        "70 AI image generations ",
-
-        "Best resolution images",
-        "24/7 email support",
+        "70 AI masterpiece generations",
+        "HD quality artworks",
+        "Basic style controls",
+        "24/7 creative support",
+        "Commercial usage rights",
       ],
-      cta: "Get Started",
+      cta: "Start Creating",
       popular: false,
+      icon: <Palette className="w-8 h-8 text-purple-400" />,
     },
     {
-      name: "Pro",
+      name: "Artist Pro",
       price: isAnnual ? 190 : 200,
       features: [
-        "300 AI image generations",
-        "Advanced style controls",
-        "Best resolution images",
+        "300 AI masterpiece generations",
+        "Ultra HD quality artworks",
+        "Advanced style & mood controls",
+        "Priority creative support",
+        "Commercial usage rights",
+        "Style preservation technology",
       ],
-      cta: "Get Started",
-      popular: false,
+      cta: "Unleash Creativity",
+      popular: true,
+      icon: <Wand2 className="w-8 h-8 text-purple-500" />,
     },
     {
-      name: "Enterprise",
+      name: "Studio Master",
       price: isAnnual ? 380 : 400,
       features: [
-        "800 AI image generation",
-        "Dedicated account manager",
-        "Best resolution images",
-        "White-label options",
-        "Custom API integration",
-        "SSO & team management",
+        "800 AI masterpiece generations",
+        "Maximum resolution artworks",
+        "Custom style engine access",
+        "Dedicated art director",
+        "Advanced API integration",
+        "Exclusive artistic features",
+        "Team collaboration tools",
       ],
-      cta: "Upgraded to pro",
-      popular: true,
+      cta: "Master Your Craft",
+      popular: false,
+      icon: <Sparkles className="w-8 h-8 text-purple-600" />,
     },
   ];
+
+  const features = [
+    {
+      icon: <Camera className="w-12 h-12 text-purple-500" />,
+      title: "AI-Powered Creation",
+      description:
+        "Transform your ideas into stunning visuals with our state-of-the-art AI models",
+    },
+    {
+      icon: <PenTool className="w-12 h-12 text-purple-500" />,
+      title: "Style Control",
+      description:
+        "Fine-tune every aspect of your artwork with intuitive style controls",
+    },
+    {
+      icon: <Layers className="w-12 h-12 text-purple-500" />,
+      title: "Commercial License",
+      description:
+        "Use your generated masterpieces in commercial projects worry-free",
+    },
+  ];
+
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 py-20 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-purple-50 py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Upgrade Your Creative Power
-            </h1>
-            <p className="text-lg text-gray-600 mb-8">
-              Choose the perfect plan for your creative journey
-            </p>
+            <div className="mb-6">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text mb-4">
+                Where AI Meets Artistry
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Join thousands of creators transforming ideas into stunning
+                artworks
+              </p>
+            </div>
 
-            {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4">
               <span
                 className={`text-sm ${
@@ -69,56 +109,58 @@ const PricingPage = () => {
               >
                 Monthly
               </span>
-
-              {/* Updated toggle button */}
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
-                className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 overflow-hidden transition-colors duration-200 ease-in-out"
+                className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 cursor-pointer"
               >
                 <div
-                  className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
+                  className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-lg transform transition-transform duration-300 ease-spring ${
                     isAnnual ? "translate-x-8" : "translate-x-0"
                   }`}
                 />
               </button>
-
               <span
                 className={`text-sm ${
                   isAnnual ? "text-gray-900" : "text-gray-500"
                 }`}
               >
                 Annually
-                <span className="ml-1 text-green-500 text-xs font-medium">
-                  Save 20%
+                <span className="ml-1 text-green-500 font-medium">
+                  (Save 20%)
                 </span>
               </span>
             </div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-105 ${
-                  plan.popular ? "ring-2 ring-purple-500" : ""
+                className={`relative bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                  plan.popular
+                    ? "ring-2 ring-purple-500 transform scale-105"
+                    : ""
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-1 text-sm font-medium rounded-bl-xl">
+                  <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 text-sm font-medium rounded-bl-2xl">
                     Most Popular
                   </div>
                 )}
 
                 <div className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {plan.name}
-                  </h3>
-                  <div className="flex items-baseline mb-6">
-                    <span className="text-4xl font-bold text-gray-900">
+                  <div className="flex items-center gap-4 mb-4">
+                    {plan.icon}
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      {plan.name}
+                    </h3>
+                  </div>
+
+                  <div className="flex items-baseline mb-8">
+                    <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
                       ₹{plan.price}
                     </span>
-                    <span className="text-gray-500 ml-1">/month</span>
+                    <span className="text-gray-500 ml-2">/month</span>
                   </div>
 
                   <ul className="space-y-4 mb-8">
@@ -132,10 +174,10 @@ const PricingPage = () => {
 
                   <button
                     onClick={() => router.push("/login")}
-                    className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
+                    className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 ${
                       plan.popular
-                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"
-                        : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90 transform hover:-translate-y-1"
+                        : "bg-gray-100 text-gray-900 hover:bg-gray-200 hover:shadow-md"
                     }`}
                   >
                     {plan.cta}
@@ -147,28 +189,34 @@ const PricingPage = () => {
 
           {/* Features Grid */}
           <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="text-center p-6">
-              <Sparkles className="w-12 h-12 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                AI-Powered Creation
-              </h3>
-              <p className="text-gray-600">
-                Create stunning images with state-of-the-art AI models
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="bg-white/50 backdrop-blur-sm rounded-xl p-8 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              >
+                <div className="flex justify-center mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Call to Action */}
+          <div className="mt-24 text-center">
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-12 max-w-4xl mx-auto shadow-xl">
+              <h2 className="text-3xl font-bold mb-4">
+                Ready to Transform Your Creative Journey?
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Join our community of artists and creators. Start generating
+                stunning AI artwork today.
               </p>
-            </div>
-            <div className="text-center p-6">
-              <Zap className="w-12 h-12 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Lightning Fast</h3>
-              <p className="text-gray-600">
-                Generate images in seconds with our optimized infrastructure
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <Check className="w-12 h-12 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Commercial License</h3>
-              <p className="text-gray-600">
-                Use generated images in your commercial projects worry-free
-              </p>
+              <button
+                onClick={() => router.push("/login")}
+                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:opacity-90 transform hover:-translate-y-1"
+              >
+                Get Started Now
+              </button>
             </div>
           </div>
         </div>

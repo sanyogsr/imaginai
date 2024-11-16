@@ -23,7 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         await prisma.userCredit.create({
           data: {
             userId: user.id as string,
-            credits: 6,
+            credits: 10,
           },
         });
       } catch (error) {

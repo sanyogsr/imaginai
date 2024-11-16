@@ -14,9 +14,11 @@ export default function Footer() {
     {
       title: "Company",
       links: [
-        { name: "About", href: "/about" },
-        { name: "Blog", href: "/blog" },
-        { name: "Contact", href: "/contact" },
+        { name: "About us", href: "/about-us" },
+        { name: "Contact", href: "/contact-us" },
+        { name: "Terms & Conditions", href: "/terms-and-conditions" },
+        { name: "Privacy policy", href: "/privacy-policy" },
+        { name: "Refund Policy", href: "/refund-policy" },
       ],
     },
   ];
