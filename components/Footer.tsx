@@ -5,10 +5,10 @@ export default function Footer() {
     {
       title: "Product",
       links: [
-        { name: "Features", href: "/features" },
-        { name: "Solutions", href: "/solutions" },
+        // { name: "Features", href: "/features" },
+        // { name: "Solutions", href: "/solutions" },
         { name: "Pricing", href: "/pricing" },
-        { name: "Documentation", href: "/docs" },
+        { name: "Sign in", href: "/login" },
       ],
     },
     {
@@ -40,7 +40,8 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               <Link
-                href="#"
+                href="https://x.com/sanyogsr"
+                target="_blank"
                 className="text-gray-600 hover:text-blue-500 transition"
               >
                 <svg
@@ -85,13 +86,13 @@ export default function Footer() {
             </div>
             <div className="flex space-x-6">
               <Link
-                href="#"
+                href="/terms-and-conditions"
                 className="text-sm text-gray-600 hover:text-blue-500 transition-colors"
               >
-                Terms
+                Terms and Conditions
               </Link>
               <Link
-                href="#"
+                href="/privacy-policy"
                 className="text-sm text-gray-600 hover:text-blue-500 transition-colors"
               >
                 Privacy
