@@ -102,9 +102,12 @@ export async function POST(req: NextRequest) {
 }
 
 function calculateCredits(amount: number) {
-  if (amount === 1) return 2;
-  if (amount === 200) return 700;
-  if (amount === 400) return 1600;
+  if (amount === 50) return 120;
+  if (amount === 60) return 120;
+  if (amount === 190) return 600;
+  if (amount === 200) return 600;
+  if (amount === 380) return 1400;
+  if (amount === 400) return 1400;
   return 0;
 }
 

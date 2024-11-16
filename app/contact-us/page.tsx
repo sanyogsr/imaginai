@@ -68,7 +68,7 @@ export default function ContactUs() {
             </div>
           </section>
 
-          <section className="bg-white rounded-2xl p-8 shadow-sm">
+          {/* <section className="bg-white rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               Send Us a Message
             </h2>
@@ -112,7 +112,7 @@ export default function ContactUs() {
                 Send Message
               </button>
             </form>
-          </section>
+          </section> */}
 
           <section className="bg-white rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">

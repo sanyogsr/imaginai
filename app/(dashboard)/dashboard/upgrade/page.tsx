@@ -303,10 +303,10 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Creative Explorer",
-      price: isAnnual ? 1 : 1,
+      price: isAnnual ? 50 : 60,
       credits: 150,
       features: [
-        "70 AI masterpiece generations",
+        "60 AI masterpiece generations",
         "HD quality artworks",
         "Basic style controls",
         "24/7 creative support",
@@ -337,7 +337,7 @@ const PricingPage = () => {
       price: isAnnual ? 380 : 400,
       credits: 800,
       features: [
-        "800 AI masterpiece generations",
+        "700 AI masterpiece generations",
         "Maximum resolution artworks",
         "Custom style engine access",
         "Dedicated art director",
@@ -402,7 +402,7 @@ const PricingPage = () => {
           <div className="max-w-md mx-auto">
             <input
               type="tel"
-              placeholder="Your phone number for order updates"
+              placeholder="Enter your phone number to complete payment"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="w-full p-4 border border-purple-200 rounded-xl bg-white/50 backdrop-blur-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"

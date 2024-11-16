@@ -21,7 +21,7 @@ interface NavbarProps {
 const navItems: NavItem[] = [
   { name: "Features", href: "#", hasDropdown: true },
   { name: "Pricing", href: "/pricing" },
-  { name: "Tutorials", href: "/tutorials" },
+  { name: "About us", href: "/about-us" },
 ];
 
 export default function Navbar({ className }: NavbarProps) {

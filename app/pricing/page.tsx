@@ -21,7 +21,7 @@ const PricingPage = () => {
       name: "Creative Explorer",
       price: isAnnual ? 50 : 60,
       features: [
-        "70 AI masterpiece generations",
+        "60 AI masterpiece generations",
         "HD quality artworks",
         "Basic style controls",
         "24/7 creative support",
@@ -50,7 +50,7 @@ const PricingPage = () => {
       name: "Studio Master",
       price: isAnnual ? 380 : 400,
       features: [
-        "800 AI masterpiece generations",
+        "700 AI masterpiece generations",
         "Maximum resolution artworks",
         "Custom style engine access",
         "Dedicated art director",

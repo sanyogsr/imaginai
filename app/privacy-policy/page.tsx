@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Account information (name, email, password)</li>
-              <li>Payment information</li>
+              {/* <li>Payment information</li> */}
               <li>Generated images and prompts</li>
               <li>Usage data and preferences</li>
             </ul>
