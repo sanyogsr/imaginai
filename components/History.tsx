@@ -208,6 +208,8 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
 
   // Filter items
   const filteredItems = useMemo(() => {
+    const itemsToShow = isGridView ? 40 : 6;
+    console.log("jjj", itemsToShow);
     return history
       .filter((item) => {
         const matchesSearch = item.prompt
@@ -221,8 +223,15 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
             (!dateRange.to || new Date(item.timestamp) <= dateRange.to));
         return matchesSearch && matchesModel && matchesStyle && matchesDate;
       })
-      .slice(0, 6);
-  }, [history, searchQuery, selectedModel, selectedStyle, dateRange]);
+      .slice(0, itemsToShow);
+  }, [
+    history,
+    searchQuery,
+    selectedModel,
+    selectedStyle,
+    dateRange,
+    isGridView,
+  ]);
 
   // Download functionality
 
