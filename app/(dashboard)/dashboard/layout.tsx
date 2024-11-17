@@ -7,7 +7,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex flex-col">
-      <DashboardNavbar />
+      <DashboardNavbar  />
       {children}
     </div>
   );

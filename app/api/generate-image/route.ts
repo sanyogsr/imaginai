@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import Together from "together-ai";
 import z from "zod";
+
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 type ExtendedImageParams = Parameters<typeof together.images.create>[0] & {
   response_format: string;
@@ -45,6 +46,7 @@ type ExtendedImageParams = Parameters<typeof together.images.create>[0] & {
 //     );
 //   }
 // }
+
 export async function POST(req: NextRequest) {
   try {
     const values = await req.json();

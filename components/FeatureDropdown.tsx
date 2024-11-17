@@ -32,24 +32,6 @@ const FeatureDropdown = ({
       href: "/login",
       icon: "🎨",
     },
-    // {
-    //   name: "Social Media Posts",
-    //   description: "Schedule and create engaging content",
-    //   href: "/tutorials/features/Social-media-post",
-    //   icon: "📱",
-    // },
-    // {
-    //   name: "Video Creation",
-    //   description: "Generate professional video content",
-    //   href: "/tutorials/features/video",
-    //   icon: "🎥",
-    // },
-    // {
-    //   name: "Content Writing",
-    //   description: "AI-powered content generation",
-    //   href: "/tutorials/features/writing",
-    //   icon: "✍️",
-    // },
   ];
 
   // Mobile accordion style dropdown
