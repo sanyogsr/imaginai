@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   Camera,
-  Download,
   ZoomIn,
   ZoomOut,
   Maximize2,
@@ -179,41 +178,67 @@ const EnhancedImagePreview: React.FC<{
     );
   };
 
-  const handleDownload = useCallback(async () => {
-    if (!currentImage) return;
+  // const handleDownloads = useCallback(async () => {
+  //   if (!currentImage) return;
 
-    try {
-      setState((prev) => ({ ...prev, loading: true }));
+  //   try {
+  //     setState((prev) => ({ ...prev, loading: true }));
 
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = imageRef.current;
+  //     const canvas = document.createElement("canvas");
+  //     const ctx = canvas.getContext("2d");
+  //     const img = imageRef.current;
 
-      if (!ctx || !img) return;
+  //     if (!ctx || !img) return;
 
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
+  //     canvas.width = img.naturalWidth;
+  //     canvas.height = img.naturalHeight;
 
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((state.transform.rotation * Math.PI) / 180);
-      ctx.scale(state.transform.flipX ? -1 : 1, state.transform.flipY ? -1 : 1);
-      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+  //     ctx.translate(canvas.width / 2, canvas.height / 2);
+  //     ctx.rotate((state.transform.rotation * Math.PI) / 180);
+  //     ctx.scale(state.transform.flipX ? -1 : 1, state.transform.flipY ? -1 : 1);
+  //     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-      ctx.filter = `brightness(${state.transform.brightness}%) contrast(${state.transform.contrast}%)`;
-      ctx.drawImage(img, 0, 0);
+  //     ctx.filter = `brightness(${state.transform.brightness}%) contrast(${state.transform.contrast}%)`;
+  //     ctx.drawImage(img, 0, 0);
 
-      const link = document.createElement("a");
-      link.download = `generated-image-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    } catch (error) {
-      console.error("Download failed:", error);
-      setState((prev) => ({ ...prev, error: "Download failed" }));
-    } finally {
-      setState((prev) => ({ ...prev, loading: false }));
-    }
-  }, [currentImage, state.transform]);
+  //     const link = document.createElement("a");
+  //     link.download = `generated-image-${Date.now()}.png`;
+  //     link.href = canvas.toDataURL("image/png");
+  //     link.click();
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     setState((prev) => ({ ...prev, error: "Download failed" }));
+  //   } finally {
+  //     setState((prev) => ({ ...prev, loading: false }));
+  //   }
+  // }, [currentImage, state.transform]);
+  // const handleDownload = async (imageUrl: string) => {
+  //   try {
+  //     const response = await fetch("/api/download-image", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ imageUrl }),
+  //     });
 
+  //     if (!response.ok) throw new Error("Download failed");
+
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `generated-image-${Date.now()}.png`;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //     showToast("Image downloaded successfully");
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   } catch (error) {
+  //     showToast("Failed to download image", "error");
+  //   }
+  // };
   // const handleNavigate = useCallback(
   //   (direction: "next" | "prev") => {
   //     if (!generatedImages.urls.length) return;
@@ -462,13 +487,13 @@ const EnhancedImagePreview: React.FC<{
                 <FlipHorizontal className="w-5 h-5" />
               </button>
               <div className="w-px h-6 bg-gray-300" />
-              <button
-                onClick={handleDownload}
+              {/* <button
+                // onClick={handleDownload(items.url)}
                 className="p-2 hover:bg-gray-100 rounded-lg tooltip"
                 title="Download"
               >
                 <Download className="w-5 h-5" />
-              </button>
+              </button> */}
               <button
                 onClick={() =>
                   setState((prev) => ({ ...prev, editMode: !prev.editMode }))
