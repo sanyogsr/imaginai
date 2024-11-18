@@ -128,7 +128,7 @@ const TextBehindObjectEditor = () => {
         {
           method: "POST",
           headers: {
-            "x-api-key": process.env.NEXT_PUBLIC_CLIPDROP_API_KEY || "",
+            "x-api-key": process.env.CLIPDROP_API_KEY || "",
           },
           body: formData,
         }
