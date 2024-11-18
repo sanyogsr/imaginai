@@ -5,16 +5,12 @@ import { StatsCard } from "@/components/history/StatsCard";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import { useImageDownload } from "@/utils/useImageDownload";
 import {
-  Download,
   Grid,
-  Heart,
   ImageIcon,
   LayoutGrid,
   Loader2,
-  MessageCircle,
   Plus,
   Sparkles,
-  Palette,
   Wand2,
   Trash2,
 } from "lucide-react";
@@ -33,7 +29,6 @@ interface HistoryItem {
 }
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 

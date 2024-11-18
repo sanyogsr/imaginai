@@ -59,7 +59,6 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
-import Link from "next/link";
 
 // Import popular Google Fonts for a more aesthetic look
 import { Inter, Raleway, Playfair_Display } from 'next/font/google';

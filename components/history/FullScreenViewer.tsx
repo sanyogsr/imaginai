@@ -4,7 +4,6 @@ import {
   Download,
   Loader2,
   MessageCircle,
-  Share2,
   Trash2,
   X,
 } from "lucide-react";

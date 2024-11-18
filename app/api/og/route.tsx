@@ -291,7 +291,8 @@ export async function GET(request: NextRequest) {
         height: 630,
       }
     );
-  } catch (e: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
     return new Response(`Failed to generate image`, {
       status: 500,
     });
