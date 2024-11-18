@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 
+// Constants
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache duration
+
 export interface HistoryItem {
   id: number;
   imageUrls: string[];
@@ -13,65 +16,169 @@ export interface HistoryItem {
   style: string;
 }
 
+interface FetchState {
+  lastFetched: number | null;
+  inProgress: boolean;
+  userId: string | null;
+}
+
 interface HistoryState {
   history: HistoryItem[];
   isLoading: boolean;
+  error: string | null;
+  fetchState: FetchState;
   addToHistory: (item: HistoryItem) => void;
-  removeFromHistory: (id: number) => void;
-  clearHistory: () => void;
+  removeFromHistory: (id: number) => Promise<void>;
+  clearHistory: () => Promise<void>;
   fetchHistory: (userId: string) => Promise<void>;
   setHistory: (history: HistoryItem[]) => void;
 }
 
+// Utility functions
+const isCacheValid = (lastFetched: number | null): boolean => {
+  if (!lastFetched) return false;
+  return Date.now() - lastFetched < CACHE_DURATION;
+};
+
+const createHistoryItem = (
+  imageUrl: string | string[],
+  index: number
+): HistoryItem => ({
+  id: index,
+  imageUrls: Array.isArray(imageUrl) ? imageUrl : [imageUrl],
+  prompt: "AI Generated Image",
+  timestamp: new Date().toISOString(),
+  model: "Standard",
+  size: "1024x1024",
+  quality: "Standard",
+  style: "Natural",
+});
+
 export const useHistoryStore = create<HistoryState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       history: [],
       isLoading: false,
+      error: null,
+      fetchState: {
+        lastFetched: null,
+        inProgress: false,
+        userId: null,
+      },
 
-      setHistory: (history) => set({ history }),
+      setHistory: (history) => {
+        set({ history, error: null });
+      },
 
       addToHistory: (item) => {
         set((state) => ({
           history: [item, ...state.history],
+          error: null,
         }));
       },
 
-      removeFromHistory: (id) =>
-        set((state) => ({
-          history: state.history.filter((item) => item.id !== id),
-        })),
+      removeFromHistory: async (id) => {
+        try {
+          // Optimistic update
+          set((state) => ({
+            history: state.history.filter((item) => item.id !== id),
+            error: null,
+          }));
 
-      clearHistory: () => set({ history: [] }),
+          // You might want to add API call here to sync with backend
+          // await axios.delete(`/api/image/${id}`);
+        } catch (error) {
+          // Rollback on error
+          const previousHistory = get().history;
+          set((state) => ({
+            history: previousHistory,
+            error: "Failed to delete image",
+          }));
+          throw error;
+        }
+      },
+
+      clearHistory: async () => {
+        const previousHistory = get().history;
+
+        try {
+          set({ history: [], error: null });
+
+          // You might want to add API call here to sync with backend
+          // await axios.delete('/api/image/clear');
+        } catch (error) {
+          // Rollback on error
+          set((state) => ({
+            history: previousHistory,
+            error: "Failed to clear history",
+          }));
+          throw error;
+        }
+      },
 
       fetchHistory: async (userId) => {
-        set({ isLoading: true });
+        const state = get();
+
+        // Check if we're already fetching for this user
+        if (state.fetchState.inProgress && state.fetchState.userId === userId) {
+          return;
+        }
+
+        // Check if we have valid cached data
+        if (
+          state.fetchState.userId === userId &&
+          isCacheValid(state.fetchState.lastFetched) &&
+          state.history.length > 0
+        ) {
+          return;
+        }
+
+        set((state) => ({
+          isLoading: true,
+          error: null,
+          fetchState: {
+            ...state.fetchState,
+            inProgress: true,
+            userId,
+          },
+        }));
+
         try {
-          const response = await axios.get(`/api/image/fetch-image/${userId}`);
+          const response = await axios.get(`/api/image/fetch-image/${userId}`, {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          });
 
           if (response.data.images && Array.isArray(response.data.images)) {
-            // Transform the array of URLs into HistoryItem objects
             const historyItems: HistoryItem[] = response.data.images.map(
-              (imageUrl: string, index: number) => ({
-                id: index,
-                imageUrls: Array.isArray(imageUrl) ? imageUrl : [imageUrl],
-                prompt: "AI Generated Image", // You might want to update this if you have actual prompts
-                timestamp: new Date().toLocaleString(),
-                model: "Standard", // Default value
-                size: "1024x1024", // Default value
-                quality: "Standard", // Default value
-                style: "Natural", // Default value
-              })
+              (imageUrl: string | string[], index: number) =>
+                createHistoryItem(imageUrl, index)
             );
 
             set({
               history: historyItems,
               isLoading: false,
+              error: null,
+              fetchState: {
+                lastFetched: Date.now(),
+                inProgress: false,
+                userId,
+              },
             });
           }
         } catch (error) {
-          // console.error("Error fetching history:", error);
-          set({ isLoading: false });
+          set((state) => ({
+            isLoading: false,
+            error: "Failed to fetch history",
+            fetchState: {
+              ...state.fetchState,
+              inProgress: false,
+            },
+          }));
+          throw error;
         }
       },
     }),
@@ -79,13 +186,28 @@ export const useHistoryStore = create<HistoryState>()(
       name: "history-storage",
       storage: {
         getItem: (name) => {
-          const str = sessionStorage.getItem(name);
-          return str ? JSON.parse(str) : null;
+          try {
+            const str = sessionStorage.getItem(name);
+            return str ? JSON.parse(str) : null;
+          } catch (error) {
+            console.error("Error reading from sessionStorage:", error);
+            return null;
+          }
         },
         setItem: (name, value) => {
-          sessionStorage.setItem(name, JSON.stringify(value));
+          try {
+            sessionStorage.setItem(name, JSON.stringify(value));
+          } catch (error) {
+            console.error("Error writing to sessionStorage:", error);
+          }
         },
-        removeItem: (name) => sessionStorage.removeItem(name),
+        removeItem: (name) => {
+          try {
+            sessionStorage.removeItem(name);
+          } catch (error) {
+            console.error("Error removing from sessionStorage:", error);
+          }
+        },
       },
     }
   )
