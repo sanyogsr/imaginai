@@ -570,7 +570,7 @@ const Header = () => {
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-600 hover:bg-gray-50"
                       }`}
-                    disabled={tool.comingSoon}
+                    // disabled={tool.comingSoon}
                   >
                     <span className="flex items-center gap-2">
                       {tool.icon}
