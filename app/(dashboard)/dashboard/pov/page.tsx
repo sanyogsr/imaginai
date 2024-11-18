@@ -1,17 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import {
-  Upload,
-  Type,
-  Layers,
-  Download,
-  Trash2,
-  ImageOff,
-  Edit3,
-  Check,
-  X,
-} from "lucide-react";
+import { Upload, Layers, Download, Trash2, ImageOff, X } from "lucide-react";
 
 interface EditorState {
   step: "upload" | "remove-bg" | "edit";
@@ -60,6 +50,7 @@ const TextBehindObjectEditor = () => {
 
       // Add the processed image on top
       if (removedBgImage) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         fabric.Image.fromURL(removedBgImage, (img: any) => {
           img.scaleToWidth(400);
           img.set({
@@ -85,6 +76,7 @@ const TextBehindObjectEditor = () => {
     if (editorState.step === "edit") {
       const textObj = fabricRef.current
         ?.getObjects()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .find((obj: any) => obj.type === "text") as fabric.Text;
 
       if (textObj) {
@@ -109,6 +101,7 @@ const TextBehindObjectEditor = () => {
         setEditorState({ step: "remove-bg", loading: false });
       };
       reader.readAsDataURL(file);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError("Error uploading image. Please try again.");
     }
@@ -151,6 +144,7 @@ const TextBehindObjectEditor = () => {
         setEditorState({ step: "edit", loading: false });
       };
       reader.readAsDataURL(imageBlob);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError("Failed to remove background. Please try again.");
       setEditorState({ ...editorState, loading: false });
