@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Mail, Phone, Clock, MessageSquare } from "lucide-react";
+import { Mail, Phone, Clock, MessageSquare, BookUser } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact Us | ImaginAi.art",
@@ -113,7 +113,24 @@ export default function ContactUs() {
               </button>
             </form>
           </section> */}
-
+          <section className="bg-white rounded-2xl p-8 shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Address
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="flex items-center space-x-4">
+                <BookUser className="w-6 h-6 text-purple-600" />
+                <div>
+                  <h3 className="font-medium text-gray-800">
+                    378,krishan nagar, tehsil camp, panipat
+                  </h3>
+                  <p className="text-gray-600">
+                    pincode-132103, Haryana, India
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
           <section className="bg-white rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               Additional Information

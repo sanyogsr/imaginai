@@ -105,6 +105,15 @@ export default function AboutUs() {
                 our creative community.
               </p>
             </section>
+            <section className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                Delivery and Shipment Policy{" "}
+              </h2>
+              <p className="mb-4">
+                We don&apos;t have any Delivery and Shipment policy as we
+                don&apos;t deliver any physical product.
+              </p>
+            </section>
 
             <div className="text-sm text-gray-500 mt-8">
               <p>
