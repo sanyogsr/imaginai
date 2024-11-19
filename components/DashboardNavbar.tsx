@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import {
   History,
@@ -73,7 +73,8 @@ const Header = () => {
   const session = useSession();
   const pathname = usePathname();
   const { credits, fetchCredits } = userCreditsStore();
-
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
   // Auto-close dropdowns on navigation
   useEffect(() => {
     setProfileOpen(false);
@@ -92,18 +93,39 @@ const Header = () => {
   );
 
   // Close dropdowns when clicking outside
+  // useEffect(() => {
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   const handleClickOutside = (event: any) => {
+  //     const target = event.target;
+  //     if (!target.closest(".profile-menu")) setProfileOpen(false);
+  //     if (!target.closest(".mobile-menu")) setMobileMenuOpen(false);
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => document.removeEventListener("mousedown", handleClickOutside);
+  // }, []);
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleClickOutside = (event: any) => {
-      const target = event.target;
-      if (!target.closest(".profile-menu")) setProfileOpen(false);
-      if (!target.closest(".mobile-menu")) setMobileMenuOpen(false);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        mobileMenuOpen &&
+        mobileMenuRef.current &&
+        mobileButtonRef.current &&
+        !mobileMenuRef.current.contains(target) &&
+        !mobileButtonRef.current.contains(target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+
+      if (!target.parentElement?.closest(".profile-menu")) {
+        setProfileOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+  }, [mobileMenuOpen]);
   // Keyboard shortcuts
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,52 +300,66 @@ const Header = () => {
 
               {/* Mobile Menu Button */}
               <button
+                ref={mobileButtonRef}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors relative z-50"
+                aria-expanded={mobileMenuOpen}
+                aria-label="Toggle menu"
               >
-                <Menu className="w-5 h-5" />
+                <Menu
+                  className={`w-5 h-5 transition-transform duration-200 ${
+                    mobileMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-100">
-              <nav className="flex flex-col space-y-2">
-                {tools.map((tool) => (
-                  <button
-                    key={tool.id}
-                    onClick={() => {
-                      setActiveTab(tool.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium relative
-                      ${
-                        activeTab === tool.id
-                          ? "bg-blue-50 text-blue-600"
-                          : "text-gray-600 hover:bg-gray-50"
-                      }`}
-                    disabled={tool.comingSoon}
-                  >
-                    <span className="flex items-center gap-2">
+          <div
+            ref={mobileMenuRef}
+            className={`md:hidden absolute left-0 right-0 bg-white border-t border-gray-100 shadow-lg transition-all duration-200 ease-in-out ${
+              mobileMenuOpen
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <nav className="flex flex-col space-y-2 p-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              {tools.map((tool) => (
+                <button
+                  key={tool.id}
+                  onClick={() => {
+                    setActiveTab(tool.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-4 py-3 rounded-xl text-sm font-medium relative group transition-all duration-200
+                    ${
+                      activeTab === tool.id
+                        ? "bg-blue-50 text-blue-600 shadow-sm"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                  disabled={tool.comingSoon}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="transform group-hover:scale-110 transition-transform">
                       {tool.icon}
-                      {tool.title}
                     </span>
-                    {tool.isNew && (
-                      <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-green-500 text-white text-xs rounded-full">
-                        New
-                      </span>
-                    )}
-                    {tool.comingSoon && (
-                      <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
-                        Soon
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          )}
+                    {tool.title}
+                  </span>
+                  {tool.isNew && (
+                    <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full shadow-sm">
+                      New
+                    </span>
+                  )}
+                  {tool.comingSoon && (
+                    <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
+                      Soon
+                    </span>
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
       </header>
 
