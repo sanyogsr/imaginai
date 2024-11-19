@@ -59,29 +59,28 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
-
 // Import popular Google Fonts for a more aesthetic look
-import { Inter, Raleway, Playfair_Display } from 'next/font/google';
+import { Inter, Raleway, Playfair_Display } from "next/font/google";
 
 // Modern sans-serif font for main text
 const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
 // Elegant font for headings
 const raleway = Raleway({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-raleway',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-raleway",
 });
 
 // Sophisticated font for special elements
 const playfair = Playfair_Display({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-playfair',
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
 });
 
 // Keep Geist fonts for code and monospace elements
@@ -94,7 +93,7 @@ const geistMono = localFont({
 
 // Enhanced metadata for better SEO
 const title = "Create Professional AI Art | Imagin AI - #1 AI Image Generator";
-const description = 
+const description =
   "Transform your ideas into stunning AI-generated artwork in seconds. Use professional-grade Flux models (Schnell, Dev, Pro) to create unique, high-resolution images. Perfect for designers, artists, and creators. Start generating for free today.";
 
 export const metadata: Metadata = {
@@ -132,8 +131,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: {
-      'en-US': '/en-us',
-      'es': '/es',
+      "en-US": "/en-us",
+      es: "/es",
     },
   },
   openGraph: {
@@ -145,7 +144,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`,
+        url: `/api/og?title=${encodeURIComponent(
+          title
+        )}&description=${encodeURIComponent(description)}`,
         width: 1200,
         height: 630,
         alt: "Imagin AI - Professional AI Image Generator",
@@ -157,14 +158,18 @@ export const metadata: Metadata = {
         height: 630,
         alt: "AI Art Examples by Imagin AI",
         type: "image/jpeg",
-      }
+      },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Create Professional AI Art in Seconds | Imagin AI",
     description,
-    images: [`/api/og?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`],
+    images: [
+      `/api/og?title=${encodeURIComponent(
+        title
+      )}&description=${encodeURIComponent(description)}`,
+    ],
     creator: "@imaginaiart",
     site: "@imaginaiart",
   },
@@ -174,10 +179,10 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'notranslate': true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      notranslate: true,
     },
   },
   verification: {
@@ -206,11 +211,15 @@ export default function RootLayout({
           type="font/woff"
           crossOrigin="anonymous"
         />
-        
+
         {/* Preconnect to Critical Origins */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -219,8 +228,8 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
 
         {/* Enhanced Analytics with IP Anonymization and Cookie Consent */}
-        <Script 
-          strategy="afterInteractive" 
+        <Script
+          strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-LGYT0281S0"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -256,7 +265,7 @@ export default function RootLayout({
               brand: {
                 "@type": "Brand",
                 name: "Imagin AI",
-                logo: "https://imaginai.art/logo.png"
+                logo: "https://imaginai.art/logo.png",
               },
               url: "https://imaginai.art",
               image: "https://imaginai.art/og-image.jpg",
@@ -266,14 +275,14 @@ export default function RootLayout({
                 "Multiple AI models (Flux Schnell, Dev, Pro)",
                 "Professional-grade outputs",
                 "Instant generation",
-                "Commercial usage rights"
+                "Commercial usage rights",
               ],
               applicationSubCategory: "AI Art Generator",
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.8",
-                ratingCount: "1250"
-              }
+                ratingCount: "1250",
+              },
             }),
           }}
         />

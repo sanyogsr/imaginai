@@ -217,7 +217,7 @@ import { persist } from "zustand/middleware";
 import axios from "axios";
 
 // Constants
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache duration
+const CACHE_DURATION = 1000; // 5 minutes cache duration
 
 export interface HistoryItem {
   id: number;
@@ -311,8 +311,19 @@ export const useHistoryStore = create<HistoryState>()(
       },
 
       addToHistory: (item) => {
+        // Ensure imageUrls is always an array
+        const normalizedItem = {
+          ...item,
+          imageUrls: Array.isArray(item.imageUrls)
+            ? item.imageUrls
+            : [item.imageUrls],
+        };
+
+        // Log the item being added for debugging
+        console.log("Adding to history:", normalizedItem);
+
         set((state) => ({
-          history: [item, ...state.history], // Add the item with all image URLs to history
+          history: [normalizedItem, ...state.history],
           error: null,
         }));
       },

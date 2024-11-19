@@ -167,6 +167,10 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
   const [zoomLevel, setZoomLevel] = useState(100);
   const [isGridView, setIsGridView] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = isGridView ? 12 : 8;
+
   // const [showCalendar, setShowCalendar] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
@@ -232,9 +236,48 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
     dateRange,
     isGridView,
   ]);
+  const filteredAndPaginatedItems = useMemo(() => {
+    const filtered = history.filter((item) => {
+      const matchesSearch = item.prompt
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesModel = !selectedModel || item.model === selectedModel;
+      const matchesStyle = !selectedStyle || item.style === selectedStyle;
+      const matchesDate =
+        !dateRange.from ||
+        (new Date(item.timestamp) >= dateRange.from &&
+          (!dateRange.to || new Date(item.timestamp) <= dateRange.to));
+      return matchesSearch && matchesModel && matchesStyle && matchesDate;
+    });
 
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filtered.slice(startIndex, endIndex);
+  }, [
+    history,
+    searchQuery,
+    selectedModel,
+    selectedStyle,
+    dateRange,
+    currentPage,
+    itemsPerPage,
+    isGridView,
+  ]);
   // Download functionality
-
+  const totalPages = Math.ceil(
+    history.filter((item) => {
+      const matchesSearch = item.prompt
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesModel = !selectedModel || item.model === selectedModel;
+      const matchesStyle = !selectedStyle || item.style === selectedStyle;
+      const matchesDate =
+        !dateRange.from ||
+        (new Date(item.timestamp) >= dateRange.from &&
+          (!dateRange.to || new Date(item.timestamp) <= dateRange.to));
+      return matchesSearch && matchesModel && matchesStyle && matchesDate;
+    }).length / itemsPerPage
+  );
   const handleDownload = async (imageUrl: string) => {
     try {
       const response = await fetch("/api/download-image", {
@@ -369,7 +412,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
         }
       `}
       >
-        {filteredItems.map((item, index) => (
+        {filteredAndPaginatedItems.map((item, index) => (
           <div
             key={item.id}
             className={`
@@ -389,9 +432,16 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
               `}
               onClick={() => {
                 setPreviewImage(item.imageUrls[0]);
+                setCurrentImageIndex(0);
                 setSelectedImageIndex(index);
               }}
             >
+              {/* <Image
+                src={item.imageUrls[0]}
+                alt={item.prompt}
+                fill
+                className="object-cover rounded-lg"
+              /> */}
               <Image
                 src={item.imageUrls[0]}
                 alt={item.prompt}
@@ -491,7 +541,27 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
           </div>
         ))}
       </div>
-
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg border disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-3 py-1">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg border disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
       {/* Image Preview Modal */}
       <Modal
         isOpen={!!previewImage}
@@ -499,6 +569,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
           setPreviewImage(null);
           setZoomLevel(100);
           setImagePosition({ x: 0, y: 0 });
+          setCurrentImageIndex(0);
         }}
       >
         <div className="h-full flex flex-col ">
@@ -511,13 +582,20 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
                 min={50}
                 max={200}
               />
-              <span className="text-sm text-gray-500">{zoomLevel}%</span>
+              <span className="text-sm text-gray-500">{zoomLevel}%</span>{" "}
+              {filteredItems[selectedImageIndex]?.imageUrls.length > 1 && (
+                <span className="text-sm text-gray-500">
+                  Image {currentImageIndex + 1} of{" "}
+                  {filteredItems[selectedImageIndex].imageUrls.length}
+                </span>
+              )}
             </div>
             <button
               onClick={() => {
                 setPreviewImage(null);
                 setZoomLevel(100);
                 setImagePosition({ x: 0, y: 0 });
+                setCurrentImageIndex(0);
               }}
               className="p-2 hover:bg-gray-100 rounded-lg"
             >
@@ -537,7 +615,11 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
                   onMouseLeave={handleDragEnd}
                 >
                   <img
-                    src={previewImage}
+                    src={
+                      filteredItems[selectedImageIndex]?.imageUrls[
+                        currentImageIndex
+                      ]
+                    }
                     alt="Preview"
                     style={{
                       transform: `translate(${imagePosition.x}px, ${
@@ -549,28 +631,31 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
                     className="max-w-full max-h-full"
                   />
                 </div>
-
                 {/* Navigation Buttons */}
-                {/* <button
-                  onClick={() =>
-                    setSelectedImageIndex((prev) =>
-                      prev > 0 ? prev - 1 : filteredItems.length - 1
-                    )
-                  }
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() =>
-                    setSelectedImageIndex((prev) =>
-                      prev < filteredItems.length - 1 ? prev + 1 : 0
-                    )
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button> */}
+                {filteredItems[selectedImageIndex]?.imageUrls.length > 1 && (
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                    {filteredItems[selectedImageIndex].imageUrls.map(
+                      (_, imgIndex) => (
+                        <button
+                          key={imgIndex}
+                          onClick={() => {
+                            setCurrentImageIndex(imgIndex);
+                            setPreviewImage(
+                              filteredItems[selectedImageIndex].imageUrls[
+                                imgIndex
+                              ]
+                            );
+                          }}
+                          className={`w-2 h-2 rounded-full ${
+                            currentImageIndex === imgIndex
+                              ? "bg-blue-500"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      )
+                    )}
+                  </div>
+                )}
               </>
             )}
           </div>

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 
 type Category = "landscape" | "portrait" | "abstract" | "concept" | "character";
 type Difficulty = "beginner" | "intermediate" | "advanced";
-type Tag = "meme" | "family" | "billionaire" | "youtube";
+type Tag = "meme" | "family" | "billionaire" | "youtube" | "controversial";
 
 interface ExamplePrompt {
   id: string;
@@ -32,25 +32,61 @@ const generatePrompts = (): ExamplePrompt[] => {
 
   // Template prompts that will be varied
   const templates = [
-    // Meme-related templates
-    "Create a {style} version of the {subject} meme with {modifier}",
-    "Reimagine the {subject} meme in a {style} style with {modifier}",
-    "Design a {style} meme featuring {subject} with {modifier}",
+    // Meme-related templates,
+    "Design a surrealistic version of the Distracted Boyfriend meme featuring astronauts on Mars, with holograph,ic screens and floating memes in zero gravity.",
+    "Reimagine the This is Fine dog meme with a post-apocalyptic backdrop, robotic dogs, and burning skyscrapers.",
+    "Create a Cat Vibing meme where the cat is DJing at a futuristic neon-lit rave with laser beams.",
+    "Visualize the Drake posting meme in a medieval painting style, with knights and royal gestures.",
+    "Generate a 3D render of the Pepe the Frog meme as a golden statue in a cyberpunk museum.",
+    "Create an oil painting of aMocking SpongeBob meme where SpongeBob is wearing a renaissance outfit.",
+    "Design theWoman Yelling at Cat meme in an alien utopia, where the women are androids and the cat is a hologram.",
+    "Illustrate a TikTok-inspired You Cant See Me John Cena meme featuring a glitch effect and Gen Z fashion.",
+    "ReimagineBaby Yoda sipping soup as a hyper-futuristic robot sipping a bowl of liquid stardust.",
+    "Create a Shrek is Love, Shrek is Life meme where Shrek is depicted as a divine god figure in a heavenly glow.",
 
-    // Family-related templates
-    "Capture a {style} family portrait with {subject} and {modifier}",
-    "Design a {style} family gathering scene with {subject} and {modifier}",
-    "Create a {style} family moment showing {subject} with {modifier}",
-
-    // Billionaire-related templates
-    "Generate a {style} portrait of a billionaire {subject} with {modifier}",
-    "Create a {style} scene of luxury featuring {subject} with {modifier}",
-    "Design a {style} wealth visualization with {subject} and {modifier}",
-
-    // YouTube-related templates
-    "Design a {style} YouTube thumbnail featuring {subject} with {modifier}",
-    "Create a {style} streaming setup with {subject} and {modifier}",
-    "Generate a {style} content creator scene with {subject} and {modifier}",
+    "Design a whimsical family portrait where everyone is dressed as their favorite superhero, surrounded by holographic comic panels.",
+    "Illustrate a family celebrating Diwali in space, with firecrackers shaped like stars and an Earth view in the background.",
+    "Visualize a family road trip in a flying car, soaring above a futuristic megacity during sunset.",
+    "Generate a watercolor painting of a multigenerational family picnic in a magical forest with glowing trees.",
+    "Design a modern family game night scene with augmented reality games projected all around the room.",
+    "Illustrate a family reunion at a beachfront bonfire, with each member holding a glowing, animated memory orb.",
+    "Create a festive family dinner in a floating house, with flying dishes served by AI-powered drones.",
+    "Design a steampunk-style family portrait featuring mechanical pets and brass-accented clothing.",
+    "Illustrate a chaotic yet heartwarming breakfast scene with kids flying on hoverboards and parents sipping coffee mid-air.",
+    "Visualize a family camping trip on a distant planet with glowing alien creatures as their friendly guides.",
+    // ,Tag: Billionaire
+    "Illustrate a billionaire lounging on a solid gold yacht in a crystal-clear, bioluminescent sea.",
+    "Design a hyper-realistic portrait of a billionaire with a floating crown made of glowing cryptocurrencies.",
+    "Create a scene of a billionaire s futuristic party, with holographic waiters and an AI DJ in a glass dome.",
+    "Visualize a billionaire meditating in a zen garden on a sky island, with floating bonsai trees.",
+    "Generate an oil painting of a billionaire riding a robot horse through a virtual reality desert.",
+    "Design an ultra-luxurious space station suite, complete with golden windows overlooking Earth.",
+    "Illustrate a billionaires gala under an ocean dome, with whales and glowing fish as the backdrop.",
+    "Create a minimalist billionaire workspace featuring a solid diamond desk and holographic projectors.",
+    "Visualize a billionaire flying a personal jetpack through a futuristic city skyline at sunset.",
+    "Design a portrait of a billionaire surrounded by robotic bodyguards in an opulent, high-tech palace.",
+    // ,Tag: YouTube
+    "Illustrate a YouTuber filming in a zero-gravity studio with floating equipment and glowing comment bubbles.",
+    "Design a high-energy YouTube thumbnail featuring a wild desert race between custom AI robots.",
+    "Create a YouTubers dream studio inside a massive VR gaming environment, with infinite backgrounds.",
+    "Visualize a popular YouTuber doing a live Q&A with fans projected as holograms around them.",
+    "Generate a futuristic YouTube cooking channel setup, with robotic arms prepping food mid-air.",
+    "Design a whimsical YouTube unboxing video featuring a mysterious glowing treasure chest.",
+    "Illustrate a YouTube vlog of a deep-sea exploration, with vibrant marine life and glowing coral reefs.",
+    "Create a hyper-realistic depiction of a YouTube prank video set in a time-traveling coffee shop.",
+    "Visualize a YouTube travel vlogger documenting life on a bustling alien planet.",
+    "Design a gaming YouTubers avatar leading a virtual army in a neon-lit digital battlefield.",
+    // Controversial prompts
+    "Reimagine a courtroom scene where AI is on trial for surpassing human intelligence, illustrated in {style} style.",
+    "Depict a dinner table where world leaders negotiate peace with aliens, captured in a {style} futuristic setting.",
+    "Illustrate a surreal scenario of billionaires buying planets in a galactic auction house with {modifier}.",
+    "Create a cartoon where AI influencers overshadow human celebrities in a chaotic red-carpet event.",
+    "Visualize the concept of 'cancel culture' as a chaotic battle between digital avatars in a {style} cyberpunk arena.",
+    "Design a satirical portrait of modern society addicted to social media, with people trapped inside their phones.",
+    "Generate an oil painting of ancient gods debating climate change policies with {modifier}.",
+    "Illustrate a billionaire's dystopian paradise where money grows on trees, but the air is toxic, rendered in {style}.",
+    "Create a dramatic pencil sketch of a time traveler stuck between natural and industrialized worlds.",
+    "Design a minimalist artwork of a family dinner where everyone stares into holographic screens.",
   ];
 
   const styles = [
@@ -97,7 +133,7 @@ const generatePrompts = (): ExamplePrompt[] => {
   ];
 
   // Generate 400+ unique prompts
-  for (let i = 0; i < 405; i++) {
+  for (let i = 0; i < 40; i++) {
     const template = templates[i % templates.length];
     const style = styles[i % styles.length];
     const subject = subjects[i % subjects.length];

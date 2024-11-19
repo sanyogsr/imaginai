@@ -1,12 +1,12 @@
+import React, { useState } from "react";
 import {
   Download,
-  Heart,
+  Maximize,
+  Eye,
+  Trash2,
   ImageIcon,
   Loader2,
-  MessageCircle,
-  Trash2,
 } from "lucide-react";
-import { useState } from "react";
 
 interface HistoryItem {
   id: number;
@@ -38,26 +38,20 @@ export const ImageCard: React.FC<ImageCardProps> = ({
   downloadProgress,
   handleDownload,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+
+  const toggleDetails = () => {
+    setIsDetailsVisible(!isDetailsVisible);
+  };
 
   return (
-    <div
-      className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500
-                   transform hover:-translate-y-2 overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div
-        className="aspect-[4/5] cursor-pointer overflow-hidden"
-        onClick={() => onImageClick(item, index)}
-      >
+    <div className="group relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+      <div className="aspect-[4/5] relative cursor-default overflow-hidden">
         {item.imageUrls?.[0] ? (
           <img
             src={item.imageUrls[0]}
             alt={item.prompt}
-            className={`w-full h-full object-cover transition-all duration-700 
-                         ${isHovered ? "scale-110 blur-[2px]" : "scale-100"}`}
+            className="w-full h-full object-cover"
             loading="lazy"
           />
         ) : (
@@ -65,98 +59,86 @@ export const ImageCard: React.FC<ImageCardProps> = ({
             <ImageIcon className="w-12 h-12 text-gray-400" />
           </div>
         )}
+
+        {/* Overlay with Actions */}
+        <div
+          className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 
+          transition-opacity duration-300 flex items-center justify-center gap-4"
+        >
+          <button
+            onClick={() => onImageClick(item, index)}
+            className="bg-white/90 p-3 rounded-full hover:bg-white 
+              transition-colors flex items-center justify-center"
+            aria-label="View Fullscreen"
+          >
+            <Eye className="w-5 h-5 text-gray-800" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownload(item.imageUrls[0], item.id);
+            }}
+            disabled={downloadProgress[item.id]}
+            className="bg-white/90 p-3 rounded-full hover:bg-white 
+              transition-colors flex items-center justify-center"
+            aria-label="Download"
+          >
+            {downloadProgress[item.id] ? (
+              <Loader2 className="w-5 h-5 text-gray-800 animate-spin" />
+            ) : (
+              <Download className="w-5 h-5 text-gray-800" />
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Floating Stats - Now with higher z-index */}
-      <div
-        className={`absolute top-4 right-4 flex gap-2 transition-all duration-300 z-20
-                     ${isHovered ? "opacity-100" : "opacity-0"}`}
-      >
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsLiked(!isLiked);
-          }}
-          className={`p-2 rounded-full backdrop-blur-md transition-all duration-300
-                       ${
-                         isLiked
-                           ? "bg-red-500 text-white"
-                           : "bg-white/70 hover:bg-white"
-                       }`}
-        >
-          <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-        </button>
-        <button
-          onClick={(e) => e.stopPropagation()}
-          className="p-2 rounded-full bg-white/70 hover:bg-white backdrop-blur-md transition-all duration-300"
-        >
-          <MessageCircle className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Overlay Content - Now with lower z-index */}
-      <div
-        className={`absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-all duration-500 flex flex-col justify-between p-6 z-10
-                      ${
-                        isHovered
-                          ? "opacity-100"
-                          : "opacity-0 pointer-events-none"
-                      }`}
-      >
-        <div className="flex justify-between items-start">
-          <div className="flex flex-col gap-2">
-            <span className="text-white/70 text-sm">{item.timestamp}</span>
-            <p className="text-white font-medium line-clamp-2 text-lg">
-              {item.prompt}
-            </p>
-          </div>
+      {/* Image Details */}
+      <div className="p-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
+            {item.prompt}
+          </h3>
+          <button
+            onClick={toggleDetails}
+            className="text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            <Maximize className="w-4 h-4" />
+          </button>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            {[
-              { label: item.model, color: "purple" },
-              { label: item.size, color: "blue" },
-              { label: item.style, color: "orange" },
-            ].map((tag, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-white/10 text-white rounded-full text-sm 
-                            backdrop-blur-md transition-transform hover:scale-105"
+        {isDetailsVisible && (
+          <div className="mt-4 space-y-2 text-sm text-gray-600">
+            <div className="flex justify-between">
+              <span>Model:</span>
+              <span className="font-medium">{item.model}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Size:</span>
+              <span className="font-medium">{item.size}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Style:</span>
+              <span className="font-medium">{item.style}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Created:</span>
+              <span className="font-medium">{item.timestamp}</span>
+            </div>
+            <div className="pt-2 flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item.id, e);
+                }}
+                className="w-full py-2 bg-red-500 text-white rounded-lg 
+                  hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
               >
-                {tag.label}
-              </span>
-            ))}
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            </div>
           </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDownload(item.imageUrls[0], item.id);
-              }}
-              disabled={downloadProgress[item.id]}
-              className="flex-1 py-2 bg-white text-black rounded-full font-medium
-                         hover:bg-gray-100 transition-all duration-300 flex items-center justify-center gap-2
-                         disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {downloadProgress[item.id] ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              Download
-            </button>
-            <button
-              onClick={(e) => onDelete(item.id, e)}
-              className="flex-1 py-2 bg-red-500 text-white rounded-full font-medium
-                         hover:bg-red-600 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

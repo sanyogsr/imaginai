@@ -93,17 +93,7 @@ const Header = () => {
   );
 
   // Close dropdowns when clicking outside
-  // useEffect(() => {
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  //   const handleClickOutside = (event: any) => {
-  //     const target = event.target;
-  //     if (!target.closest(".profile-menu")) setProfileOpen(false);
-  //     if (!target.closest(".mobile-menu")) setMobileMenuOpen(false);
-  //   };
 
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;

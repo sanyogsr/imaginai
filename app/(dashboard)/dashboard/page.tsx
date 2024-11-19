@@ -156,7 +156,7 @@ const Dashboard = () => {
         // Correctly create a history item with all images
         const historyItem: HistoryItem = {
           id: Date.now(),
-          imageUrls: [...generatedImages], // Make sure to spread all generated images
+          imageUrls: generatedImages, // Make sure to spread all generated images
           prompt: cleanedPrompt,
           timestamp: new Date().toLocaleString(),
           model,
@@ -165,6 +165,10 @@ const Dashboard = () => {
           style,
         };
         addToHistory(historyItem);
+
+        if (userId) {
+          await fetchHistory(userId);
+        }
       } else {
         toast.warning("Failed to upload images. Please try again.");
       }
@@ -182,7 +186,6 @@ const Dashboard = () => {
     }
   };
 
-  
   const simulateProgress = useCallback(() => {
     setIsGenerating(true);
     setProgress(0);
