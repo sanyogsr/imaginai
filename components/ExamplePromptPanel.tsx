@@ -124,6 +124,7 @@ const generatePrompts = (): ExamplePrompt[] => {
 const examplePrompts = generatePrompts();
 
 const ExamplePromptsPanel: React.FC<Props> = ({ onPromptSelect }) => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [selectedCategory, setSelectedCategory] = useState<"all" | Category>(
     "all"
   );
@@ -135,14 +136,14 @@ const ExamplePromptsPanel: React.FC<Props> = ({ onPromptSelect }) => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
 
-  const categories: ("all" | Category)[] = [
-    "all",
-    "landscape",
-    "portrait",
-    "abstract",
-    "concept",
-    "character",
-  ];
+  // const categories: ("all" | Category)[] = [
+  //   "all",
+  //   "landscape",
+  //   "portrait",
+  //   "abstract",
+  //   "concept",
+  //   "character",
+  // ];
   const tags: ("all" | Tag)[] = [
     "all",
     "meme",
@@ -152,7 +153,7 @@ const ExamplePromptsPanel: React.FC<Props> = ({ onPromptSelect }) => {
   ];
 
   const filteredAndSortedPrompts = useMemo(() => {
-    let filtered = examplePrompts.filter((prompt) => {
+    const filtered = examplePrompts.filter((prompt) => {
       const categoryMatch =
         selectedCategory === "all" || prompt.category === selectedCategory;
       const tagMatch =

@@ -75,6 +75,7 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
   recentPrompts = [],
 }) => {
   const [prompt, setPrompt] = useState("");
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const [showHistory, setShowHistory] = useState(false);
   const [suggestions, setSuggestions] = useState<SuggestionState>({
     isVisible: false,

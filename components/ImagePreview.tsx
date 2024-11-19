@@ -10,7 +10,6 @@ import {
   FlipHorizontal,
   ChevronRight,
   ChevronLeft,
-  Download,
 } from "lucide-react";
 import { useImageStore } from "@/store/useImageStore";
 
@@ -213,33 +212,33 @@ const EnhancedImagePreview: React.FC<{
   //     setState((prev) => ({ ...prev, loading: false }));
   //   }
   // }, [currentImage, state.transform]);
-  const handleDownload = async (imageUrl: string) => {
-    try {
-      const response = await fetch("/api/download-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ imageUrl }),
-      });
+  // const handleDownload = async (imageUrl: string) => {
+  //   try {
+  //     const response = await fetch("/api/download-image", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ imageUrl }),
+  //     });
 
-      if (!response.ok) throw new Error("Download failed");
+  //     if (!response.ok) throw new Error("Download failed");
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `generated-image-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      alert("Image downloaded successfully");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      alert("Failed to download image");
-    }
-  };
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `generated-image-${Date.now()}.png`;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //     alert("Image downloaded successfully");
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   } catch (error) {
+  //     alert("Failed to download image");
+  //   }
+  // };
   // const handleNavigate = useCallback(
   //   (direction: "next" | "prev") => {
   //     if (!generatedImages.urls.length) return;
