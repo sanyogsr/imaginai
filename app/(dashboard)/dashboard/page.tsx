@@ -1,5 +1,22 @@
 "use client";
 
+// import { useState, useCallback, useEffect } from "react";
+// import { Loader } from "lucide-react";
+// import { SettingsPanel } from "@/components/SettingPanel";
+// import EnhancedImagePreview from "@/components/ImagePreview";
+// import EnhancedPromptInput from "@/components/PromptInput";
+// import { userCreditsStore } from "@/store/useCreditStore";
+// import { toast } from "sonner";
+// import { redirect, useRouter } from "next/navigation";
+// import axios from "axios";
+// import { useImageStore } from "@/store/useImageStore";
+// import { useSettingsStore } from "@/store/useSettingsStore";
+// import { useSession } from "next-auth/react";
+// import { useHistoryStore } from "@/store/useHistoryStore";
+// import HistoryPanel from "@/components/History";
+// import ExamplePromptsPanel from "@/components/ExamplePromptPanel";
+// import DashboardNavbar from "@/components/DashboardNavbar";
+
 import { useState, useCallback, useEffect } from "react";
 import { Loader } from "lucide-react";
 import { SettingsPanel } from "@/components/SettingPanel";
@@ -233,46 +250,54 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50">
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Generation Area */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Preview Area */}
+    <div className="w-full min-h-screen bg-gradient-to-b from-white to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content Area */}
+          <div className="w-full lg:w-3/5 space-y-6">
+            <div className="w-full">
+              <EnhancedImagePreview
+                isGenerating={isGenerating}
+                isUploading={isUploading}
+                progress={isUploading ? uploadProgress : progress}
+                generationComplete={generationComplete}
+              />
+            </div>
 
-            <EnhancedImagePreview
-              isGenerating={isGenerating}
-              isUploading={isUploading}
-              progress={isUploading ? uploadProgress : progress}
-              generationComplete={generationComplete}
-            />
+            <div className="w-full">
+              <EnhancedPromptInput
+                onSubmit={handlePromptSubmit}
+                isGenerating={isGenerating}
+              />
+            </div>
 
-            <EnhancedPromptInput
-              onSubmit={handlePromptSubmit}
-              isGenerating={isGenerating}
-            />
-            <ExamplePromptsPanel
-              onPromptSelect={(prompt) => {
-                setPrompt(prompt);
-                // Optionally scroll to the prompt input
-                document
-                  .querySelector("#prompt-input")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-            />
+            <div className="block lg:hidden w-full">
+              <SettingsPanel />
+            </div>
+
+            <div className="w-full">
+              <ExamplePromptsPanel
+                onPromptSelect={(prompt) => {
+                  setPrompt(prompt);
+                  document
+                    .querySelector("#prompt-input")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+              />
+            </div>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-2 space-y-6">
-            <SettingsPanel />
-
-            {/* History */}
-
-            <HistoryPanel />
+          <div className="w-full lg:w-2/5 space-y-6">
+            <div className="hidden lg:block w-full">
+              <SettingsPanel />
+            </div>
+            <div className="w-full">
+              <HistoryPanel />
+            </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
