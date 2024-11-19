@@ -221,7 +221,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache duration
 
 export interface HistoryItem {
   id: number;
-  imageUrls: string[];
+  imageUrls: string[]; // Array of image URLs
   prompt: string;
   timestamp: string;
   model: string;
@@ -248,27 +248,13 @@ interface HistoryState {
   setHistory: (history: HistoryItem[]) => void;
 }
 
-// Utility functions
+// Utility function to check cache validity
 const isCacheValid = (lastFetched: number | null): boolean => {
   if (!lastFetched) return false;
   return Date.now() - lastFetched < CACHE_DURATION;
 };
 
-const createHistoryItem = (
-  imageUrl: string | string[],
-  index: number
-): HistoryItem => ({
-  id: index,
-  imageUrls: Array.isArray(imageUrl) ? imageUrl : [imageUrl],
-  prompt: "AI Generated Image",
-  timestamp: new Date().toISOString(),
-  model: "Standard",
-  size: "1024x1024",
-  quality: "Standard",
-  style: "Natural",
-});
-
-// Custom storage implementation that checks for browser environment
+// Custom storage implementation that checks for the browser environment
 const createCustomStorage = () => {
   const isServer = typeof window === "undefined";
 
@@ -326,7 +312,7 @@ export const useHistoryStore = create<HistoryState>()(
 
       addToHistory: (item) => {
         set((state) => ({
-          history: [item, ...state.history],
+          history: [item, ...state.history], // Add the item with all image URLs to history
           error: null,
         }));
       },
@@ -339,7 +325,7 @@ export const useHistoryStore = create<HistoryState>()(
             error: null,
           }));
 
-          // API call can be added here
+          // API call can be added here if needed
           // await axios.delete(`/api/image/${id}`);
         } catch (error) {
           // Rollback on error
@@ -357,7 +343,7 @@ export const useHistoryStore = create<HistoryState>()(
 
         try {
           set({ history: [], error: null });
-          // API call can be added here
+          // API call can be added here if needed
           // await axios.delete('/api/image/clear');
         } catch (error) {
           // Rollback on error
@@ -405,8 +391,16 @@ export const useHistoryStore = create<HistoryState>()(
 
           if (response.data.images && Array.isArray(response.data.images)) {
             const historyItems: HistoryItem[] = response.data.images.map(
-              (imageUrl: string | string[], index: number) =>
-                createHistoryItem(imageUrl, index)
+              (imageUrl: string | string[], index: number) => ({
+                id: Date.now() + index,
+                imageUrls: Array.isArray(imageUrl) ? imageUrl : [imageUrl],
+                prompt: "AI Generated Image",
+                timestamp: new Date().toISOString(),
+                model: "Standard",
+                size: "1024x1024",
+                quality: "Standard",
+                style: "Natural",
+              })
             );
 
             set({

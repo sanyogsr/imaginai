@@ -208,7 +208,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({
 
   // Filter items
   const filteredItems = useMemo(() => {
-    const itemsToShow = isGridView ? 40 : 14;
+    const itemsToShow = isGridView ? 40 : 15;
     console.log("jjj", itemsToShow);
     return history
       .filter((item) => {

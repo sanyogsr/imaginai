@@ -1,22 +1,4 @@
 "use client";
-
-// import { useState, useCallback, useEffect } from "react";
-// import { Loader } from "lucide-react";
-// import { SettingsPanel } from "@/components/SettingPanel";
-// import EnhancedImagePreview from "@/components/ImagePreview";
-// import EnhancedPromptInput from "@/components/PromptInput";
-// import { userCreditsStore } from "@/store/useCreditStore";
-// import { toast } from "sonner";
-// import { redirect, useRouter } from "next/navigation";
-// import axios from "axios";
-// import { useImageStore } from "@/store/useImageStore";
-// import { useSettingsStore } from "@/store/useSettingsStore";
-// import { useSession } from "next-auth/react";
-// import { useHistoryStore } from "@/store/useHistoryStore";
-// import HistoryPanel from "@/components/History";
-// import ExamplePromptsPanel from "@/components/ExamplePromptPanel";
-// import DashboardNavbar from "@/components/DashboardNavbar";
-
 import { useState, useCallback, useEffect } from "react";
 import { Loader } from "lucide-react";
 import { SettingsPanel } from "@/components/SettingPanel";
@@ -33,24 +15,6 @@ import { useHistoryStore } from "@/store/useHistoryStore";
 import HistoryPanel from "@/components/History";
 import ExamplePromptsPanel from "@/components/ExamplePromptPanel";
 
-// interface GenerationPhase {
-//   phase: number;
-//   message: string;
-// }
-// interface GenerationSettings {
-//   model: string;
-//   size: string;
-//   quality: string;
-//   style: string;
-//   numberOfImages: number;
-// }
-
-// interface ImageGeneration {
-//   prompt: string;
-//   settings: GenerationSettings;
-//   status: "idle" | "generating" | "complete" | "error";
-//   progress: number;
-// }
 interface HistoryItem {
   id: number;
   imageUrls: string[];
@@ -63,18 +27,12 @@ interface HistoryItem {
 }
 
 const Dashboard = () => {
-  // const [activeTab, setActiveTab] = useState("image");
   const [isGenerating, setIsGenerating] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [prompt, setPrompt] = useState("");
-  // const [showHistory, setShowHistory] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // const [currentPhase, setCurrentPhase] = useState<GenerationPhase>({
-  // phase: 0,
-  // message: "Ready to create",
-  // });
   const { addToHistory, fetchHistory } = useHistoryStore();
 
   const { model, size, quality, style, numberOfImages } = useSettingsStore();
@@ -85,7 +43,6 @@ const Dashboard = () => {
   const { addGeneratedImages, clearGeneratedImages } = useImageStore();
   const { fetchCredits, credits, deductCredits } = userCreditsStore();
   const { data: session, status } = useSession();
-  // const userId = session?.user?.id;
 
   useEffect(() => {
     fetchCredits();
@@ -93,8 +50,7 @@ const Dashboard = () => {
     if (session?.user?.id) {
       fetchHistory(session.user.id);
     }
-  }, [fetchCredits, fetchHistory, session, status]);
-
+  }, [fetchCredits, fetchHistory, session, generationComplete, status]);
   const handlePromptSubmit = async (prompt: string) => {
     simulateProgress();
 
@@ -116,7 +72,8 @@ const Dashboard = () => {
     setGenerationComplete(false);
 
     clearGeneratedImages();
-    // const stopProgress = simulateProgress();
+
+    // Simulating the progress bar
     const generationInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -125,7 +82,8 @@ const Dashboard = () => {
         }
         return prev + 2;
       });
-    }, 100);
+    }, 1000);
+
     try {
       const [width, height] = size.split("x").map(Number);
 
@@ -145,21 +103,23 @@ const Dashboard = () => {
         throw new Error("Image generation failed");
       }
 
+      // Add a slight delay before starting upload
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const data1 = response.data;
+      await deductCredits(numberOfImages);
       clearInterval(generationInterval);
       setProgress(100);
       setGenerationComplete(true);
 
-      // Add a slight delay before starting upload
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const data1 = response.data;
-      await deductCredits(numberOfImages);
-
       let generatedImages: string[] = [];
       if (data1.response && data1.response.data) {
+        // Map each image data correctly
         generatedImages = data1.response.data.map(
           (imageData: { b64_json: string }) =>
             `data:image/png;base64,${imageData.b64_json}`
         );
+        // Add all generated images to the store
         addGeneratedImages(generatedImages);
       } else {
         console.warn("No images received from generate-image API");
@@ -181,6 +141,7 @@ const Dashboard = () => {
             return prev + 10;
           });
         }, 500);
+
         await axios.post("/api/image/upload-image", {
           images: generatedImages,
           userId,
@@ -191,9 +152,11 @@ const Dashboard = () => {
 
         setUploadProgress(100);
         clearInterval(uploadInterval);
+
+        // Correctly create a history item with all images
         const historyItem: HistoryItem = {
           id: Date.now(),
-          imageUrls: generatedImages,
+          imageUrls: [...generatedImages], // Make sure to spread all generated images
           prompt: cleanedPrompt,
           timestamp: new Date().toLocaleString(),
           model,
@@ -218,6 +181,8 @@ const Dashboard = () => {
       }, 1000);
     }
   };
+
+  
   const simulateProgress = useCallback(() => {
     setIsGenerating(true);
     setProgress(0);

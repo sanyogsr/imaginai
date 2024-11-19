@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   Camera,
+  Download,
   ZoomIn,
   ZoomOut,
   Maximize2,
@@ -178,92 +179,40 @@ const EnhancedImagePreview: React.FC<{
     );
   };
 
-  // const handleDownloads = useCallback(async () => {
-  //   if (!currentImage) return;
+  const handleDownload = useCallback(async () => {
+    if (!currentImage) return;
 
-  //   try {
-  //     setState((prev) => ({ ...prev, loading: true }));
+    try {
+      setState((prev) => ({ ...prev, loading: true }));
 
-  //     const canvas = document.createElement("canvas");
-  //     const ctx = canvas.getContext("2d");
-  //     const img = imageRef.current;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = imageRef.current;
 
-  //     if (!ctx || !img) return;
+      if (!ctx || !img) return;
 
-  //     canvas.width = img.naturalWidth;
-  //     canvas.height = img.naturalHeight;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
 
-  //     ctx.translate(canvas.width / 2, canvas.height / 2);
-  //     ctx.rotate((state.transform.rotation * Math.PI) / 180);
-  //     ctx.scale(state.transform.flipX ? -1 : 1, state.transform.flipY ? -1 : 1);
-  //     ctx.translate(-canvas.width / 2, -canvas.height / 2);
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((state.transform.rotation * Math.PI) / 180);
+      ctx.scale(state.transform.flipX ? -1 : 1, state.transform.flipY ? -1 : 1);
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-  //     ctx.filter = `brightness(${state.transform.brightness}%) contrast(${state.transform.contrast}%)`;
-  //     ctx.drawImage(img, 0, 0);
+      ctx.filter = `brightness(${state.transform.brightness}%) contrast(${state.transform.contrast}%)`;
+      ctx.drawImage(img, 0, 0);
 
-  //     const link = document.createElement("a");
-  //     link.download = `generated-image-${Date.now()}.png`;
-  //     link.href = canvas.toDataURL("image/png");
-  //     link.click();
-  //   } catch (error) {
-  //     console.error("Download failed:", error);
-  //     setState((prev) => ({ ...prev, error: "Download failed" }));
-  //   } finally {
-  //     setState((prev) => ({ ...prev, loading: false }));
-  //   }
-  // }, [currentImage, state.transform]);
-  // const handleDownload = async (imageUrl: string) => {
-  //   try {
-  //     const response = await fetch("/api/download-image", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ imageUrl }),
-  //     });
-
-  //     if (!response.ok) throw new Error("Download failed");
-
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.download = `generated-image-${Date.now()}.png`;
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //     window.URL.revokeObjectURL(url);
-  //     alert("Image downloaded successfully");
-  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   } catch (error) {
-  //     alert("Failed to download image");
-  //   }
-  // };
-  // const handleNavigate = useCallback(
-  //   (direction: "next" | "prev") => {
-  //     if (!generatedImages.urls.length) return;
-
-  //     setState((prev) => ({
-  //       ...prev,
-  //       selectedImageIndex:
-  //         direction === "next"
-  //           ? (prev.selectedImageIndex + 1) % generatedImages.urls.length
-  //           : (prev.selectedImageIndex - 1 + generatedImages.urls.length) %
-  //             generatedImages.urls.length,
-  //       transform: defaultTransform,
-  //     }));
-
-  //     setCurrentImage(
-  //       generatedImages.urls[
-  //         direction === "next"
-  //           ? (state.selectedImageIndex + 1) % generatedImages.urls.length
-  //           : (state.selectedImageIndex - 1 + generatedImages.urls.length) %
-  //             generatedImages.urls.length
-  //       ]
-  //     );
-  //   },
-  //   [generatedImages.urls, state.selectedImageIndex, setCurrentImage]
-  // );
+      const link = document.createElement("a");
+      link.download = `generated-image-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (error) {
+      console.error("Download failed:", error);
+      setState((prev) => ({ ...prev, error: "Download failed" }));
+    } finally {
+      setState((prev) => ({ ...prev, loading: false }));
+    }
+  }, [currentImage, state.transform]);
 
   // Set up event listeners
   const handleNavigate = useCallback(
@@ -487,13 +436,13 @@ const EnhancedImagePreview: React.FC<{
                 <FlipHorizontal className="w-5 h-5" />
               </button>
               <div className="w-px h-6 bg-gray-300" />
-              {/* <button
-                onClick={handleDownload(items.url)}
+              <button
+                onClick={handleDownload}
                 className="p-2 hover:bg-gray-100 rounded-lg tooltip"
                 title="Download"
               >
                 <Download className="w-5 h-5" />
-              </button> */}
+              </button>
               <button
                 onClick={() =>
                   setState((prev) => ({ ...prev, editMode: !prev.editMode }))

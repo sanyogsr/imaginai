@@ -119,7 +119,6 @@ export const SettingsPanel =
       model,
       size,
       quality,
-      style,
       numberOfImages,
       updateSetting,
       setNumberOfImages,
@@ -127,8 +126,8 @@ export const SettingsPanel =
 
     const modelOptions = [
       { value: "black-forest-labs/FLUX.1-schnell", label: "Flux schnell" },
-      { value: "black-forest-labs/FLUX.1-dev", label: "Flux dev" },
-      { value: "black-forest-labs/FLUX.1.1-pro", label: "Flux ultra Pro" },
+      // { value: "black-forest-labs/FLUX.1-dev", label: "Flux dev" },
+      // { value: "black-forest-labs/FLUX.1.1-pro", label: "Flux ultra Pro" },
     ];
 
     const sizeOptions = [
@@ -147,11 +146,7 @@ export const SettingsPanel =
       { value: "ultra", label: "Ultra" },
     ];
 
-    const styleOptions = [
-      { value: "natural", label: "Natural" },
-      { value: "vivid", label: "Vivid" },
-      { value: "artistic", label: "Artistic" },
-    ];
+   
 
     const imageCountOptions = [
       { value: "1", label: "1 Image" },
@@ -199,12 +194,12 @@ export const SettingsPanel =
               value={quality}
               onChange={(value) => updateSetting("quality", value)}
             />
-            <Select
+            {/* <Select
               label="Style"
               options={styleOptions}
               value={style}
               onChange={(value) => updateSetting("style", value)}
-            />
+            /> */}
             <Select
               label="Number of Images"
               options={imageCountOptions}

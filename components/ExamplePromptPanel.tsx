@@ -242,14 +242,6 @@ const ExamplePromptsPanel: React.FC<Props> = ({ onPromptSelect }) => {
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
               <button
-                onClick={() => setSortBy("likes")}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  sortBy === "likes" ? "bg-blue-500 text-white" : "bg-gray-100"
-                }`}
-              >
-                Sort by Likes
-              </button>
-              <button
                 onClick={() => setSortBy("difficulty")}
                 className={`px-3 py-1 rounded-lg text-sm ${
                   sortBy === "difficulty"
@@ -316,9 +308,6 @@ const ExamplePromptsPanel: React.FC<Props> = ({ onPromptSelect }) => {
                   )}`}
                 >
                   {prompt.difficulty}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {prompt.likes} likes
                 </span>
               </div>
             </div>
