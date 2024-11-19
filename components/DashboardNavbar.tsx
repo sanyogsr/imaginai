@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   History,
   Search,
@@ -8,9 +9,10 @@ import {
   UserCircle,
   Crown,
   LogOut,
+  Menu,
+  ChevronDown,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { userCreditsStore } from "@/store/useCreditStore";
 import Image from "next/image";
@@ -24,12 +26,11 @@ const tools = [
     isNew: true,
     comingSoon: false,
   },
-
   {
     id: "code-gen",
     title: "Image to Image",
     icon: "💻",
-    description: "Generate images from another image with Ai",
+    description: "Generate images from another image with AI",
     isNew: false,
     comingSoon: true,
   },
@@ -48,8 +49,18 @@ const profileMenuItems = [
     icon: Crown,
     url: "/dashboard/upgrade",
   },
-  { id: "history", label: "History", icon: History, url: "/dashboard/history" },
-  { id: "logout", label: "Logout", icon: LogOut, url: "/dashboard/profile" },
+  {
+    id: "history",
+    label: "History",
+    icon: History,
+    url: "/dashboard/history",
+  },
+  {
+    id: "logout",
+    label: "Logout",
+    icon: LogOut,
+    url: "/dashboard/profile",
+  },
 ];
 
 const Header = () => {
@@ -58,35 +69,42 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
-  // const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const session = useSession();
+  const pathname = usePathname();
   const { credits, fetchCredits } = userCreditsStore();
-  // Filter tools based on search query
+
+  // Auto-close dropdowns on navigation
+  useEffect(() => {
+    setProfileOpen(false);
+    setMobileMenuOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     fetchCredits();
   }, [fetchCredits]);
-  const filteredTools = useMemo(() => {
-    return tools.filter(
-      (tool) =>
-        tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery]);
 
-  // Close profile dropdown when clicking outside
+  const filteredTools = tools.filter(
+    (tool) =>
+      tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleClickOutside = (event: any) => {
-      if (profileOpen && !event.target.closest(".profile-menu")) {
-        setProfileOpen(false);
-      }
+      const target = event.target;
+      if (!target.closest(".profile-menu")) setProfileOpen(false);
+      if (!target.closest(".mobile-menu")) setMobileMenuOpen(false);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [profileOpen]);
+  }, []);
 
-  // Handle keyboard shortcuts
+  // Keyboard shortcuts
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleKeyDown = (e: any) => {
@@ -94,79 +112,74 @@ const Header = () => {
         e.preventDefault();
         setSearchOpen(true);
       }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
-  // Handle search navigation
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleKeyNavigation = (e: any) => {
-      if (!searchOpen) return;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setSelectedIndex((prev) =>
-            Math.min(prev + 1, filteredTools.length - 1)
-          );
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => Math.max(prev - 1, 0));
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (filteredTools[selectedIndex]) {
-            setActiveTab(filteredTools[selectedIndex].id);
+      if (searchOpen) {
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault();
+            setSelectedIndex((prev) =>
+              Math.min(prev + 1, filteredTools.length - 1)
+            );
+            break;
+          case "ArrowUp":
+            e.preventDefault();
+            setSelectedIndex((prev) => Math.max(prev - 1, 0));
+            break;
+          case "Enter":
+            e.preventDefault();
+            if (filteredTools[selectedIndex]) {
+              setActiveTab(filteredTools[selectedIndex].id);
+              setSearchOpen(false);
+            }
+            break;
+          case "Escape":
             setSearchOpen(false);
-          }
-          break;
-        case "Escape":
-          setSearchOpen(false);
-          break;
+            break;
+        }
       }
     };
 
-    window.addEventListener("keydown", handleKeyNavigation);
-    return () => window.removeEventListener("keydown", handleKeyNavigation);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [searchOpen, selectedIndex, filteredTools]);
-
-  const handleSearchClose = () => {
-    setSearchOpen(false);
-    setSearchQuery("");
-    setSelectedIndex(0);
-  };
 
   return (
     <>
-      <header className="sticky top-0  z-50  bg-white/80 backdrop-blur-lg border-b border-gray-100">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Logo and Desktop Navigation */}
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                <Link href={"/dashboard"}>ImaginAI</Link>
+              <h1 className="text-2xl font-bold">
+                <Link href="/dashboard" className="flex items-center space-x-2">
+                  <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+                    ImaginAI
+                  </span>
+                </Link>
               </h1>
-              <nav className="hidden md:flex space-x-1">
+
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex space-x-2">
                 {tools.map((tool) => (
                   <button
                     key={tool.id}
                     onClick={() => setActiveTab(tool.id)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium relative
+                    className={`px-4 py-2 rounded-xl text-sm font-medium relative group transition-all duration-200
                       ${
                         activeTab === tool.id
-                          ? "bg-blue-50 text-blue-600"
+                          ? "bg-blue-50 text-blue-600 shadow-sm"
                           : "text-gray-600 hover:bg-gray-50"
                       }`}
-                    // disabled={tool.comingSoon}
+                    disabled={tool.comingSoon}
                   >
                     <span className="flex items-center gap-2">
-                      {tool.icon}
+                      <span className="transform group-hover:scale-110 transition-transform">
+                        {tool.icon}
+                      </span>
                       {tool.title}
                     </span>
                     {tool.isNew && (
-                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full shadow-lg animate-pulse">
                         New
                       </span>
                     )}
@@ -179,10 +192,13 @@ const Header = () => {
                 ))}
               </nav>
             </div>
+
+            {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
+              {/* Search Button */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="px-3 py-1.5 text-gray-500 hover:text-gray-600 hover:bg-gray-100 rounded-lg text-sm flex items-center gap-2"
+                className="px-3 py-1.5 text-gray-500 hover:text-gray-600 hover:bg-gray-100 rounded-xl text-sm flex items-center gap-2 transition-colors"
               >
                 <Search className="w-4 h-4" />
                 <span className="hidden sm:inline">Search</span>
@@ -190,91 +206,138 @@ const Header = () => {
                   ⌘K
                 </kbd>
               </button>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-blue-50 rounded-lg">
-                <span className="text-sm font-medium text-blue-600">
-                  Credits: {credits}
+
+              {/* Credits Display */}
+              <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl">
+                <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                  {credits} Credits
                 </span>
               </div>
+
               {/* Profile Menu */}
               <div className="relative profile-menu">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2"
+                  className="p-1 text-gray-600 hover:bg-gray-100 rounded-xl flex items-center gap-2 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 p-0.5">
                     <Image
                       src={session.data?.user?.image ?? "/default-avatar.png"}
                       alt="Profile"
                       width={96}
                       height={96}
-                      className="w-full h-full rounded-full object-cover"
+                      className="w-full h-full rounded-lg object-cover"
                     />
                   </div>
+                  <ChevronDown className="w-4 h-4 hidden sm:block" />
                 </button>
 
                 {/* Profile Dropdown */}
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 ring-1 ring-black ring-opacity-5">
-                    <div className="px-4 py-2 border-b border-gray-100">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-1 ring-1 ring-black ring-opacity-5 transform transition-all">
+                    <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">
-                        {session.data?.user?.name}{" "}
+                        {session.data?.user?.name}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 truncate">
                         {session.data?.user?.email}
                       </p>
                     </div>
 
-                    {profileMenuItems.map((item) => {
-                      const Icon = item.icon;
+                    <div className="py-1">
+                      {profileMenuItems.map((item) => {
+                        const Icon = item.icon;
+                        if (item.id === "logout") {
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => signOut({ callbackUrl: "/" })}
+                              className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                            >
+                              <Icon className="w-4 h-4" />
+                              {item.label}
+                            </button>
+                          );
+                        }
 
-                      // Handle logout action separately
-                      if (item.id === "logout") {
                         return (
-                          <button
+                          <Link
                             key={item.id}
-                            onClick={() => signOut({ callbackUrl: "/" })}
-                            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                            href={item.url}
+                            className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
                           >
                             <Icon className="w-4 h-4" />
                             {item.label}
-                          </button>
+                          </Link>
                         );
-                      }
-
-                      // For other menu items, render the Link as usual
-                      return (
-                        <Link
-                          key={item.id}
-                          href={item.url as string}
-                          className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                        >
-                          <Icon className="w-4 h-4" />
-                          {item.label}
-                        </Link>
-                      );
-                    })}
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
             </div>
           </div>
+
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 border-t border-gray-100">
+              <nav className="flex flex-col space-y-2">
+                {tools.map((tool) => (
+                  <button
+                    key={tool.id}
+                    onClick={() => {
+                      setActiveTab(tool.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium relative
+                      ${
+                        activeTab === tool.id
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-600 hover:bg-gray-50"
+                      }`}
+                    disabled={tool.comingSoon}
+                  >
+                    <span className="flex items-center gap-2">
+                      {tool.icon}
+                      {tool.title}
+                    </span>
+                    {tool.isNew && (
+                      <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                        New
+                      </span>
+                    )}
+                    {tool.comingSoon && (
+                      <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
+                        Soon
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Command Palette Modal */}
+      {/* Search Modal */}
       {searchOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="min-h-screen px-4 text-center">
-            {/* Backdrop */}
             <div
               className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
-              onClick={handleSearchClose}
+              onClick={() => setSearchOpen(false)}
             />
 
-            {/* Modal */}
             <div className="inline-block w-full max-w-2xl my-16 text-left align-middle transition-all transform">
               <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
-                {/* Search Header */}
                 <div className="flex items-center space-x-3 p-4 border-b border-gray-200">
                   <Command size={20} className="text-gray-400" />
                   <input
@@ -286,14 +349,13 @@ const Header = () => {
                     autoFocus
                   />
                   <button
-                    onClick={handleSearchClose}
+                    onClick={() => setSearchOpen(false)}
                     className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <X size={20} className="text-gray-400" />
                   </button>
                 </div>
 
-                {/* Search Results */}
                 <div className="max-h-96 overflow-y-auto">
                   <div className="p-2">
                     {filteredTools.map((tool, index) => (
@@ -301,13 +363,14 @@ const Header = () => {
                         key={tool.id}
                         onClick={() => {
                           setActiveTab(tool.id);
-                          handleSearchClose();
+                          setSearchOpen(false);
                         }}
-                        className={`w-full flex items-start space-x-4 p-4 rounded-xl transition-all ${
-                          selectedIndex === index
-                            ? "bg-blue-50"
-                            : "hover:bg-gray-50"
-                        }`}
+                        className={`w-full flex items-start space-x-4 p-4 rounded-xl transition-all
+                          ${
+                            selectedIndex === index
+                              ? "bg-blue-50 text-blue-600"
+                              : "hover:bg-gray-50"
+                          }`}
                         disabled={tool.comingSoon}
                       >
                         <div className="flex-shrink-0 text-2xl">
@@ -322,7 +385,7 @@ const Header = () => {
                           </p>
                         </div>
                         {tool.isNew && (
-                          <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                          <span className="px-2 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full">
                             New
                           </span>
                         )}
@@ -333,22 +396,40 @@ const Header = () => {
                         )}
                       </button>
                     ))}
+
+                    {filteredTools.length === 0 && (
+                      <div className="p-8 text-center">
+                        <div className="text-4xl mb-3">🔍</div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-1">
+                          No results found
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Try searching with different keywords
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Keyboard Shortcuts */}
-                <div className="p-4 border-t border-gray-200">
-                  <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+                {/* Keyboard Shortcuts Footer */}
+                <div className="p-4 border-t border-gray-200 bg-gray-50">
+                  <div className="flex items-center justify-center space-x-6 text-xs text-gray-500">
                     <div className="flex items-center space-x-2">
-                      <kbd className="px-2 py-1 bg-gray-100 rounded">↑↓</kbd>
+                      <kbd className="px-2 py-1 bg-white rounded-lg shadow-sm border border-gray-200">
+                        ↑↓
+                      </kbd>
                       <span>Navigate</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <kbd className="px-2 py-1 bg-gray-100 rounded">Enter</kbd>
+                      <kbd className="px-2 py-1 bg-white rounded-lg shadow-sm border border-gray-200">
+                        ↵
+                      </kbd>
                       <span>Select</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <kbd className="px-2 py-1 bg-gray-100 rounded">Esc</kbd>
+                      <kbd className="px-2 py-1 bg-white rounded-lg shadow-sm border border-gray-200">
+                        esc
+                      </kbd>
                       <span>Close</span>
                     </div>
                   </div>
@@ -358,6 +439,17 @@ const Header = () => {
           </div>
         </div>
       )}
+
+      {/* Mobile Credits Display (Fixed Bottom) */}
+      <div className="fixed bottom-0 left-0 right-0 sm:hidden z-40">
+        <div className="bg-white/80 backdrop-blur-xl border-t border-gray-100 p-4">
+          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl max-w-xs mx-auto">
+            <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+              {credits} Credits Available
+            </span>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
