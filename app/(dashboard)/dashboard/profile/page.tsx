@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Camera, CreditCard, Download, ChevronDown, X } from "lucide-react";
 import { Progress } from "@/components/ProgressBar";
 import { userCreditsStore } from "@/store/useCreditStore";
-import { signOut, useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
 import Image from "next/image";
 import {
   Dialog,
@@ -196,16 +196,7 @@ const ProfilePage: React.FC = () => {
                   <h1 className="text-2xl font-bold text-gray-900 mb-1">
                     {session?.data?.user?.name}
                   </h1>
-                  <div className="inline-block px-3 py-1 bg-purple-100 text-purple-600 text-sm rounded-full">
-                    Pro Member
-                  </div>
                 </div>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-white bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  Logout
-                </button>
               </div>
               <p className="text-gray-600 mb-4">{session?.data?.user?.email}</p>
             </div>
