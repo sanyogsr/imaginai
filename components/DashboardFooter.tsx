@@ -12,7 +12,7 @@ export default function Footer() {
             About us
           </Link>
           <Link
-            href="/dashboard/contact-us"
+            href="/dashboard/support"
             className="hover:text-blue-500 transition-colors"
           >
             Contact
