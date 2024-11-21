@@ -39,6 +39,7 @@ const Dashboard = () => {
   const { model, size, quality, style, numberOfImages } = useSettingsStore();
   const [isUploading, setIsUploading] = useState(false);
   const [generationComplete, setGenerationComplete] = useState(false);
+  const [isUploadComplete, setIsUploadComplete] = useState(false); // New state
 
   const router = useRouter();
   const { addGeneratedImages, clearGeneratedImages } = useImageStore();
@@ -50,8 +51,11 @@ const Dashboard = () => {
     console.log(session);
     if (session?.user?.id) {
       fetchHistory(session.user.id);
+      setIsUploadComplete(false);
     }
-  }, [fetchCredits, fetchHistory, session, generationComplete, status]);
+  }, [fetchCredits, fetchHistory, session, isUploadComplete]);
+
+  // prompt handling function
   const handlePromptSubmit = async (prompt: string) => {
     simulateProgress();
 
@@ -166,7 +170,7 @@ const Dashboard = () => {
           style,
         };
         addToHistory(historyItem);
-
+        setIsUploadComplete(true);
         if (userId) {
           await fetchHistory(userId);
         }
