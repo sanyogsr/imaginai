@@ -12,7 +12,7 @@ declare global {
 }
 
 const PricingPage = () => {
-  const [isAnnual, setIsAnnual] = useState(false);
+  // const [isAnnual, setIsAnnual] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const session = useSession();
@@ -71,13 +71,13 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Creative Explorer",
-      price: isAnnual ? 50 : 60,
-      credits: 150,
+      price: 60,
+      credits: 120,
       features: [
         "60 AI masterpiece generations",
-        "HD quality artworks",
+        "best quality artworks",
         "Basic style controls",
-        "24/7 creative support",
+        "24/7 email support",
         "Commercial usage rights",
       ],
       cta: "Start Creating",
@@ -86,15 +86,15 @@ const PricingPage = () => {
     },
     {
       name: "Artist Pro",
-      price: isAnnual ? 190 : 200,
-      credits: 300,
+      price: 200,
+      credits: 500,
       features: [
-        "300 AI masterpiece generations",
-        "Ultra HD quality artworks",
-        "Advanced style & mood controls",
+        "250 AI masterpiece generations",
+        "best quality artworks",
+        "24/7 email support",
         "Priority creative support",
         "Commercial usage rights",
-        "Style preservation technology",
+        "zero downtime",
       ],
       cta: "Unleash Creativity",
       popular: true,
@@ -102,16 +102,15 @@ const PricingPage = () => {
     },
     {
       name: "Studio Master",
-      price: isAnnual ? 380 : 400,
-      credits: 800,
+      price: 400,
+      credits: 1000,
       features: [
-        "700 AI masterpiece generations",
+        "500 AI masterpiece generations",
         "Maximum resolution artworks",
-        "Custom style engine access",
-        "Dedicated art director",
-        "Advanced API integration",
-        "Exclusive artistic features",
-        "Team collaboration tools",
+        "Commercial usage rights",
+        "Ultra fast generation",
+        " Priority creative support",
+        "zero downtime  ",
       ],
       cta: "Master Your Craft",
       popular: false,
@@ -137,7 +136,7 @@ const PricingPage = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
+          {/* <div className="flex items-center justify-center gap-4 mb-8">
             <span
               className={`text-sm ${
                 !isAnnual ? "text-gray-900" : "text-gray-500"
@@ -165,7 +164,7 @@ const PricingPage = () => {
                 (Save 20%)
               </span>
             </span>
-          </div>
+          </div> */}
 
           <div className="max-w-md mx-auto">
             <input

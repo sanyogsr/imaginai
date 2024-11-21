@@ -11,6 +11,8 @@ import {
   LogOut,
   Menu,
   ChevronDown,
+  Contact2,
+  HomeIcon,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -38,6 +40,12 @@ const tools = [
 
 const profileMenuItems = [
   {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: HomeIcon,
+    url: "/dashboard/",
+  },
+  {
     id: "profile",
     label: "Profile",
     icon: UserCircle,
@@ -54,6 +62,12 @@ const profileMenuItems = [
     label: "History",
     icon: History,
     url: "/dashboard/history",
+  },
+  {
+    id: "Support",
+    label: "Support",
+    icon: Contact2,
+    url: "/dashboard/support",
   },
   {
     id: "logout",
@@ -222,8 +236,14 @@ const Header = () => {
               {/* Credits Display */}
               <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl">
                 <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                  {credits} Credits
+                  {credits} : Credits Left
                 </span>
+                <Link
+                  href="/dashboard/upgrade"
+                  className="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-700 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
+                >
+                  Upgrade
+                </Link>
               </div>
 
               {/* Profile Menu */}
@@ -469,10 +489,16 @@ const Header = () => {
       {/* Mobile Credits Display (Fixed Bottom) */}
       <div className="fixed bottom-0 left-0 right-0 sm:hidden z-40">
         <div className="bg-white/80 backdrop-blur-xl border-t border-gray-100 p-4">
-          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-violet-50 rounded-xl max-w-xs mx-auto">
-            <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-200 rounded-xl max-w-xs mx-auto">
+            <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {credits} Credits Available
             </span>
+            <Link
+              href="/dashboard/upgrade"
+              className="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-700 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
+            >
+              Upgrade
+            </Link>
           </div>
         </div>
       </div>

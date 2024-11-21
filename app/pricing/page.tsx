@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Check,
   Sparkles,
@@ -13,17 +13,16 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 
 const PricingPage = () => {
-  const [isAnnual, setIsAnnual] = useState(false);
+  // const [isAnnual, setIsAnnual] = useState(false);
   const router = useRouter();
 
   const plans = [
     {
       name: "Creative Explorer",
-      price: isAnnual ? 50 : 60,
+      price: 60,
       features: [
         "60 AI masterpiece generations",
-        "HD quality artworks",
-        "Basic style controls",
+        "best quality artworks",
         "24/7 creative support",
         "Commercial usage rights",
       ],
@@ -33,30 +32,29 @@ const PricingPage = () => {
     },
     {
       name: "Artist Pro",
-      price: isAnnual ? 190 : 200,
+      price: 200,
       features: [
-        "300 AI masterpiece generations",
-        "Ultra HD quality artworks",
-        "Advanced style & mood controls",
+        "250 AI masterpiece generations",
+        "Best quality artworks",
+        "Ultra fast generation",
         "Priority creative support",
         "Commercial usage rights",
-        "Style preservation technology",
+        "zero downtime",
       ],
       cta: "Unleash Creativity",
       popular: true,
       icon: <Wand2 className="w-8 h-8 text-purple-500" />,
     },
     {
-      name: "Studio Master",
-      price: isAnnual ? 380 : 400,
+      name: "The Master Pro",
+      price: 400,
       features: [
-        "700 AI masterpiece generations",
-        "Maximum resolution artworks",
-        "Custom style engine access",
-        "Dedicated art director",
-        "Advanced API integration",
-        "Exclusive artistic features",
-        "Team collaboration tools",
+        "500 AI masterpiece generations",
+        "Best resolution artworks",
+        "Commercial usage rights",
+        "Ultra fast generation",
+        "Priority creative support",
+        "zero downtime",
       ],
       cta: "Master Your Craft",
       popular: false,
@@ -101,7 +99,7 @@ const PricingPage = () => {
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-4">
+            {/* <div className="flex items-center justify-center gap-4">
               <span
                 className={`text-sm ${
                   !isAnnual ? "text-gray-900" : "text-gray-500"
@@ -129,7 +127,7 @@ const PricingPage = () => {
                   (Save 20%)
                 </span>
               </span>
-            </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">

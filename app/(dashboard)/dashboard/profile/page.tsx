@@ -1,9 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Camera, CreditCard, Download, ChevronDown, X } from "lucide-react";
+import {
+  Camera,
+  CreditCard,
+  Download,
+  ChevronDown,
+  X,
+  Landmark,
+} from "lucide-react";
 import { Progress } from "@/components/ProgressBar";
 import { userCreditsStore } from "@/store/useCreditStore";
-import {  useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import {
   Dialog,
@@ -60,6 +67,12 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
               <Image src={UpiIcon} alt="UPI" width={40} height={40} />
             </div>
             <span className="font-medium">UPI Payment</span>
+          </div>
+          <div className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer flex items-center gap-3 transition-colors">
+            <div className="w-10 h-10  flex items-center justify-center">
+              <Landmark width={30} height={30} />
+            </div>
+            <span className="font-medium">Net Banking</span>
           </div>
         </div>
       </DialogContent>

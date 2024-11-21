@@ -454,6 +454,10 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
             >
               <Trash2 className="w-5 h-5" />
             </button>
+
+            <p className=" p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+              2 credits per image
+            </p>
           </div>
 
           {/* Right Actions */}

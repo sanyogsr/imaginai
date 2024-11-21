@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import HistoryPanel from "@/components/History";
 import ExamplePromptsPanel from "@/components/ExamplePromptPanel";
+import Footer from "@/components/DashboardFooter";
 
 interface HistoryItem {
   id: number;
@@ -266,6 +267,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
