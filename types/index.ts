@@ -27,3 +27,22 @@ export interface ImagePreviewProps {
   onFullscreen?: () => void;
   className?: string;
 }
+export interface TrainingInput {
+  modelName: string;
+  zipFile: File | null;
+}
+
+export interface TrainingResponse {
+  id: string;
+  status: string;
+  modelUrl?: string;
+  error?: string;
+}
+
+export interface TrainingState {
+  isLoading: boolean;
+  error: string | null;
+  trainingId: string | null;
+  status: "idle" | "training" | "completed" | "failed";
+  uploadProgress: number;
+}

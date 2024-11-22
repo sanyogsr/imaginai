@@ -49,12 +49,12 @@ model Account {
 }
 
 model PaymentFailureLog {
-  id         Int      @id @default(autoincrement())
-  userId     String
-  amount     Float
-  reason     String?
-  paymentId  String
-  createdAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    String
+  amount    Float
+  reason    String?
+  paymentId String
+  createdAt DateTime @default(now())
 }
 
 model Session {
@@ -116,8 +116,6 @@ model GeneratedContent {
   @@index([status])
 }
 
-
-
 model UserCredit {
   id              String    @id @default(cuid())
   userId          String    @unique
@@ -127,6 +125,15 @@ model UserCredit {
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model Training {
+  id        String   @id @default(cuid())
+  modelName String
+  modelUrl  Json
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum SubscriptionStatus {
