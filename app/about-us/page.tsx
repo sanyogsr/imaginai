@@ -60,6 +60,16 @@ export default function AboutUs() {
                   </p>
                 </div>
               </div>
+              <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+                Business Name
+              </h2>
+              <div className="flex items-start space-x-6">
+                <div>
+                  <h3 className="text-xl font-semibold text-purple-600 mt-2">
+                    ImaginAi
+                  </h3>
+                </div>
+              </div>
             </section>
 
             <section className="bg-white rounded-2xl p-8 shadow-sm">
