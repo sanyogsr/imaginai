@@ -14,6 +14,9 @@ const publicRoutes = [
   "/dashboard/profile",
   "/dashboard/upgrade",
   "/dashboard/history",
+  "/dashboard/payment",
+  "/dashboard/payment/success",
+  "/dashboard/payment/failure",
 ];
 const authRoutes = ["/login", "/register"];
 

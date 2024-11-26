@@ -44,21 +44,14 @@ const PricingPage = () => {
         name: "Imagin AI",
         description: `${plan.name} Plan - ${plan.credits} Credits`,
         order_id: data.orderId,
+        callback_url: "https://imaginai.art/dashboard/payment/success",
+        redirect: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        handler: function (response: any) {
-          localStorage.setItem(
-            "paymentDetails",
-            JSON.stringify({
-              orderId: data.orderId,
-              planName: plan.name,
-              credits: plan.credits,
-              amount: plan.price,
-              paymentId: response.razorpay_payment_id,
-            })
-          );
+        handler: function () {
+          console.log("payment successfully");
 
           // Redirect to a success page
-          router.push("/dashboard/payment/success");
+          // router.push("/dashboard/payment/success");
         },
         prefill: {
           name: session.data?.user?.name || "",
@@ -87,7 +80,7 @@ const PricingPage = () => {
     {
       name: "Creative Explorer",
       price: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 60,
-      credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 2 : 120,
+      credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 120,
       features: [
         "60 AI masterpiece generations",
         "best quality artworks",
