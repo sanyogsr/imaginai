@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Check, Sparkles, Wand2, Palette } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -16,6 +17,7 @@ const PricingPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const session = useSession();
+  const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePayment = async (plan: any) => {
     if (!phoneNumber || phoneNumber.length !== 10) {
@@ -44,7 +46,19 @@ const PricingPage = () => {
         order_id: data.orderId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: function (response: any) {
-          console.log("Payment successful", response);
+          localStorage.setItem(
+            "paymentDetails",
+            JSON.stringify({
+              orderId: data.orderId,
+              planName: plan.name,
+              credits: plan.credits,
+              amount: plan.price,
+              paymentId: response.razorpay_payment_id,
+            })
+          );
+
+          // Redirect to a success page
+          router.push("/dashboard/payment/success");
         },
         prefill: {
           name: session.data?.user?.name || "",
@@ -59,6 +73,7 @@ const PricingPage = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
         console.error("Payment failed", response.error);
+        router.push("/dashboard/payment/failure");
       });
       rzp1.open();
     } catch (error) {
@@ -72,7 +87,7 @@ const PricingPage = () => {
     {
       name: "Creative Explorer",
       price: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 60,
-      credits: 120,
+      credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 2 : 120,
       features: [
         "60 AI masterpiece generations",
         "best quality artworks",
