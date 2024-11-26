@@ -30,7 +30,7 @@ const PaymentFailurePage = () => {
             Dashboard
           </button>
           <button
-            onClick={() => router.push("/pricing")}
+            onClick={() => router.push("/dashboard/upgrade")}
             className="w-full py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-5 h-5" />
@@ -38,7 +38,7 @@ const PaymentFailurePage = () => {
           </button>
 
           <button
-            onClick={() => router.push("/contact")}
+            onClick={() => router.push("/dashboard/support")}
             className="w-full py-3 bg-gray-100 text-gray-800 rounded-xl hover:bg-gray-200 transition-colors"
           >
             Contact Support
