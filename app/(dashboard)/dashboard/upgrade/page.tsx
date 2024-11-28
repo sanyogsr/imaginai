@@ -89,7 +89,7 @@ const PricingPage = () => {
       const rzp1 = new window.Razorpay(options);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
-        router.push("/payment/failure");
+        router.push("dashboard/payment/failure");
 
         alert(response.error.description);
       });
