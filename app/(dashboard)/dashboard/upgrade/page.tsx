@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Check, Sparkles, Wand2, Palette } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Script from "next/script";
-import { useRouter } from "next/navigation";
+// import {  useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -17,7 +17,7 @@ const PricingPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const session = useSession();
-  const router = useRouter();
+  // const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePayment = async (plan: any) => {
     if (!phoneNumber || phoneNumber.length !== 10) {
@@ -89,7 +89,7 @@ const PricingPage = () => {
       const rzp1 = new window.Razorpay(options);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
-        router.push("dashboard/payment/failure");
+        // redirect("https://imaginai/art/dashboard/payment/failure");
 
         alert(response.error.description);
       });
