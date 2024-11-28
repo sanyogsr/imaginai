@@ -45,7 +45,7 @@ const PricingPage = () => {
         description: `${plan.name} Plan - ${plan.credits} Credits`,
         order_id: data.orderId,
         callback_url: `https://imaginai.art/api/razorpay_callback`,
-        redirect: true,
+        // redirect: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // handler: async function (response: any) {
         //   // Send user to success page with query params
@@ -89,7 +89,7 @@ const PricingPage = () => {
       const rzp1 = new window.Razorpay(options);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
-        router.push("dashboard/payment/failure");
+        router.push("/payment/failure");
 
         alert(response.error.description);
       });
