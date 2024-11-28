@@ -38,7 +38,7 @@ const PricingPage = () => {
         throw new Error("Order ID is missing from the response.");
 
       const options = {
-        key: process.env.RAZORPAY_KEY_ID,
+        key: process.env.RAZORPAY_KEY_TEST,
         amount: plan.price * 100,
         currency: "INR",
         name: "Imagin AI",
@@ -47,12 +47,36 @@ const PricingPage = () => {
         callback_url: `https://imaginai.art/api/razorpay_callback`,
         redirect: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        handler: function () {
-          console.log("payment successfully");
+        // handler: async function (response: any) {
+        //   // Send user to success page with query params
 
-          // Redirect to a success page
-          // router.push("/dashboard/payment/success");
-        },
+        //   const data1 = {
+        //     orderCreationId: data.orderId,
+        //     razorpayPaymentId: response.razorpay_payment_id,
+        //     razorpayOrderId: response.razorpay_order_id,
+        //     razorpaySignature: response.razorpay_signature,
+        //   };
+        //   const verifyResponse = await fetch("/api/verify-payment", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify(data1),
+        //   });
+        //   const res = await verifyResponse.json();
+        //   if (res.isOk)
+        //     router.push(
+        //       `/dashboard/payment/success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&signature=${response.razorpay_signature}`
+        //     );
+        //   else {
+        //     router.push("/dashboard/payment/failure");
+        //   }
+
+        //   // const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+        //   //   response;
+        //   // router.push(
+        //   //   `/dashboard/payment/success?payment_id=${razorpay_payment_id}&order_id=${razorpay_order_id}&signature=${razorpay_signature}`
+        //   // );
+        // },
+
         prefill: {
           name: session.data?.user?.name || "",
           email: session.data?.user?.email || "",
@@ -65,8 +89,9 @@ const PricingPage = () => {
       const rzp1 = new window.Razorpay(options);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       rzp1.on("payment.failed", function (response: any) {
-        console.error("Payment failed", response.error);
-        router.push("/dashboard/payment/failure");
+        router.push("dashboard/payment/failure");
+
+        alert(response.error.description);
       });
       rzp1.open();
     } catch (error) {
