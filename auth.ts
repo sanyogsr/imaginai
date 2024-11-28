@@ -17,6 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  
   events: {
     async createUser({ user }) {
       try {
