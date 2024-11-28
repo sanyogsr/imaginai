@@ -44,7 +44,7 @@ const PricingPage = () => {
         name: "Imagin AI",
         description: `${plan.name} Plan - ${plan.credits} Credits`,
         order_id: data.orderId,
-        callback_url: `${process.env.NEXTAUTH_URL}/api/razorpay_callback`,
+        callback_url: `https://imaginai.art/api/razorpay_callback`,
         redirect: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: function () {
