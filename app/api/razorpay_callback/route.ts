@@ -142,10 +142,10 @@ export async function POST(req: NextRequest) {
 
     if (expectedSignature === razorpay_signature) {
       console.log("Payment verified successfully.");
-      return NextResponse.redirect(successUrl);
+      return NextResponse.redirect(successUrl, { status: 303 });
     } else {
       console.error("Invalid signature verification.");
-      return NextResponse.redirect(failureUrl);
+      return NextResponse.redirect(failureUrl, { status: 303 });
     }
   } catch (error) {
     console.error("Error processing Razorpay callback:", error);
