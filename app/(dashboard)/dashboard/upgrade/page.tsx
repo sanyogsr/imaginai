@@ -104,8 +104,16 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Creative Explorer",
-      price: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 60,
-      credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 120,
+      price:
+        session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ||
+        "cm3ivcppq0000t0ut2yadv8vr"
+          ? 1
+          : 60,
+      credits:
+        session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ||
+        "cm3ivcppq0000t0ut2yadv8vr"
+          ? 2
+          : 120,
       features: [
         "60 AI masterpiece generations",
         "best quality artworks",
