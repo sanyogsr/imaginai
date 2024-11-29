@@ -37,27 +37,6 @@ export default function AboutUs() {
             </section>
 
             <section className="bg-white rounded-2xl p-8 shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Leadership
-              </h2>
-              <div className="flex items-start space-x-6">
-                {/* <div className="w-[10rem] h-20 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">S</span>
-              </div> */}
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Sanyog
-                  </h3>
-                  <p className="text-purple-600 mb-2">Founder & CEO</p>
-                  <p className="text-gray-600">
-                    Leading the vision of ImaginAi.art, Sanyog brings innovative
-                    AI technology to creative professionals and enthusiasts
-                    worldwide. His passion for AI and art drives our mission to
-                    make high-quality AI image generation accessible to
-                    everyone.
-                  </p>
-                </div>
-              </div>
               <h2 className="text-2xl font-semibold text-gray-800 mt-4">
                 Business Name
               </h2>

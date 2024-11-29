@@ -40,7 +40,7 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               <Link
-                href="https://x.com/sanyogsr"
+                href="https://x.com/imaginaiart"
                 target="_blank"
                 className="text-gray-600 hover:text-blue-500 transition"
               >

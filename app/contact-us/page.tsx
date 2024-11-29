@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Mail, Phone, Clock, MessageSquare, BookUser } from "lucide-react";
+import { Mail, Clock, MessageSquare  } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact Us | ImaginAi.art",
@@ -42,28 +42,6 @@ export default function ContactUs() {
               </div>
               <p className="text-gray-600">
                 For general inquiries, support requests, and feedback
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <Phone className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Call Us
-                  </h2>
-                  <a
-                    href="tel:+918059570676"
-                    className="text-purple-600 hover:text-purple-700"
-                  >
-                    +91 8059570676
-                  </a>
-                </div>
-              </div>
-              <p className="text-gray-600">
-                Available for urgent support needs during business hours
               </p>
             </div>
           </section>
@@ -113,24 +91,7 @@ export default function ContactUs() {
               </button>
             </form>
           </section> */}
-          <section className="bg-white rounded-2xl p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-              Address
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="flex items-center space-x-4">
-                <BookUser className="w-6 h-6 text-purple-600" />
-                <div>
-                  <h3 className="font-medium text-gray-800">
-                    378,krishan nagar, tehsil camp, panipat
-                  </h3>
-                  <p className="text-gray-600">
-                    pincode-132103, Haryana, India
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+
           <section className="bg-white rounded-2xl p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               Additional Information

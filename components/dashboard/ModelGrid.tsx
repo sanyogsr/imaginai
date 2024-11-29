@@ -63,7 +63,7 @@ export default function ModelGrid() {
       href: `/dashboard/text-to-image?model=${modelOptions[2].value}`, // Add link here
     },
     {
-      name: "Flux LoRA",
+      name: "Train your model  -  coming soon",
       category: "Text to Image",
       description: "image to image generation.",
       tier: "Pro",
@@ -72,7 +72,7 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
     {
-      name: "ReCraft V3",
+      name: "ReCraft V3 - coming soon",
       category: "Text to Image",
       description: "Redefine creative workflows.",
       tier: "Pro",
@@ -81,7 +81,7 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
     {
-      name: "Bytedance/SDXL Lightning",
+      name: "Bytedance/SDXL Lightning - coming soon",
       category: "Text to Image",
       description: "Fast and efficient text-to-image AI.",
       tier: "Pro",
@@ -90,7 +90,7 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
     {
-      name: "Stable Diffusion SDXL",
+      name: "Stable Diffusion SDXL - soon",
       category: "Text to Image",
       description: "High-quality text-to-image generation.",
       tier: "Pro",
@@ -99,7 +99,7 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
     {
-      name: "Stable Diffusion",
+      name: "Stable Diffusion - coming soon",
       category: "Text to Image",
       description: "High-quality text-to-image generation.",
       tier: "Pro",
