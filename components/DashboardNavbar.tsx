@@ -27,14 +27,16 @@ const tools = [
     description: "Generate unique images with AI",
     isNew: true,
     comingSoon: false,
+    url: "/dashboard/text-to-image",
   },
   {
-    id: "code-gen",
+    id: "image-gen",
     title: "Image to Image",
     icon: "💻",
     description: "Generate images from another image with AI",
     isNew: false,
-    comingSoon: true,
+    comingSoon: false,
+    url: "/dashboard/image-to-image",
   },
 ];
 
@@ -186,36 +188,41 @@ const Header = () => {
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex space-x-2">
-                {tools.map((tool) => (
-                  <button
-                    key={tool.id}
-                    onClick={() => setActiveTab(tool.id)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium relative group transition-all duration-200
-                      ${
-                        activeTab === tool.id
-                          ? "bg-blue-50 text-blue-600 shadow-sm"
-                          : "text-gray-600 hover:bg-gray-50"
-                      }`}
-                    disabled={tool.comingSoon}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="transform group-hover:scale-110 transition-transform">
-                        {tool.icon}
+                {tools.map((tool) => {
+                  const isActive = pathname === tool.url;
+
+                  return (
+                    <Link
+                      key={tool.id}
+                      href={tool.url} // Disable link if coming soon
+                      className={`px-4 py-2 rounded-xl text-sm font-medium relative group transition-all duration-200
+              ${
+                isActive
+                  ? "bg-blue-50 text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:bg-gray-50"
+              }
+              ${tool.comingSoon ? "cursor-not-allowed opacity-50" : ""}
+            `}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="transform group-hover:scale-110 transition-transform">
+                          {tool.icon}
+                        </span>
+                        {tool.title}
                       </span>
-                      {tool.title}
-                    </span>
-                    {tool.isNew && (
-                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full shadow-lg animate-pulse">
-                        New
-                      </span>
-                    )}
-                    {tool.comingSoon && (
-                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
-                        Soon
-                      </span>
-                    )}
-                  </button>
-                ))}
+                      {tool.isNew && (
+                        <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full shadow-lg animate-pulse">
+                          New
+                        </span>
+                      )}
+                      {tool.comingSoon && (
+                        <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
+                          Soon
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 

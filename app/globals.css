@@ -18,3 +18,26 @@
 .animate-scroll {
   animation: scroll 15s linear infinite;
 }
+
+.gradient-text {
+  background: linear-gradient(90deg, #ff00c7, #6f44ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 0, 199, 0.6), 0 0 20px rgba(255, 0, 199, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(111, 68, 255, 0.7),
+      0 0 40px rgba(111, 68, 255, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 0, 199, 0.6), 0 0 20px rgba(255, 0, 199, 0.5);
+  }
+}
+
+.group-hover:animate-glow:hover .absolute {
+  animation: glow 1.5s infinite alternate;
+}

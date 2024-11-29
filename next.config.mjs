@@ -13,6 +13,10 @@ const nextConfig = {
       "images.unsplash.com",
       "d17d8sfx13z6g2.cloudfront.net",
       "lh3.googleusercontent.com",
+      "replicate.delivery",
+      "replicate.com",
+      "bflapistorage.blob.core.windows.net",
+      "pbxt.replicate.delivery",
     ],
     remotePatterns: [
       {

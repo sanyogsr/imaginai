@@ -50,7 +50,7 @@ type ExtendedImageParams = Parameters<typeof together.images.create>[0] & {
 export async function POST(req: NextRequest) {
   try {
     const values = await req.json();
-    const { prompt, model, width, height, steps, n, style } = z
+    const { prompt, model, width, height, steps, n } = z
       .object({
         prompt: z.string(),
         model: z.string(),
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         width: z.number(),
         steps: z.number(),
         n: z.number(),
-        style: z.string(),
+        // style: z.string(),
       })
       .parse(values);
 
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       height,
       steps,
       n,
-      style,
+      // style,
       response_format: "b64_json",
     } as ExtendedImageParams);
 
