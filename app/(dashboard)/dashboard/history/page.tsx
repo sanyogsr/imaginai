@@ -181,7 +181,7 @@ const ImageHistoryPage = () => {
               Your gallery is waiting for its first masterpiece.
             </p>
             <button
-              onClick={() => (window.location.href = "/create")}
+              onClick={() => (window.location.href = "/text-to-image")}
               className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 
                        transition-colors"
             >
