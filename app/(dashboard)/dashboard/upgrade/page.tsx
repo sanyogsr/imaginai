@@ -44,8 +44,31 @@ const PricingPage = () => {
         name: "Imagin AI",
         description: `${plan.name} Plan - ${plan.credits} Credits`,
         order_id: data.orderId,
-        callback_url: `https://imaginai.art/api/razorpay/callback`,
-        redirect: true,
+        // callback_url: `https://imaginai.art/api/razorpay/callback`,
+        // redirect: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: async (response: any) => {
+          console.log("[INFO] Razorpay Payment Successful:", response);
+
+          // Step 3: Send payment verification to backend
+          const verifyResponse = await fetch("/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+          if (verifyData.success) {
+            alert("Payment Verified and Successful!");
+            // Redirect or update UI
+          } else {
+            alert("Payment Verification Failed");
+          }
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // handler: async function (response: any) {
         //   // Send user to success page with query params
