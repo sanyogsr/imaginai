@@ -44,8 +44,8 @@ const PricingPage = () => {
         name: "Imagin AI",
         description: `${plan.name} Plan - ${plan.credits} Credits`,
         order_id: data.orderId,
-        callback_url: `https://imaginai.art/api/razorpay_callback`,
-        // redirect: true,
+        callback_url: `https://imaginai.art/api/razorpay/callback`,
+        redirect: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // handler: async function (response: any) {
         //   // Send user to success page with query params
@@ -168,36 +168,6 @@ const PricingPage = () => {
               Unlock the power of AI to bring your artistic visions to life
             </p>
           </div>
-
-          {/* <div className="flex items-center justify-center gap-4 mb-8">
-            <span
-              className={`text-sm ${
-                !isAnnual ? "text-gray-900" : "text-gray-500"
-              }`}
-            >
-              Monthly
-            </span>
-            <button
-              onClick={() => setIsAnnual(!isAnnual)}
-              className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 cursor-pointer"
-            >
-              <div
-                className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-lg transform transition-transform duration-300 ease-spring ${
-                  isAnnual ? "translate-x-8" : "translate-x-0"
-                }`}
-              />
-            </button>
-            <span
-              className={`text-sm ${
-                isAnnual ? "text-gray-900" : "text-gray-500"
-              }`}
-            >
-              Annually
-              <span className="ml-1 text-green-500 font-medium">
-                (Save 20%)
-              </span>
-            </span>
-          </div> */}
 
           <div className="max-w-md mx-auto">
             <input
