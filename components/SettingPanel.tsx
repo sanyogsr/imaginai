@@ -14,8 +14,7 @@ export const SettingsPanel = () => {
 
   const modelOptions = [
     { value: "black-forest-labs/FLUX.1-schnell", label: "Flux schnell" },
-    { value: "black-forest-labs/FLUX.1-dev", label: "Flux dev" },
-    { value: "black-forest-labs/FLUX.1.1-pro", label: "Flux.1.1 Pro" },
+    { value: "black-forest-labs/FLUX.1.1-pro", label: "Flux 1.1 Pro" },
   ];
 
   const sizeOptions = [

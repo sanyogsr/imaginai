@@ -17,6 +17,7 @@ const nextConfig = {
       "replicate.com",
       "bflapistorage.blob.core.windows.net",
       "pbxt.replicate.delivery",
+      "fal.media",
     ],
     remotePatterns: [
       {

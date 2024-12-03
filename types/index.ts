@@ -46,3 +46,36 @@ export interface TrainingState {
   status: "idle" | "training" | "completed" | "failed";
   uploadProgress: number;
 }
+
+
+
+export interface ImageGeneration {
+  id: string;
+  prompt: string;
+  image: string;
+  timestamp: Date;
+  style: string;
+  seed: number;
+  aspectRatio: string;
+  complexity: number;
+}
+
+export interface AIModelConfig {
+  id: string;
+  name: string;
+  maxResolution: number;
+  supportedStyles: string[];
+  speed: number;
+  supportedAspectRatios?: string[];
+}
+
+export interface AdvancedOptions {
+  style: string;
+  aspectRatio: string;
+  negativePrompt: string;
+  samplingSteps: number;
+  cfgScale: number;
+  seed?: number | null;
+  enhancementLevel: string;
+  numImages: number;
+}

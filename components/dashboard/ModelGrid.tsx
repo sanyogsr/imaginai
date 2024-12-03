@@ -31,7 +31,6 @@ export default function ModelGrid() {
 
   const modelOptions = [
     { value: "black-forest-labs/FLUX.1-schnell", label: "Flux schnell" },
-    { value: "black-forest-labs/FLUX.1-dev", label: "Flux dev" },
     { value: "black-forest-labs/FLUX.1.1-pro", label: "Flux 1.1 Pro" },
   ];
   const models: Model[] = [
@@ -51,7 +50,7 @@ export default function ModelGrid() {
       tier: "Pro",
       preview:
         "https://replicate.delivery/yhqm/xU3wLlAQcGpZLVQipTVxaZMaL4omk9n7d1suU0byMnngfQvJA/out-0.webp", // Add preview image path here
-      href: `/dashboard/text-to-image?model=${modelOptions[1].value}`, // Add link here
+      href: `/dashboard/textToImage/flux/dev`, // Add link here
     },
     {
       name: "Flux/Pro",
@@ -60,7 +59,7 @@ export default function ModelGrid() {
       tier: "Pro",
       preview:
         "https://bflapistorage.blob.core.windows.net/public/547e601710b343da95b72a9e4038bd70/sample.jpg", // Add preview image path here
-      href: `/dashboard/text-to-image?model=${modelOptions[2].value}`, // Add link here
+      href: `/dashboard/text-to-image?model=${modelOptions[1].value}`, // Add link here
     },
     {
       name: "Train your model  -  coming soon",
