@@ -17,14 +17,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
-  
+
   events: {
     async createUser({ user }) {
       try {
         await prisma.userCredit.create({
           data: {
             userId: user.id as string,
-            credits: 10,
+            credits: 2,
           },
         });
       } catch (error) {
