@@ -112,7 +112,7 @@ export default function ModelGrid() {
       description: "Advanced video generation.",
       tier: "Pro",
       preview: "", // Add preview image path here
-      href: "", // Add link here
+      href: "/dashboard/text-to-video/hailuo-ai/", // Add link here
     },
     {
       name: "Kling AI - Coming Soon",
@@ -120,7 +120,7 @@ export default function ModelGrid() {
       description: "Next-gen video transformation.",
       tier: "Pro",
       preview: "", // Add preview image path here
-      href: "", // Add link here
+      href: "/dashboard/text-to-video/kling-ai/", // Add link here
     },
     {
       name: "Chroma Anime -  Coming Soon",

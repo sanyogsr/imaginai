@@ -122,7 +122,8 @@ const DashboardContent = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const data1 = response.data;
-      await deductCredits(numberOfImages);
+
+      await deductCredits(numberOfImages, model);
       clearInterval(generationInterval);
       setProgress(100);
       setGenerationComplete(true);

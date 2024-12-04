@@ -1,51 +1,6 @@
-// // components/dashboard/PromptInput.tsx
-// import React, { useState } from "react";
-// import { Sparkles } from "lucide-react";
-
-// interface PromptInputProps {
-//   onSubmit: (prompt: string) => void;
-//   isLoading?: boolean;
-// }
-
-// export const PromptInput: React.FC<PromptInputProps> = ({
-//   onSubmit,
-//   isLoading = false,
-// }) => {
-//   const [prompt, setPrompt] = useState("");
-
-//   const handleSubmit = () => {
-//     if (prompt.trim() && !isLoading) {
-//       onSubmit(prompt.trim());
-//     }
-//   };
-
-//   return (
-//     <div className="relative">
-//       <textarea
-//         value={prompt}
-//         onChange={(e) => setPrompt(e.target.value)}
-//         placeholder="Describe the image you want to generate..."
-//         className="w-full p-4 pr-24 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-0 resize-none h-24 transition-colors"
-//         disabled={isLoading}
-//       />
-//       <button
-//         onClick={handleSubmit}
-//         disabled={!prompt.trim() || isLoading}
-//         className={`absolute right-4 bottom-4 px-4 py-2 rounded-xl flex items-center space-x-2 transition-all ${
-//           !prompt.trim() || isLoading
-//             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-//             : "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"
-//         }`}
-//       >
-//         <Sparkles size={20} className={isLoading ? "animate-spin" : ""} />
-//         <span>{isLoading ? "Generating..." : "Generate"}</span>
-//       </button>
-//     </div>
-//   );
-// };
-
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Copy, Share2, Sparkles, Trash2, Save } from "lucide-react";
+import { useSettingsStore } from "@/store/useSettingsStore";
 
 interface EnhancedPromptInputProps {
   onSubmit: (prompt: string) => void;
@@ -82,6 +37,7 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
     suggestions: [],
     selectedIndex: -1,
   });
+  const { model } = useSettingsStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -193,185 +149,6 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
     }
   }, []);
 
-  //   return (
-  //     <div
-  //       className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-4 ${className}`}
-  //     >
-  //       <div className="space-y-4">
-  //         <div className="relative">
-  //           <textarea
-  //             ref={textareaRef}
-  //             value={prompt}
-  //             onChange={handlePromptChange}
-  //             onKeyDown={handleKeyDown}
-  //             onFocus={() => setIsFocused(true)}
-  //             onBlur={() => {
-  //               // Delay hiding suggestions to allow clicking them
-  //               setTimeout(() => setIsFocused(false), 200);
-  //             }}
-  //             placeholder="Describe what you want to create..."
-  //             className="w-full resize-none bg-gray-50 rounded-xl p-4 text-gray-700
-  //                      placeholder-gray-400 focus:outline-none focus:ring-2
-  //                      focus:ring-blue-500 border-0 min-h-[8rem]"
-  //             disabled={isGenerating}
-  //           />
-
-  //           {/* Suggestions dropdown */}
-  //           {suggestions.isVisible && isFocused && (
-  //             <div className="absolute w-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-  //               {suggestions.suggestions.map((suggestion, index) => (
-  //                 <div
-  //                   key={suggestion}
-  //                   className={`px-4 py-2 cursor-pointer hover:bg-gray-50
-  //                            ${
-  //                              index === suggestions.selectedIndex
-  //                                ? "bg-gray-100"
-  //                                : ""
-  //                            }`}
-  //                   onClick={() => {
-  //                     setPrompt(suggestion);
-  //                     setSuggestions((prev) => ({ ...prev, isVisible: false }));
-  //                   }}
-  //                 >
-  //                   {suggestion}
-  //                 </div>
-  //               ))}
-  //             </div>
-  //           )}
-  //         </div>
-
-  //         <div className="flex items-center justify-between">
-  //           <div className="flex gap-2">
-  //             <button
-  //               onClick={handleCopy}
-  //               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-  //               title="Copy prompt"
-  //             >
-  //               <Copy className="w-5 h-5" />
-  //             </button>
-  //             {onShare && (
-  //               <button
-  //                 onClick={() => onShare(prompt)}
-  //                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-  //                 title="Share prompt"
-  //               >
-  //                 <Share2 className="w-5 h-5" />
-  //               </button>
-  //             )}
-  //             {onSave && (
-  //               <button
-  //                 onClick={() => onSave(prompt)}
-  //                 className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-  //                 title="Save prompt"
-  //               >
-  //                 <Save className="w-5 h-5" />
-  //               </button>
-  //             )}
-
-  //             <button
-  //               onClick={handleClear}
-  //               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-  //               title="Clear prompt"
-  //             >
-  //               <Trash2 className="w-5 h-5" />
-  //             </button>
-  //           </div>
-
-  //           <div className="flex items-center gap-3">
-  //             <span
-  //               className={`text-sm ${
-  //                 prompt.length >= maxLength ? "text-red-500" : "text-gray-500"
-  //               }`}
-  //             >
-  //               {prompt.length}/{maxLength} characters
-  //             </span>
-  //             <button
-  //               onClick={handleGenerate}
-  //               disabled={isGenerating || !prompt.trim()}
-  //               className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium
-  //                        disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700
-  //                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-  //                        flex items-center gap-2"
-  //             >
-  //               <Sparkles
-  //                 className={`w-5 h-5 ${isGenerating ? "animate-spin" : ""}`}
-  //               />
-  //               <span>{isGenerating ? "Generating..." : "Generate"}</span>
-  //             </button>
-  //           </div>
-  //         </div>
-
-  //         {/* History panel */}
-  //         {showHistory &&
-  //           (recentPrompts.length > 0 || savedPrompts.length > 0) && (
-  //             <div className="mt-4 border-t pt-4">
-  //               {savedPrompts.length > 0 && (
-  //                 <div className="mb-4">
-  //                   <h3 className="text-sm font-medium text-gray-700 mb-2">
-  //                     Saved Prompts
-  //                   </h3>
-  //                   <div className="space-y-2">
-  //                     {savedPrompts.map((saved, index) => (
-  //                       <div
-  //                         key={`saved-${index}`}
-  //                         className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-  //                         onClick={() => setPrompt(saved)}
-  //                       >
-  //                         <span className="text-sm text-gray-600 truncate">
-  //                           {saved}
-  //                         </span>
-  //                         <button
-  //                           onClick={(e) => {
-  //                             e.stopPropagation();
-  //                             setPrompt(saved);
-  //                           }}
-  //                           className="text-blue-600 text-sm hover:text-blue-700"
-  //                         >
-  //                           Use
-  //                         </button>
-  //                       </div>
-  //                     ))}
-  //                   </div>
-  //                 </div>
-  //               )}
-
-  //               {recentPrompts.length > 0 && (
-  //                 <div>
-  //                   <h3 className="text-sm font-medium text-gray-700 mb-2">
-  //                     Recent Prompts
-  //                   </h3>
-  //                   <div className="space-y-2">
-  //                     {recentPrompts.map((recent, index) => (
-  //                       <div
-  //                         key={`recent-${index}`}
-  //                         className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-  //                         onClick={() => setPrompt(recent)}
-  //                       >
-  //                         <span className="text-sm text-gray-600 truncate">
-  //                           {recent}
-  //                         </span>
-  //                         <button
-  //                           onClick={(e) => {
-  //                             e.stopPropagation();
-  //                             setPrompt(recent);
-  //                           }}
-  //                           className="text-blue-600 text-sm hover:text-blue-700"
-  //                         >
-  //                           Use
-  //                         </button>
-  //                       </div>
-  //                     ))}
-  //                   </div>
-  //                 </div>
-  //               )}
-  //             </div>
-  //           )}
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
-  // export default EnhancedPromptInput;
   return (
     <div
       className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-4 ${className}`}
@@ -456,7 +233,11 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
             </button>
 
             <p className=" p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-              2 credits per image
+              {model === "black-forest-labs/FLUX.1-schnell"
+                ? "2 credits per image"
+                : model === "black-forest-labs/FLUX.1.1-pro"
+                ? "12 credits per image"
+                : ""}
             </p>
           </div>
 

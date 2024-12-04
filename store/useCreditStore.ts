@@ -5,7 +5,7 @@ import { devtools } from "zustand/middleware";
 interface UserState {
   credits: number | null;
   fetchCredits: () => Promise<void>;
-  deductCredits: (numberOfImages: number) => Promise<void>;
+  deductCredits: (numberOfImages: number, model: string) => Promise<void>;
 }
 
 export const userCreditsStore = create<UserState>()(
@@ -16,20 +16,21 @@ export const userCreditsStore = create<UserState>()(
         const response = await axios.get("/api/user/credits");
         set({ credits: response.data.credits });
       } catch (error) {
-        console.error("error fetchinh credits : ", error);
+        console.error("Error fetching credits:", error);
       }
     },
-    deductCredits: async (numberOfImages) => {
+    deductCredits: async (numberOfImages, model) => {
       try {
         const response = await axios.post("/api/user/credits/deduct", {
           numberOfImages,
+          model,
         });
+
         set((state) => ({
-          credits:
-            state.credits !== null ? state.credits - numberOfImages * 2 : null,
+          credits: response.data.credits,
         }));
       } catch (error) {
-        console.error("error deducting credits : ", error);
+        console.error("Error deducting credits:", error);
       }
     },
   }))

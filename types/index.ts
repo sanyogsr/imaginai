@@ -47,8 +47,6 @@ export interface TrainingState {
   uploadProgress: number;
 }
 
-
-
 export interface ImageGeneration {
   id: string;
   prompt: string;
@@ -78,4 +76,79 @@ export interface AdvancedOptions {
   seed?: number | null;
   enhancementLevel: string;
   numImages: number;
+}
+// export interface VideoGeneration {
+//   id: string;
+//   prompt: string;
+//   image_url: string;
+//   video_url?: string;
+//   timestamp: Date;
+//   style?: string;
+//   seed?: number | null;
+// }
+
+// export interface VideoModelConfig {
+//   id: string;
+//   name: string;
+//   maxDuration: number;
+//   supportedStyles: string[];
+//   speed: number;
+// }
+
+// export interface VideoAdvancedOptions {
+//   style: string;
+//   prompt_optimizer: boolean;
+//   seed?: number | null;
+// }
+export type VideoGenerationStatus =
+  | "IN_QUEUE"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "FAILED";
+
+export interface VideoModelConfig {
+  id: string;
+  name: string;
+  maxDuration: number;
+  supportedStyles: string[];
+  speed: number;
+}
+
+export interface VideoAdvancedOptions {
+  style: string;
+  prompt_optimizer: boolean;
+  seed: number | null;
+}
+
+export interface VideoGeneration {
+  id: string;
+  prompt: string;
+  image_url: string;
+  video_url: string;
+  timestamp: Date;
+  style: string;
+  seed: number | null;
+}
+
+export interface FalVideoResult {
+  video: {
+    url: string;
+  };
+}
+
+export interface VideoPreviewProps {
+  currentVideo: VideoGeneration | null;
+  advancedOptions?: VideoAdvancedOptions; // Optional prop
+}
+
+export interface VideoAdvancedSettingsProps {
+  advancedOptions: VideoAdvancedOptions;
+  videoModels: VideoModelConfig[];
+  updateAdvancedOptions: (options: Partial<VideoAdvancedOptions>) => void;
+  imageUrl: string;
+  setImageUrl: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface VideoPreviewProps {
+  currentVideo: VideoGeneration | null;
 }
