@@ -12,7 +12,7 @@ import { generateRandomSeed } from "@/utils/utils";
 import { PromptInput } from "@/components/fal/dashboard/PromptInput";
 import { ImagePreview } from "@/components/fal/dashboard/ImagePreview";
 import ImageHistory from "@/components/fal/dashboard/ImageHistory";
-import { AdvancedSettings } from "@/components/fal/dashboard/Settings";
+import { AdvancedSettings } from "@/components/fal/dashboard/RecraftSetting";
 import { userCreditsStore } from "@/store/useCreditStore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -51,7 +51,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
   );
   const { fetchCredits, credits, deductCredits } = userCreditsStore();
   const { addGeneratedImages, clearGeneratedImages } = useImageStore();
-  const { addToHistory, fetchHistory } = useHistoryStore();
+  // const { addToHistory, fetchHistory } = useHistoryStore();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -61,8 +61,8 @@ export default function ResponsiveAIImageGenerationDashboard() {
   const { data: session } = useSession();
 
   const [advancedOptions, setAdvancedOptions] = useState<AdvancedOptions>({
-    style: "photorealistic",
-    aspectRatio: "1:1",
+    style: "realistic_image",
+    aspectRatio: "square_hd",
     negativePrompt: "",
     samplingSteps: 50,
     cfgScale: 7,
@@ -81,7 +81,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
       return;
     }
 
-    if (credits === null || credits <= 8) {
+    if (credits === null || credits <= 12) {
       toast.error("Please upgrade your plan to get more credits.");
       router.push("/dashboard/upgrade");
       return;
@@ -92,14 +92,11 @@ export default function ResponsiveAIImageGenerationDashboard() {
     clearGeneratedImages();
 
     try {
-      const result = await fal.subscribe("fal-ai/flux/dev", {
+      const result = await fal.subscribe("fal-ai/recraft-v3", {
         input: {
           prompt,
           image_size: advancedOptions.aspectRatio as ImageSize,
-          num_inference_steps: advancedOptions.samplingSteps,
-          guidance_scale: advancedOptions.cfgScale,
-          seed: advancedOptions.seed || generateRandomSeed(),
-          num_images: advancedOptions.numImages,
+          style: advancedOptions.style as any,
         },
         logs: true,
       });
@@ -108,7 +105,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
         ?.map((img: any) => img.url || "")
         .filter(Boolean);
 
-      await deductCredits(advancedOptions.numImages, "fal-ai/flux/dev");
+      await deductCredits(advancedOptions.numImages, "fal-ai/recraft-v3");
 
       if (images && images.length > 0) {
         const newImages: ImageGeneration[] = images.map((image: string) => ({
@@ -138,6 +135,86 @@ export default function ResponsiveAIImageGenerationDashboard() {
     }
   }, [prompt, advancedOptions]);
 
+  // const uploadImagesToS3 = async (images: ImageGeneration[]) => {
+  //   const userId = session?.user?.id;
+  //   if (!userId) return;
+
+  //   try {
+  //     setIsUploading(true);
+  //     setProgress(0);
+
+  //     const uploadInterval = setInterval(() => {
+  //       setProgress((prev) => {
+  //         if (prev >= 90) {
+  //           clearInterval(uploadInterval);
+  //           return 90;
+  //         }
+  //         return prev + 10;
+  //       });
+  //     }, 500);
+
+  //     const base64Images = await Promise.all(
+  //       images.map(async (img) => {
+  //         // If already base64, return as is
+  //         if (img.image.startsWith("data:image")) return img.image;
+
+  //         try {
+  //           // Fetch image and convert to WebP
+  //           const response = await fetch(img.image);
+  //           const blob = await response.blob();
+
+  //           // Convert to WebP
+  //           const bitmap = await createImageBitmap(blob);
+  //           const canvas = document.createElement("canvas");
+  //           canvas.width = bitmap.width;
+  //           canvas.height = bitmap.height;
+  //           const ctx = canvas.getContext("2d");
+  //           ctx?.drawImage(bitmap, 0, 0);
+
+  //           // Convert to WebP data URL
+  //           const webpDataUrl = canvas.toDataURL("image/webp");
+  //           return webpDataUrl;
+  //         } catch (error) {
+  //           console.error("Image conversion error:", error);
+  //           return img.image; // Fallback to original if conversion fails
+  //         }
+  //       })
+  //     );
+
+  //     await axios.post("/api/image/upload-image", {
+  //       images: base64Images,
+  //       userId,
+  //       prompt,
+  //       model: "fal-ai/flux/dev",
+  //       creditsUsed: images.length * 2,
+  //     });
+
+  //     const historyItem: HistoryItem = {
+  //       id: Date.now(),
+  //       imageUrls: base64Images,
+  //       prompt,
+  //       timestamp: new Date().toLocaleString(),
+  //       model: "fal-ai/flux/dev",
+  //       size: "square_hd",
+  //       quality: "standard",
+  //       style: advancedOptions.style,
+  //     };
+
+  //     addToHistory(historyItem);
+
+  //     if (userId) {
+  //       await fetchHistory(userId);
+  //     }
+
+  //     toast.success("Images uploaded successfully");
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     toast.error("Failed to upload images");
+  //   } finally {
+  //     setIsUploading(false);
+  //     setProgress(0);
+  //   }
+  // };
   const uploadImagesToS3 = async (images: ImageGeneration[]) => {
     const userId = session?.user?.id;
     if (!userId) return;
@@ -146,70 +223,46 @@ export default function ResponsiveAIImageGenerationDashboard() {
       setIsUploading(true);
       setProgress(0);
 
-      const uploadInterval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(uploadInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 500);
-
-      const base64Images = await Promise.all(
+      const uploadImages = await Promise.all(
         images.map(async (img) => {
-          // If already base64, return as is
-          if (img.image.startsWith("data:image")) return img.image;
-
-          try {
-            // Fetch image and convert to WebP
-            const response = await fetch(img.image);
-            const blob = await response.blob();
-
-            // Convert to WebP
-            const bitmap = await createImageBitmap(blob);
-            const canvas = document.createElement("canvas");
-            canvas.width = bitmap.width;
-            canvas.height = bitmap.height;
-            const ctx = canvas.getContext("2d");
-            ctx?.drawImage(bitmap, 0, 0);
-
-            // Convert to WebP data URL
-            const webpDataUrl = canvas.toDataURL("image/webp");
-            return webpDataUrl;
-          } catch (error) {
-            console.error("Image conversion error:", error);
-            return img.image; // Fallback to original if conversion fails
+          // Ensure image is a base64 data URL
+          if (!img.image.startsWith("data:image")) {
+            try {
+              const response = await fetch(img.image);
+              const blob = await response.blob();
+              const bitmap = await createImageBitmap(blob);
+              const canvas = document.createElement("canvas");
+              canvas.width = bitmap.width;
+              canvas.height = bitmap.height;
+              const ctx = canvas.getContext("2d");
+              ctx?.drawImage(bitmap, 0, 0);
+              return canvas.toDataURL("image/webp");
+            } catch (error) {
+              console.error("Image conversion error:", error);
+              return null;
+            }
           }
+          return img.image;
         })
       );
 
+      // Filter out any null values
+      const validImages = uploadImages.filter(Boolean);
+
+      if (validImages.length === 0) {
+        toast.error("No valid images to upload");
+        return;
+      }
+
       await axios.post("/api/image/upload-image", {
-        images: base64Images,
+        images: validImages,
         userId,
         prompt,
         model: "fal-ai/flux/dev",
         creditsUsed: images.length * 2,
       });
 
-      const historyItem: HistoryItem = {
-        id: Date.now(),
-        imageUrls: base64Images,
-        prompt,
-        timestamp: new Date().toLocaleString(),
-        model: "fal-ai/flux/dev",
-        size: "square_hd",
-        quality: "standard",
-        style: advancedOptions.style,
-      };
-
-      addToHistory(historyItem);
-
-      if (userId) {
-        await fetchHistory(userId);
-      }
-
-      toast.success("Images uploaded successfully");
+      // Rest of the code remains the same...
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload images");
@@ -218,11 +271,12 @@ export default function ResponsiveAIImageGenerationDashboard() {
       setProgress(0);
     }
   };
-
   return (
     <div className="max-w-7xl mx-auto p-4 overflow-x-hidden">
       <div className="min-h-screen bg-white">
-        <div className="text-black font-extrabold text-2xl my-2">Flux Dev</div>
+        <div className="text-black font-extrabold text-2xl my-2">
+          Recraft V3
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Large Screen Layout */}

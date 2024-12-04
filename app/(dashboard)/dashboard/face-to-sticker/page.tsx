@@ -10,9 +10,7 @@ import {
 } from "@/types";
 import { generateRandomSeed } from "@/utils/utils";
 import { PromptInput } from "@/components/fal/dashboard/PromptInput";
-import { ImagePreview } from "@/components/fal/dashboard/ImagePreview";
-import ImageHistory from "@/components/fal/dashboard/ImageHistory";
-import { AdvancedSettings } from "@/components/fal/dashboard/Settings";
+import { ImagePreview } from "@/components/fal/dashboard/faceToStickerPreview";
 import { userCreditsStore } from "@/store/useCreditStore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -20,31 +18,15 @@ import { toast } from "sonner";
 import { useImageStore } from "@/store/useImageStore";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import axios from "axios";
-import { ImageSize } from "@fal-ai/client/endpoints";
+import { ImageSize, FaceToStickerInput } from "@fal-ai/client/endpoints";
 
 const fal = createFalClient({
   proxyUrl: "/api/fal/proxy",
 });
 
-const DEFAULT_AI_MODELS: AIModelConfig[] = [
-  {
-    id: "flux-v1",
-    name: "Flux Advanced",
-    maxResolution: 2048,
-    supportedStyles: ["photorealistic", "artistic", "anime"],
-    speed: 0.8,
-  },
-  {
-    id: "flux-v2",
-    name: "Flux Pro",
-    maxResolution: 4096,
-    supportedStyles: ["photorealistic", "artistic", "hyperrealistic"],
-    speed: 0.6,
-  },
-];
-
-export default function ResponsiveAIImageGenerationDashboard() {
+export default function FaceToStickerDashboard() {
   const [prompt, setPrompt] = useState("");
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [generatedImages, setGeneratedImages] = useState<ImageGeneration[]>([]);
   const [currentImage, setCurrentImage] = useState<ImageGeneration | null>(
     null
@@ -57,31 +39,43 @@ export default function ResponsiveAIImageGenerationDashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
-  const [aiModels] = useState<AIModelConfig[]>(DEFAULT_AI_MODELS);
   const { data: session } = useSession();
 
   const [advancedOptions, setAdvancedOptions] = useState<AdvancedOptions>({
     style: "photorealistic",
     aspectRatio: "1:1",
     negativePrompt: "",
-    samplingSteps: 50,
+    samplingSteps: 20,
     cfgScale: 7,
     seed: null,
     enhancementLevel: "standard",
     numImages: 1,
   });
 
-  useEffect(() => {
-    fetchCredits();
-  }, [fetchCredits]);
+  // Handle image file upload
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-  const generateImage = useCallback(async () => {
+  const generateSticker = useCallback(async () => {
     if (!prompt.trim()) {
       toast.error("Please provide a detailed prompt");
       return;
     }
 
-    if (credits === null || credits <= 8) {
+    if (!imageUrl) {
+      toast.error("Please upload an image first");
+      return;
+    }
+
+    if (credits === null || credits <= 12) {
       toast.error("Please upgrade your plan to get more credits.");
       router.push("/dashboard/upgrade");
       return;
@@ -92,15 +86,17 @@ export default function ResponsiveAIImageGenerationDashboard() {
     clearGeneratedImages();
 
     try {
-      const result = await fal.subscribe("fal-ai/flux/dev", {
-        input: {
-          prompt,
-          image_size: advancedOptions.aspectRatio as ImageSize,
-          num_inference_steps: advancedOptions.samplingSteps,
-          guidance_scale: advancedOptions.cfgScale,
-          seed: advancedOptions.seed || generateRandomSeed(),
-          num_images: advancedOptions.numImages,
-        },
+      const faceToStickerInput: FaceToStickerInput = {
+        image_url: imageUrl,
+        prompt,
+        image_size: "square_hd",
+        negative_prompt: advancedOptions.negativePrompt,
+        num_inference_steps: advancedOptions.samplingSteps,
+        guidance_scale: advancedOptions.cfgScale,
+      };
+
+      const result = await fal.subscribe("fal-ai/face-to-sticker", {
+        input: faceToStickerInput,
         logs: true,
       });
 
@@ -108,7 +104,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
         ?.map((img: any) => img.url || "")
         .filter(Boolean);
 
-      await deductCredits(advancedOptions.numImages, "fal-ai/flux/dev");
+      await deductCredits(advancedOptions.numImages, "fal-ai/face-to-sticker");
 
       if (images && images.length > 0) {
         const newImages: ImageGeneration[] = images.map((image: string) => ({
@@ -129,14 +125,14 @@ export default function ResponsiveAIImageGenerationDashboard() {
         // Upload to S3
         await uploadImagesToS3(newImages);
       } else {
-        toast.error("No images were generated");
+        toast.error("No sticker images were generated");
       }
     } catch (err: any) {
-      toast.error(err.message || "Image generation failed");
+      toast.error(err.message || "Sticker generation failed");
     } finally {
       setLoading(false);
     }
-  }, [prompt, advancedOptions]);
+  }, [prompt, imageUrl, advancedOptions]);
 
   const uploadImagesToS3 = async (images: ImageGeneration[]) => {
     const userId = session?.user?.id;
@@ -188,7 +184,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
         images: base64Images,
         userId,
         prompt,
-        model: "fal-ai/flux/dev",
+        model: "fal-ai/face-to-sticker",
         creditsUsed: images.length * 2,
       });
 
@@ -197,7 +193,7 @@ export default function ResponsiveAIImageGenerationDashboard() {
         imageUrls: base64Images,
         prompt,
         timestamp: new Date().toLocaleString(),
-        model: "fal-ai/flux/dev",
+        model: "fal-ai/face-to-sticker",
         size: "square_hd",
         quality: "standard",
         style: advancedOptions.style,
@@ -209,10 +205,10 @@ export default function ResponsiveAIImageGenerationDashboard() {
         await fetchHistory(userId);
       }
 
-      toast.success("Images uploaded successfully");
+      toast.success("Sticker images uploaded successfully");
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload images");
+      toast.error("Failed to upload sticker images");
     } finally {
       setIsUploading(false);
       setProgress(0);
@@ -222,61 +218,72 @@ export default function ResponsiveAIImageGenerationDashboard() {
   return (
     <div className="max-w-7xl mx-auto p-4 overflow-x-hidden">
       <div className="min-h-screen bg-white">
-        <div className="text-black font-extrabold text-2xl my-2">Flux Dev</div>
+        <div className="text-black font-extrabold text-2xl my-2">
+          Face to Sticker
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Large Screen Layout */}
-          <aside className="hidden lg:block lg:col-span-3 bg-white border border-black backdrop-blur-md p-6 rounded-xl space-y-4">
+          {/* Image Upload Section */}
+          <div className="col-span-12 lg:col-span-4 bg-white border border-black backdrop-blur-md p-6 rounded-xl space-y-4">
             <h2 className="text-xl font-semibold mb-4 text-black">
-              Advanced Settings
+              Upload Image
             </h2>
-            <AdvancedSettings
-              advancedOptions={advancedOptions}
-              aiModels={aiModels}
-              updateAdvancedOptions={(options) =>
-                setAdvancedOptions((prev) => ({ ...prev, ...options }))
-              }
-            />
-          </aside>
+            <div className="relative w-full border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <div className="flex flex-col items-center justify-center space-y-2 text-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 16.5v-1.95c0-.528.2-1.038.552-1.414l5.586-5.586A2 2 0 0110.05 7h3.9a2 2 0 011.414.586l5.586 5.586c.352.376.552.886.552 1.414v1.95m-5.25-2.25a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zM12 16v6"
+                  />
+                </svg>
+                <span className="text-sm font-medium text-gray-600">
+                  Drag and drop an image, or click to select
+                </span>
+              </div>
+            </div>
 
-          {/* Central Generation Area */}
-          <main className="col-span-12 lg:col-span-6 space-y-6 rounded-xl">
+            {imageUrl && (
+              <div className="mt-4">
+                <img
+                  src={imageUrl}
+                  alt="Uploaded"
+                  className="max-w-full h-auto rounded-md"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Prompt and Generation Area */}
+          <main className="col-span-12 lg:col-span-8 space-y-6 rounded-xl">
             <PromptInput
               prompt={prompt}
               setPrompt={setPrompt}
-              generateImage={generateImage}
+              generateImage={generateSticker}
               loading={loading}
+              //   buttonText="Generate Sticker"
             />
 
             <ImagePreview currentImage={currentImage} />
-
-            {/* Mobile & Tablet: Advanced Settings */}
-            <div className="block lg:hidden bg-white border border-black backdrop-blur-md p-6 rounded-xl space-y-4 mt-4">
-              <h2 className="text-xl font-semibold mb-4 text-black">
-                Advanced Settings
-              </h2>
-              <AdvancedSettings
-                advancedOptions={advancedOptions}
-                aiModels={aiModels}
-                updateAdvancedOptions={(options) =>
-                  setAdvancedOptions((prev) => ({ ...prev, ...options }))
-                }
-              />
-            </div>
-
-            {/* Mobile & Tablet: Image History */}
-            <div className="block lg:hidden bg-white border border-black backdrop-blur-md p-6 rounded-xl mt-4">
-              <h3 className="text-xl font-semibold mb-4 text-black">
-                Image History
-              </h3>
-              <ImageHistory />
-            </div>
 
             {/* Loading & Error Handling */}
             {loading && (
               <div className="w-full bg-gray-800 p-4 rounded-xl mt-4 text-center">
                 <p className="text-blue-300">
-                  Generating images using FLUX AI...
+                  Generating sticker using Face to Sticker AI...
                 </p>
                 <div className="w-full bg-gray-700 rounded-full h-2.5 mt-2">
                   <div
@@ -293,13 +300,6 @@ export default function ResponsiveAIImageGenerationDashboard() {
               </div>
             )}
           </main>
-
-          {/* Large Screen Image History */}
-          <aside className="hidden lg:block lg:col-span-3 border  backdrop-blur-md px-3 py-2 rounded-xl">
-            <div className="flex justify-center">
-              <ImageHistory />
-            </div>
-          </aside>
         </div>
       </div>
     </div>

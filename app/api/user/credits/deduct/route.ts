@@ -21,6 +21,18 @@ export async function POST(req: NextRequest) {
       case "black-forest-labs/FLUX.1.1-pro":
         creditsToDeduct = numberOfImages * 12;
         break;
+      case "fal-ai/flux/dev":
+        creditsToDeduct = numberOfImages * 8;
+        break;
+      case "fal-ai/face-to-sticker":
+        creditsToDeduct = numberOfImages * 12;
+        break;
+      case "fal-ai/recraft-v3":
+        creditsToDeduct = numberOfImages * 12;
+        break;
+      case "fal-ai/kling-video/v1.5/pro/text-to-video":
+        creditsToDeduct = numberOfImages * 25;
+        break;
       default:
         creditsToDeduct = numberOfImages * 2; // Default to 2 credits per image
     }

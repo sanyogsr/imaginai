@@ -14,22 +14,28 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
 }) => (
   <div className="space-y-4">
     {/* Style Selection */}
-    {/* <div>
+    <div>
       <label className="block mb-2 text-black">Style</label>
       <select
         value={advancedOptions.style}
         onChange={(e) => updateAdvancedOptions({ style: e.target.value })}
         className="w-full text-black border border-black p-2 rounded"
       >
-        {Array.from(
-          new Set(aiModels.flatMap((model) => model.supportedStyles))
-        ).map((style) => (
-          <option key={style} value={style}>
-            {style}
+        {[
+          "realistic_image",
+          "digital_illustration",
+          "vector_illustration",
+          "realistic_image/b_and_w",
+          "realistic_image/hard_flash",
+          "realistic_image/hdr",
+          "realistic_image/natural_light",
+        ].map((ratio) => (
+          <option key={ratio} value={ratio}>
+            {ratio}
           </option>
         ))}
       </select>
-    </div> */}
+    </div>
 
     {/* Aspect Ratio */}
     <div>
@@ -70,3 +76,4 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
     </div>
   </div>
 );
+//  "realistic_image" ,"digital_illustration" , "vector_illustration" , "realistic_image/b_and_w" , "realistic_image/hard_flash" , "realistic_image/hdr" , "realistic_image/natural_light

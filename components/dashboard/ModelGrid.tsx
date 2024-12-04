@@ -10,6 +10,8 @@ interface Model {
   description: string;
   tier: "Basic" | "Pro" | "Pro";
   preview: string; // Path to the preview image
+  videoPreview?: string; // Path to the video preview (optional)
+
   href: string; // Link to the model's page
 }
 
@@ -62,6 +64,15 @@ export default function ModelGrid() {
       href: `/dashboard/text-to-image?model=${modelOptions[1].value}`, // Add link here
     },
     {
+      name: "ReCraft V3",
+      category: "Text to Image",
+      description: "Redefine creative workflows.",
+      tier: "Pro",
+      preview:
+        "https://replicate.delivery/czjl/76zoOfWaVAQLBKkcnQGMDNwOntaGbhLW1JL0XvwTY3T3uB2JA/output.webp", // Add preview image path here
+      href: "/dashboard/textToImage/recraft/v3", // Add link here
+    },
+    {
       name: "Train your model  -  coming soon",
       category: "Text to Image",
       description: "image to image generation.",
@@ -70,15 +81,7 @@ export default function ModelGrid() {
         "https://replicate.delivery/yhqm/GveeAfJpuDGdnJqA0grhfZeQWuedoFNTTAKvw7oF7MJkGb50E/out-0.webp", // Add preview image path here
       href: "", // Add link here
     },
-    {
-      name: "ReCraft V3 - coming soon",
-      category: "Text to Image",
-      description: "Redefine creative workflows.",
-      tier: "Pro",
-      preview:
-        "https://replicate.delivery/czjl/76zoOfWaVAQLBKkcnQGMDNwOntaGbhLW1JL0XvwTY3T3uB2JA/output.webp", // Add preview image path here
-      href: "", // Add link here
-    },
+
     {
       name: "Bytedance/SDXL Lightning - coming soon",
       category: "Text to Image",
@@ -106,20 +109,25 @@ export default function ModelGrid() {
         "https://replicate.delivery/pbxt/sWeZFZou6v3CPKuoJbqX46ugPaHT1DcsWYx0srPmGrMOCPYIA/out-0.png", // Add preview image path here
       href: "", // Add link here
     },
+    // {
+    //   name: "Hailuo AI -  Coming Soon",
+    //   category: "Text to Video",
+    //   description: "Advanced video generation.",
+    //   tier: "Pro",
+    //   preview: "", // Add preview image path here
+    //   videoPreview: "https://example.com/kling-video.mp4", // Add video URL
+
+    //   href: "/dashboard/text-to-video/hailuo-ai/", // Add link here
+    // },
     {
-      name: "Hailuo AI -  Coming Soon",
-      category: "Text to Video",
-      description: "Advanced video generation.",
-      tier: "Pro",
-      preview: "", // Add preview image path here
-      href: "/dashboard/text-to-video/hailuo-ai/", // Add link here
-    },
-    {
-      name: "Kling AI - Coming Soon",
+      name: "Kling AI ",
       category: "Text to Video",
       description: "Next-gen video transformation.",
       tier: "Pro",
       preview: "", // Add preview image path here
+      videoPreview:
+        "https://v3.fal.media/files/kangaroo/KRfqBoRwqNd7TEAGeS5Jy_output.mp4", // Add video URL
+
       href: "/dashboard/text-to-video/kling-ai/", // Add link here
     },
     {
@@ -131,12 +139,13 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
     {
-      name: "Sticker Genius -  Coming Soon",
+      name: "Face to Sticker Ai",
       category: "Sticker AI",
-      description: "Generate fun stickers in seconds.",
+      description: "Generate fun stickers from any face in seconds.",
       tier: "Pro",
-      preview: "", // Add preview image path here
-      href: "", // Add link here
+      preview:
+        "https://storage.googleapis.com/falserverless/model_tests/face_to_sticker/elon_output_2.png", // Add preview image path here
+      href: "/dashboard/face-to-sticker", // Add link here
     },
     {
       name: "3D Vision Pro -  Coming Soon",
@@ -196,12 +205,23 @@ export default function ModelGrid() {
               <Link key={model.name} href={model.href}>
                 <div className="bg-zinc-800 rounded-lg shadow-lg p-4 space-y-4 hover:bg-zinc-700 transition-colors cursor-pointer">
                   <div className="relative w-full h-40">
-                    <Image
-                      src={model.preview || "/placeholder.png"} // Fallback placeholder image
-                      alt={model.name}
-                      fill
-                      className="rounded-lg object-cover"
-                    />
+                    {model.videoPreview ? (
+                      <video
+                        src={model.videoPreview}
+                        // controls
+                        autoPlay
+                        muted
+                        loop
+                        className="rounded-lg object-cover w-full h-full"
+                      />
+                    ) : (
+                      <Image
+                        src={model.preview || "/placeholder.png"} // Fallback placeholder image
+                        alt={model.name}
+                        fill
+                        className="rounded-lg object-cover"
+                      />
+                    )}
                   </div>
                   <h3 className="text-lg font-semibold text-white">
                     {model.name}

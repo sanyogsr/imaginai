@@ -317,11 +317,11 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({ currentImage }) => {
     <>
       <div className="text-black">
         {" "}
-        If generated more than one image,can only be visible on the{" "}
+        To download image,Go to{" "}
         <span className="text-blue-600">
-          <Link href={"/dashboard/history"}>History Page</Link>{" "}
+          <Link href={"/dashboard/history"}>History Page </Link>
         </span>
-        .
+        please do not press back or home button.
       </div>
       <div
         ref={containerRef}

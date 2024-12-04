@@ -18,6 +18,8 @@ const nextConfig = {
       "bflapistorage.blob.core.windows.net",
       "pbxt.replicate.delivery",
       "fal.media",
+      "storage.googleapis.com",
+      "v3.fal.media",
     ],
     remotePatterns: [
       {

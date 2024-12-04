@@ -25,7 +25,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({
       <button
         onClick={generateImage}
         disabled={loading}
-        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition flex items-center"
+        className=" bg-gradient-to-r from-purple-600 to-purple-800  hover:from-purple-700 hover:to-purple-900 text-white px-4 py-2 rounded-xl transition flex items-center"
       >
         <Sparkle />
         {loading ? "Generating..." : "Generate"}
