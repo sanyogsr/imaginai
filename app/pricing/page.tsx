@@ -18,50 +18,55 @@ const PricingPage = () => {
 
   const plans = [
     {
-      name: "Creative Explorer",
+      name: "Basic",
       price: 60,
+      credits: 120,
       features: [
-        "60 AI masterpiece generations",
+        "60 Flux Schnell images",
+        "or 5 Flux pro v1.1 images",
         "best quality artworks",
-        "24/7 creative support",
+        "Basic style controls",
+        "24/7 email support",
         "Commercial usage rights",
       ],
-      cta: "Start Creating",
+      cta: "Get Started",
       popular: false,
       icon: <Palette className="w-8 h-8 text-purple-400" />,
     },
     {
-      name: "Artist Pro",
+      name: "Standard",
       price: 200,
+      credits: 500,
       features: [
-        "250 AI masterpiece generations",
-        "Best quality artworks",
-        "Ultra fast generation",
-        "Priority creative support",
+        "250 FLux Schnell images",
+        "or 20 Flux pro v1.1 images",
+        "best quality artworks",
+        "24/7 email support",
+        "New Feature Access: Early",
         "Commercial usage rights",
         "zero downtime",
       ],
-      cta: "Unleash Creativity",
+      cta: "Get Started",
       popular: true,
       icon: <Wand2 className="w-8 h-8 text-purple-500" />,
     },
     {
-      name: "The Master Pro",
+      name: "Creators choice",
       price: 400,
+      credits: 1000,
       features: [
-        "500 AI masterpiece generations",
-        "Best resolution artworks",
+        "500 FLux Schnell images",
+        "or 41 FLux pro v1.1 images",
         "Commercial usage rights",
-        "Ultra fast generation",
-        "Priority creative support",
-        "zero downtime",
+        "New Feature Access: Early",
+        " Priority creative support",
+        "zero downtime  ",
       ],
-      cta: "Master Your Craft",
+      cta: "Get Started",
       popular: false,
       icon: <Sparkles className="w-8 h-8 text-purple-600" />,
     },
   ];
-
   const features = [
     {
       icon: <Camera className="w-12 h-12 text-purple-500" />,
@@ -98,36 +103,6 @@ const PricingPage = () => {
                 artworks
               </p>
             </div>
-
-            {/* <div className="flex items-center justify-center gap-4">
-              <span
-                className={`text-sm ${
-                  !isAnnual ? "text-gray-900" : "text-gray-500"
-                }`}
-              >
-                Monthly
-              </span>
-              <button
-                onClick={() => setIsAnnual(!isAnnual)}
-                className="relative w-16 h-8 flex items-center bg-purple-100 rounded-full p-1 cursor-pointer"
-              >
-                <div
-                  className={`absolute w-6 h-6 bg-purple-600 rounded-full shadow-lg transform transition-transform duration-300 ease-spring ${
-                    isAnnual ? "translate-x-8" : "translate-x-0"
-                  }`}
-                />
-              </button>
-              <span
-                className={`text-sm ${
-                  isAnnual ? "text-gray-900" : "text-gray-500"
-                }`}
-              >
-                Annually
-                <span className="ml-1 text-green-500 font-medium">
-                  (Save 20%)
-                </span>
-              </span>
-            </div> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -158,7 +133,7 @@ const PricingPage = () => {
                     <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
                       ₹{plan.price}
                     </span>
-                    <span className="text-gray-500 ml-2">/month</span>
+                    {/* <span className="text-gray-500 ml-2">/</span> */}
                   </div>
 
                   <ul className="space-y-4 mb-8">

@@ -126,49 +126,51 @@ const PricingPage = () => {
 
   const plans = [
     {
-      name: "Creative Explorer",
+      name: "Basic",
       price: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 60,
       credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 2 : 120,
       features: [
-        "60 AI masterpiece generations",
+        "60 Flux Schnell images",
+        "or 5 Flux pro v1.1 images",
         "best quality artworks",
         "Basic style controls",
         "24/7 email support",
         "Commercial usage rights",
       ],
-      cta: "Start Creating",
+      cta: "Get Started",
       popular: false,
       icon: <Palette className="w-8 h-8 text-purple-400" />,
     },
     {
-      name: "Artist Pro",
+      name: "Standard",
       price: 200,
       credits: 500,
       features: [
-        "250 AI masterpiece generations",
+        "250 FLux Schnell images",
+        "or 20 Flux pro v1.1 images",
         "best quality artworks",
         "24/7 email support",
-        "Priority creative support",
+        "New Feature Access: Early",
         "Commercial usage rights",
         "zero downtime",
       ],
-      cta: "Unleash Creativity",
+      cta: "Get Started",
       popular: true,
       icon: <Wand2 className="w-8 h-8 text-purple-500" />,
     },
     {
-      name: "Studio Master",
+      name: "Creators choice",
       price: 400,
       credits: 1000,
       features: [
-        "500 AI masterpiece generations",
-        "Maximum resolution artworks",
+        "500 FLux Schnell images",
+        "or 41 FLux pro v1.1 images",
         "Commercial usage rights",
-        "Ultra fast generation",
+        "New Feature Access: Early",
         " Priority creative support",
         "zero downtime  ",
       ],
-      cta: "Master Your Craft",
+      cta: "Get Started",
       popular: false,
       icon: <Sparkles className="w-8 h-8 text-purple-600" />,
     },
@@ -229,7 +231,7 @@ const PricingPage = () => {
                   <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
                     ₹{plan.price}
                   </span>
-                  <span className="text-gray-500 ml-2">/month</span>
+                  {/* <span className="text-gray-500 ml-2">/month</span> */}
                 </div>
 
                 <ul className="space-y-4 mb-8">
