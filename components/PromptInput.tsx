@@ -23,7 +23,7 @@ const EnhancedPromptInput: React.FC<EnhancedPromptInputProps> = ({
   onSubmit,
   isGenerating = false,
   className = "",
-  maxLength = 1000,
+  maxLength = 1500,
   onShare,
   onSave,
   savedPrompts = [],
