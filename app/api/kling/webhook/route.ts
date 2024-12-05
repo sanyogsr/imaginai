@@ -1,185 +1,8 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { z } from "zod";
-// import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-// import { prisma } from "@/utils/prisma";
-// import { nanoid } from "nanoid";
-
-// // S3 Client Configuration
-// const s3 = new S3Client({
-//   region: process.env.AWS_REGION,
-//   credentials: {
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-//   },
-// });
-
-// const bucketName = process.env.AWS_BUCKET_NAME!;
-
-// // Webhook payload validation schema
-// const WebhookPayloadSchema = z.object({
-//   request_id: z.string(),
-//   status: z.enum(["COMPLETED", "IN_PROGRESS", "FAILED"]),
-//   result: z
-//     .object({
-//       data: z
-//         .object({
-//           video: z
-//             .object({
-//               url: z.string(),
-//               file_name: z.string().optional(),
-//               file_size: z.number().optional(),
-//               content_type: z.string().optional(),
-//             })
-//             .optional(),
-//         })
-//         .optional(),
-//     })
-//     .optional(),
-//   error: z.string().optional(),
-
-//   // Additional metadata you might want to pass
-//   prompt: z.string().optional(),
-//   userId: z.string().optional(),
-//   model: z.string().optional(),
-//   duration: z.string().optional(),
-//   aspectRatio: z.string().optional(),
-// });
-
-// async function uploadVideoToS3(
-//   inputVideoUrl: string,
-//   metadata: {
-//     userId?: string;
-//     prompt?: string;
-//     model?: string;
-//     duration?: string;
-//     aspectRatio?: string;
-//   }
-// ) {
-//   try {
-//     // Fetch the video from the provided URL
-//     const videoResponse = await fetch(inputVideoUrl);
-//     const videoBlob = await videoResponse.blob();
-//     const videoBuffer = Buffer.from(await videoBlob.arrayBuffer());
-
-//     // Generate unique ID for the video
-//     const videoId = nanoid();
-
-//     // Define the file key with a videos folder
-//     const fileKey = `generated/videos/${videoId}.mp4`;
-
-//     // Upload to S3
-//     const command = new PutObjectCommand({
-//       Bucket: bucketName,
-//       Key: fileKey,
-//       Body: videoBuffer,
-//       ContentType: "video/mp4",
-//     });
-
-//     await s3.send(command);
-
-//     // Generate CloudFront URL
-//     const cloudFrontUrl = `https://d17d8sfx13z6g2.cloudfront.net/${fileKey}`;
-
-//     // Save to database
-//     const savedContent = await prisma.generatedContent.create({
-//       data: {
-//         userId: metadata.userId,
-//         type: "VIDEO",
-//         status: "COMPLETED",
-//         prompt: metadata.prompt,
-//         model: metadata.model || "fal-ai/kling-video/v1.5/pro",
-//         outputUrls: [cloudFrontUrl],
-//         creditsUsed: 10, // Default credit cost
-//         metadata: JSON.stringify({
-//           duration: metadata.duration || "5",
-//           aspectRatio: metadata.aspectRatio || "16:9",
-//         }),
-//       },
-//     });
-
-//     return {
-//       message: "Video uploaded successfully",
-//       url: cloudFrontUrl,
-//       contentId: savedContent.id,
-//     };
-//   } catch (error) {
-//     console.error("Error uploading video:", error);
-//     throw error;
-//   }
-// }
-
-// export async function POST(req: NextRequest) {
-//   try {
-//     const payload = await req.json();
-
-//     // Validate webhook payload
-//     const validatedPayload = WebhookPayloadSchema.parse(payload);
-
-//     switch (validatedPayload.status) {
-//       case "COMPLETED":
-//         // Handle successful video generation
-//         const videoUrl = validatedPayload.result?.data?.video?.url;
-
-//         if (!videoUrl) {
-//           console.error("No video URL found in the payload");
-//           return NextResponse.json(
-//             { error: "No video URL found" },
-//             { status: 400 }
-//           );
-//         }
-
-//         // Upload video to S3 and save to database
-//         const uploadResult = await uploadVideoToS3(videoUrl, {
-//           userId: validatedPayload.userId,
-//           prompt: validatedPayload.prompt,
-//           model: validatedPayload.model,
-//           duration: validatedPayload.duration,
-//           aspectRatio: validatedPayload.aspectRatio,
-//         });
-
-//         console.log(`Video generated and uploaded: ${uploadResult.url}`);
-
-//         return NextResponse.json(uploadResult, { status: 200 });
-
-//       case "IN_PROGRESS":
-//         // Optionally log progress
-//         console.log(
-//           `Video generation in progress: ${validatedPayload.request_id}`
-//         );
-//         break;
-
-//       case "FAILED":
-//         // Handle generation failure
-//         console.error(`Video generation failed: ${validatedPayload.error}`);
-//         break;
-//     }
-
-//     return NextResponse.json(
-//       {
-//         message: "Webhook processed successfully",
-//         status: validatedPayload.status,
-//       },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error("Webhook processing error:", error);
-
-//     return NextResponse.json(
-//       {
-//         message: "Invalid webhook payload",
-//         error: error instanceof Error ? error.message : "Unknown error",
-//       },
-//       { status: 400 }
-//     );
-//   }
-// }
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { createFalClient } from "@fal-ai/client";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@/utils/prisma";
 import { nanoid } from "nanoid";
-import { Prisma } from "@prisma/client";
-import { auth } from "@/auth";
 
 // S3 Client Configuration
 const s3 = new S3Client({
@@ -191,48 +14,64 @@ const s3 = new S3Client({
 });
 
 const bucketName = process.env.AWS_BUCKET_NAME!;
-
-// Webhook payload validation schema
-const WebhookPayloadSchema = z.object({
-  request_id: z.string(),
-  status: z.enum(["COMPLETED", "IN_PROGRESS", "FAILED"]),
-  result: z
-    .object({
-      data: z
-        .object({
-          video: z
-            .object({
-              url: z.string(),
-              file_name: z.string().optional(),
-              file_size: z.number().optional(),
-              content_type: z.string().optional(),
-            })
-            .optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-  error: z.string().optional(),
-
-  // Additional metadata you might want to pass
-  prompt: z.string().optional(),
-  userId: z.string().optional(),
-  model: z.string().optional(),
-  duration: z.string().optional(),
-  aspectRatio: z.string().optional(),
+const fal = createFalClient({
+  proxyUrl: "/api/fal/proxy",
 });
 
-async function uploadVideoToS3(
-  inputVideoUrl: string,
-  metadata: {
-    userId: string | null;
-    prompt: string;
-    model?: string;
-    duration?: string;
-    aspectRatio?: string;
-  }
-) {
+export async function POST(req: NextRequest) {
   try {
+    // Parse webhook payload
+    const payload = await req.json();
+
+    // Validate payload structure
+    if (!payload.request_id || !payload.status) {
+      return NextResponse.json(
+        { error: "Invalid webhook payload" },
+        { status: 400 }
+      );
+    }
+
+    // Check if request was successful
+    if (payload.status !== "COMPLETED") {
+      console.log(
+        `Request ${payload.request_id} did not complete successfully`
+      );
+      return NextResponse.json(
+        { message: "Webhook received" },
+        { status: 200 }
+      );
+    }
+
+    // Fetch the full result from Fal AI
+    const result = await fal.queue.result(
+      "fal-ai/kling-video/v1.5/pro/text-to-video",
+      { requestId: payload.request_id }
+    );
+
+    // Extract video URL from result
+    const inputVideoUrl = result.data.video.url;
+
+    if (!inputVideoUrl) {
+      return NextResponse.json(
+        { error: "No video URL found in result" },
+        { status: 400 }
+      );
+    }
+
+    // Retrieve additional metadata from Redis or your database
+    // This is crucial to recover context lost on page refresh
+    const requestMetadata = await prisma.videoGenerationRequest.findUnique({
+      where: { requestId: payload.request_id },
+    });
+
+    if (!requestMetadata) {
+      console.error(`No metadata found for request ${payload.request_id}`);
+      return NextResponse.json(
+        { error: "Request metadata not found" },
+        { status: 404 }
+      );
+    }
+
     // Fetch the video from the provided URL
     const videoResponse = await fetch(inputVideoUrl);
     const videoBlob = await videoResponse.blob();
@@ -256,105 +95,40 @@ async function uploadVideoToS3(
 
     // Generate CloudFront URL
     const cloudFrontUrl = `https://d17d8sfx13z6g2.cloudfront.net/${fileKey}`;
-    const session = await auth();
-
-    // Prepare data for Prisma create with correct user connection
-    const createData: Prisma.GeneratedContentCreateInput = {
-      user: {
-        connect: {
-          id: session?.user?.id, // Connect to existing user by ID
-        },
-      },
-      type: "VIDEO",
-      status: "COMPLETED",
-      prompt: metadata.prompt,
-      model: metadata.model || "fal-ai/kling-video/v1.5/pro",
-      outputUrls: [cloudFrontUrl],
-      creditsUsed: 10,
-      metadata: JSON.stringify({
-        duration: metadata.duration || "5",
-        aspectRatio: metadata.aspectRatio || "16:9",
-      }),
-    };
 
     // Save to database
     const savedContent = await prisma.generatedContent.create({
-      data: createData,
+      data: {
+        userId: requestMetadata.userId,
+        type: "VIDEO",
+        status: "COMPLETED",
+        prompt: requestMetadata.prompt,
+        model: "fal-ai/kling-video/v1.5/pro",
+        outputUrls: [cloudFrontUrl],
+        creditsUsed: requestMetadata.creditsUsed || 10,
+        metadata: JSON.stringify({
+          duration: requestMetadata.duration || "5",
+          aspectRatio: requestMetadata.aspectRatio || "16:9",
+          requestId: payload.request_id,
+        }),
+      },
     });
 
-    return {
+    // Optional: Clean up the request metadata
+    await prisma.videoGenerationRequest.delete({
+      where: { requestId: payload.request_id },
+    });
+
+    return NextResponse.json({
       message: "Video uploaded successfully",
       url: cloudFrontUrl,
       contentId: savedContent.id,
-    };
+    });
   } catch (error) {
-    console.error("Error uploading video:", error);
-    throw error;
-  }
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const payload = await req.json();
-
-    // Validate webhook payload
-    const validatedPayload = WebhookPayloadSchema.parse(payload);
-
-    switch (validatedPayload.status) {
-      case "COMPLETED":
-        // Handle successful video generation
-        const videoUrl = validatedPayload.result?.data?.video?.url;
-
-        if (!videoUrl) {
-          console.error("No video URL found in the payload");
-          return NextResponse.json(
-            { error: "No video URL found" },
-            { status: 400 }
-          );
-        }
-
-        // Upload video to S3 and save to database
-        const uploadResult = await uploadVideoToS3(videoUrl, {
-          userId: validatedPayload.userId || null,
-          prompt: validatedPayload.prompt || "Unnamed Video Generation",
-          model: validatedPayload.model,
-          duration: validatedPayload.duration,
-          aspectRatio: validatedPayload.aspectRatio,
-        });
-
-        console.log(`Video generated and uploaded: ${uploadResult.url}`);
-
-        return NextResponse.json(uploadResult, { status: 200 });
-
-      case "IN_PROGRESS":
-        // Optionally log progress
-        console.log(
-          `Video generation in progress: ${validatedPayload.request_id}`
-        );
-        break;
-
-      case "FAILED":
-        // Handle generation failure
-        console.error(`Video generation failed: ${validatedPayload.error}`);
-        break;
-    }
-
+    console.error("Webhook error processing video:", error);
     return NextResponse.json(
-      {
-        message: "Webhook processed successfully",
-        status: validatedPayload.status,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Webhook processing error:", error);
-
-    return NextResponse.json(
-      {
-        message: "Invalid webhook payload",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 400 }
+      { error: "Failed to process webhook" },
+      { status: 500 }
     );
   }
 }

@@ -13,6 +13,8 @@ import { VideoPreview } from "@/components/fal/video/kling/VideoPreview";
 import { AdvancedSettings } from "@/components/fal/video/kling/AdvanceSettings";
 import { useVideoHistoryStore } from "@/store/fal/useVideoHistory";
 import { useRouter } from "next/navigation";
+import VideoHistorySidebar from "@/components/fal/video/kling/VideoHistory";
+
 // Types
 interface VideoGeneration {
   id: string;
@@ -36,7 +38,8 @@ export default function KlingVideoDashboard() {
   const { data: session } = useSession();
   const { videos, fetchVideoHistory, addVideoToHistory } =
     useVideoHistoryStore();
-
+  const [isAdvancedSettingsVisible, setIsAdvancedSettingsVisible] =
+    useState(false);
   const [prompt, setPrompt] = useState("");
   const [generatedVideos, setGeneratedVideos] = useState<VideoGeneration[]>([]);
   const [currentVideo, setCurrentVideo] = useState<VideoGeneration | null>(
@@ -52,10 +55,16 @@ export default function KlingVideoDashboard() {
     duration: "5",
     aspectRatio: "16:9",
   });
+
+  // Track processed request IDs to prevent duplicate uploads
+  const [processedRequestIds, setProcessedRequestIds] = useState<Set<string>>(
+    new Set()
+  );
+
   useEffect(() => {
     fetchCredits();
   }, [fetchCredits]);
-  // Fetch video history on component mount
+
   useEffect(() => {
     if (session?.user?.id) {
       fetchVideoHistory(session.user.id);
@@ -82,8 +91,9 @@ export default function KlingVideoDashboard() {
     try {
       let numOfImages = 0;
       if (advancedOptions.duration === "10" && credits < 50) {
-        alert("please purchase credits to generate the video");
+        toast.error("Please purchase credits to generate the video");
         router.push("/dashboard/upgrade");
+        setLoading(false);
         return;
       }
       const { request_id } = await fal.queue.submit(
@@ -114,11 +124,16 @@ export default function KlingVideoDashboard() {
       toast.error(err.message || "Video generation failed");
       setLoading(false);
     }
-  }, [prompt, advancedOptions, session]);
+  }, [prompt, advancedOptions, session, credits, router]);
 
   // Poll for request status
   useEffect(() => {
     if (!requestId) return;
+
+    // Prevent processing the same request multiple times
+    if (processedRequestIds.has(requestId)) {
+      return;
+    }
 
     const checkStatus = async () => {
       try {
@@ -129,6 +144,12 @@ export default function KlingVideoDashboard() {
 
         if (status.status === "COMPLETED") {
           clearInterval(intervalId); // Stop polling when done
+
+          // Prevent duplicate processing
+          if (processedRequestIds.has(requestId)) {
+            return;
+          }
+
           const result = await fal.queue.result(
             "fal-ai/kling-video/v1.5/pro/text-to-video",
             { requestId }
@@ -137,7 +158,11 @@ export default function KlingVideoDashboard() {
           const videoUrl = result.data.video.url;
 
           // Avoid duplicate uploads
-          if (generatedVideos.find((vid) => vid.videoUrl === videoUrl)) return;
+          if (generatedVideos.find((vid) => vid.videoUrl === videoUrl)) {
+            setProcessedRequestIds((prev) => new Set(prev).add(requestId));
+            setLoading(false);
+            return;
+          }
 
           const uploadResponse = await axios.post("/api/kling/video-upload", {
             videoUrl,
@@ -157,12 +182,18 @@ export default function KlingVideoDashboard() {
             aspectRatio: advancedOptions.aspectRatio,
           };
 
-          setGeneratedVideos((prev) => [newVideo, ...prev]);
+          setGeneratedVideos((prev) => {
+            // Ensure no duplicates
+            if (prev.some((vid) => vid.videoUrl === newVideo.videoUrl)) {
+              return prev;
+            }
+            return [newVideo, ...prev];
+          });
+
           setCurrentVideo(newVideo);
 
           addVideoToHistory({
             id: newVideo.id,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             userId: session?.user?.id!,
             prompt,
             videoUrl: uploadResponse.data.url,
@@ -172,13 +203,20 @@ export default function KlingVideoDashboard() {
             aspectRatio: advancedOptions.aspectRatio,
           });
 
+          // Mark this request as processed
+          setProcessedRequestIds((prev) => new Set(prev).add(requestId));
+
           toast.success("Video generated successfully!");
+          setLoading(false);
+        } else if ((status.status as string) === "FAILED") {
+          toast.error("Video generation failed");
+          setLoading(false);
+          clearInterval(intervalId);
         }
       } catch (err) {
         toast.error("Error checking video status");
-      } finally {
         setLoading(false);
-        setRequestId(null); // Reset request ID
+        clearInterval(intervalId);
       }
     };
 
@@ -191,70 +229,103 @@ export default function KlingVideoDashboard() {
     session,
     addVideoToHistory,
     generatedVideos,
+    processedRequestIds,
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      <div className="min-h-screen bg-white">
-        <h1 className="text-2xl font-bold mb-4">Kling Video Generation</h1>
+    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            Kling Ai Video Generation
+          </h1>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Advanced Settings */}
-          <aside className="lg:col-span-3 bg-gray-100 p-4 rounded-xl">
-            <AdvancedSettings
-              advancedOptions={advancedOptions}
-              updateAdvancedOptions={(options: any) =>
-                setAdvancedOptions((prev) => ({ ...prev, ...options }))
-              }
-            />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+          {/* Advanced Settings Sidebar - Visible on Large Screens */}
+          <aside className="hidden lg:block lg:col-span-3 space-y-4">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Advanced Options
+              </h2>
+              <AdvancedSettings
+                advancedOptions={advancedOptions}
+                updateAdvancedOptions={(options: any) =>
+                  setAdvancedOptions((prev) => ({ ...prev, ...options }))
+                }
+              />
+            </div>
           </aside>
 
-          {/* Main Generation Area */}
-          <main className="lg:col-span-6 space-y-4">
-            <PromptInput
-              prompt={prompt}
-              setPrompt={setPrompt}
-              generateVideo={generateVideo}
-              loading={loading}
-            />
+          {/* Main Generation Area - Center */}
+          <main className="lg:col-span-6 space-y-6">
+            {/* Prompt Input with Enhanced Container */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-lg p-1">
+              <PromptInput
+                prompt={prompt}
+                setPrompt={setPrompt}
+                generateVideo={generateVideo}
+                loading={loading}
+              />
+            </div>
 
-            <VideoPreview currentVideo={currentVideo} />
+            {/* Advanced Settings Toggle for Small/Medium Screens */}
+            <div className="block lg:hidden">
+              <button
+                onClick={() =>
+                  setIsAdvancedSettingsVisible(!isAdvancedSettingsVisible)
+                }
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-xl shadow-md text-sm font-semibold hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+              >
+                {isAdvancedSettingsVisible
+                  ? "Hide Advanced Settings"
+                  : "Show Advanced Settings"}
+              </button>
+
+              {/* Advanced Settings (Hidden by Default) */}
+              {isAdvancedSettingsVisible && (
+                <div className="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <AdvancedSettings
+                    advancedOptions={advancedOptions}
+                    updateAdvancedOptions={(options: any) =>
+                      setAdvancedOptions((prev) => ({ ...prev, ...options }))
+                    }
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Video Preview */}
+            <div className="bg-gray-50 rounded-xl border border-gray-200 shadow-md p-4">
+              <VideoPreview currentVideo={currentVideo} />
+            </div>
 
             {/* Loading Indicator */}
             {loading && (
-              <div className="w-full bg-blue-100 p-4 rounded-xl text-center">
-                <p>Generating video using Kling AI...</p>
-                <div className="w-full bg-blue-200 h-2 mt-2 overflow-hidden">
+              <div className="w-full bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                <p className="text-blue-700 font-medium mb-2">
+                  Generating video using Kling AI...
+                </p>
+                <div className="w-full bg-blue-100 h-2 rounded-full overflow-hidden">
                   <div className="animate-pulse bg-blue-500 h-full" />
                 </div>
               </div>
             )}
           </main>
 
-          {/* Video History */}
-          <aside className="lg:col-span-3 bg-gray-100 p-4 rounded-xl">
-            <h2 className="text-xl font-semibold mb-4">Video History</h2>
-            {videos.map((video: any) => (
-              <div
-                key={video.id}
-                onClick={() =>
-                  setCurrentVideo({
-                    id: video.id,
-                    prompt: video.prompt,
-                    videoUrl: video.videoUrl,
-                    timestamp: new Date(video.timestamp),
-                    duration: video.duration,
-                    aspectRatio: video.aspectRatio,
-                  })
-                }
-                className="cursor-pointer mb-2 hover:bg-gray-200 p-2 rounded"
-              >
-                <p className="text-sm truncate">{video.prompt}</p>
-                <p className="text-xs text-gray-500">
-                  {new Date(video.timestamp).toLocaleString()}
-                </p>
-              </div>
-            ))}
+          {/* Video History Sidebar - Right Side */}
+          <aside className="lg:col-span-3">
+            <div className="bg-gray-50 rounded-xl border border-gray-200 shadow-sm p-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Video History
+              </h2>
+              <VideoHistorySidebar
+                videos={videos}
+                setCurrentVideo={setCurrentVideo}
+              />
+            </div>
           </aside>
         </div>
       </div>

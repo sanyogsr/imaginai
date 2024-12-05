@@ -247,7 +247,7 @@ const Header = () => {
                 </span>
                 <Link
                   href="/dashboard/upgrade"
-                  className="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-700 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
+                  className="px-3 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 rounded-lg shadow-md  hover:to-purple-800 transition-all duration-300"
                 >
                   Upgrade
                 </Link>

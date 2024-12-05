@@ -1,10 +1,10 @@
 "use client";
 import { v4 as uuidv4 } from "uuid";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { createFalClient } from "@fal-ai/client";
 import {
   ImageGeneration,
-  AIModelConfig,
+  
   AdvancedOptions,
   HistoryItem,
 } from "@/types";
@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useImageStore } from "@/store/useImageStore";
 import { useHistoryStore } from "@/store/useHistoryStore";
 import axios from "axios";
-import { ImageSize, FaceToStickerInput } from "@fal-ai/client/endpoints";
+import {  FaceToStickerInput } from "@fal-ai/client/endpoints";
 
 const fal = createFalClient({
   proxyUrl: "/api/fal/proxy",
