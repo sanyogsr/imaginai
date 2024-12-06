@@ -11,8 +11,10 @@ import {
   FlipHorizontal,
   ChevronRight,
   ChevronLeft,
+  Paintbrush,
 } from "lucide-react";
 import { useImageStore } from "@/store/useImageStore";
+import { useRouter } from "next/navigation";
 
 interface ImageTransform {
   scale: number;
@@ -61,6 +63,7 @@ const EnhancedImagePreview: React.FC<{
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const { currentImage, generatedImages, setCurrentImage } = useImageStore();
+  const router = useRouter();
 
   const [state, setState] = useState<PreviewState>({
     transform: defaultTransform,
@@ -83,6 +86,13 @@ const EnhancedImagePreview: React.FC<{
     }
   }, []);
 
+  const navigateToEditor = useCallback(() => {
+    if (currentImage) {
+      router.push(
+        `/dashboard/image-editor?imageUrl=${encodeURIComponent(currentImage)}`
+      );
+    }
+  }, [currentImage, router]);
   // Toggle fullscreen safely
   const toggleFullscreen = useCallback(async () => {
     try {
@@ -436,6 +446,7 @@ const EnhancedImagePreview: React.FC<{
                 <FlipHorizontal className="w-5 h-5" />
               </button>
               <div className="w-px h-6 bg-gray-300" />
+
               <button
                 onClick={handleDownload}
                 className="p-2 hover:bg-gray-100 rounded-lg tooltip"

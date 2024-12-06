@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   History,
   Search,
@@ -14,29 +14,87 @@ import {
   Contact2,
   HomeIcon,
 } from "lucide-react";
+
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { userCreditsStore } from "@/store/useCreditStore";
 import Image from "next/image";
 
-const tools = [
+const featuredNavTools = [
   {
-    id: "image-gen",
-    title: "Text to Image",
+    id: "image-schnell",
+    title: "Flux Schnell",
     icon: "🎨",
-    description: "Generate unique images with AI",
+    description: "Generate High quality images with AI",
     isNew: true,
     comingSoon: false,
-    url: "/dashboard/text-to-image",
+    url: "/dashboard/text-to-image?model=black-forest-labs/FLUX.1-schnell",
   },
   {
-    id: "image-gen",
-    title: "Image to Image",
+    id: "image-pro",
+    title: "flux Pro v1.1",
     icon: "💻",
-    description: "Generate images from another image with AI",
+    description: "Generate very high quality image with flux pro",
+    isNew: true,
+    comingSoon: false,
+    url: "/dashboard/text-to-image?model=black-forest-labs/FLUX.1.1-pro",
+  },
+];
+
+const tools = [
+  {
+    id: "image-schnell",
+    title: "Flux Schnell",
+    icon: "🎨",
+    description: "Generate High quality images with AI",
+    isNew: true,
+    comingSoon: false,
+    url: "/dashboard/text-to-image?model=black-forest-labs/FLUX.1-schnell",
+  },
+  {
+    id: "image-dev",
+    title: "flux Dev",
+    icon: "💻",
+    description: "Generate high quality image with flux dev",
     isNew: false,
     comingSoon: false,
-    url: "/dashboard/image-to-image",
+    url: "/dashboard/textToImage/flux/dev",
+  },
+  {
+    id: "image-pro",
+    title: "flux Pro v1.1",
+    icon: "💻",
+    description: "Generate very high quality image with flux pro",
+    isNew: false,
+    comingSoon: false,
+    url: "/dashboard/text-to-image?model=black-forest-labs/FLUX.1.1-pro",
+  },
+  {
+    id: "image-recraft",
+    title: "Recraft V3",
+    icon: "💻",
+    description: "Generate Realistoc vector images  with Recraft v3",
+    isNew: false,
+    comingSoon: false,
+    url: "/dashboard/textToImage/recraft/v3",
+  },
+  {
+    id: "image-sticker",
+    title: "Sticker Ai",
+    icon: "💻",
+    description: "Generate Realistoc sticker from your images",
+    isNew: false,
+    comingSoon: false,
+    url: "/dashboard/face-to-sticker",
+  },
+  {
+    id: "video-kling",
+    title: "Kling Ai Video gen",
+    icon: "💻",
+    description: "Generate text to video with Kling Ai",
+    isNew: false,
+    comingSoon: false,
+    url: "/dashboard/text-to-video/kling-ai",
   },
 ];
 
@@ -91,6 +149,7 @@ const Header = () => {
   const { credits, fetchCredits } = userCreditsStore();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileButtonRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
   // Auto-close dropdowns on navigation
   useEffect(() => {
     setProfileOpen(false);
@@ -105,7 +164,8 @@ const Header = () => {
   const filteredTools = tools.filter(
     (tool) =>
       tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+      tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tool.url.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Close dropdowns when clicking outside
@@ -133,9 +193,9 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
   // Keyboard shortcuts
+  // Keyboard shortcuts
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleKeyDown = (e: any) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
@@ -145,21 +205,49 @@ const Header = () => {
         switch (e.key) {
           case "ArrowDown":
             e.preventDefault();
-            setSelectedIndex((prev) =>
-              Math.min(prev + 1, filteredTools.length - 1)
+            const newDownIndex = Math.min(
+              selectedIndex + 1,
+              filteredTools.length - 1
             );
+            setSelectedIndex(newDownIndex);
+
+            // Scroll to selected item
+            const downItemElement = document.getElementById(
+              `search-item-${newDownIndex}`
+            );
+            if (downItemElement) {
+              downItemElement.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+              });
+            }
             break;
+
           case "ArrowUp":
             e.preventDefault();
-            setSelectedIndex((prev) => Math.max(prev - 1, 0));
+            const newUpIndex = Math.max(selectedIndex - 1, 0);
+            setSelectedIndex(newUpIndex);
+
+            // Scroll to selected item
+            const upItemElement = document.getElementById(
+              `search-item-${newUpIndex}`
+            );
+            if (upItemElement) {
+              upItemElement.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+              });
+            }
             break;
+
           case "Enter":
             e.preventDefault();
             if (filteredTools[selectedIndex]) {
-              setActiveTab(filteredTools[selectedIndex].id);
+              router.push(filteredTools[selectedIndex].url);
               setSearchOpen(false);
             }
             break;
+
           case "Escape":
             setSearchOpen(false);
             break;
@@ -169,7 +257,7 @@ const Header = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [searchOpen, selectedIndex, filteredTools]);
+  }, [searchOpen, selectedIndex, filteredTools, router]);
 
   return (
     <>
@@ -188,7 +276,7 @@ const Header = () => {
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex space-x-2">
-                {tools.map((tool) => {
+                {featuredNavTools.map((tool) => {
                   const isActive = pathname === tool.url;
 
                   return (
@@ -314,68 +402,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
-
-              {/* Mobile Menu Button */}
-              <button
-                ref={mobileButtonRef}
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors relative z-50"
-                aria-expanded={mobileMenuOpen}
-                aria-label="Toggle menu"
-              >
-                <Menu
-                  className={`w-5 h-5 transition-transform duration-200 ${
-                    mobileMenuOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
             </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          <div
-            ref={mobileMenuRef}
-            className={`md:hidden absolute left-0 right-0 bg-white border-t border-gray-100 shadow-lg transition-all duration-200 ease-in-out ${
-              mobileMenuOpen
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 -translate-y-2 pointer-events-none"
-            }`}
-          >
-            <nav className="flex flex-col space-y-2 p-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
-              {tools.map((tool) => (
-                <button
-                  key={tool.id}
-                  onClick={() => {
-                    setActiveTab(tool.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium relative group transition-all duration-200
-                    ${
-                      activeTab === tool.id
-                        ? "bg-blue-50 text-blue-600 shadow-sm"
-                        : "text-gray-600 hover:bg-gray-50"
-                    }`}
-                  disabled={tool.comingSoon}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="transform group-hover:scale-110 transition-transform">
-                      {tool.icon}
-                    </span>
-                    {tool.title}
-                  </span>
-                  {tool.isNew && (
-                    <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full shadow-sm">
-                      New
-                    </span>
-                  )}
-                  {tool.comingSoon && (
-                    <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-gray-400 text-white text-xs rounded-full">
-                      Soon
-                    </span>
-                  )}
-                </button>
-              ))}
-            </nav>
           </div>
         </div>
       </header>
@@ -411,12 +438,12 @@ const Header = () => {
 
                 <div className="max-h-96 overflow-y-auto">
                   <div className="p-2">
-                    {filteredTools.map((tool, index) => (
+                    {/* {filteredTools.map((tool, index) => (
                       <button
                         key={tool.id}
                         onClick={() => {
                           setActiveTab(tool.id);
-                          setSearchOpen(false);
+                          router.push(tool.url);
                         }}
                         className={`w-full flex items-start space-x-4 p-4 rounded-xl transition-all
                           ${
@@ -448,6 +475,45 @@ const Header = () => {
                           </span>
                         )}
                       </button>
+                    ))} */}
+                    {filteredTools.map((tool, index) => (
+                      <Link
+                        id={`search-item-${index}`} // Add unique ID for scrolling
+                        key={tool.id}
+                        href={tool.url}
+                        onClick={() => {
+                          setActiveTab(tool.id);
+                          setSearchOpen(false);
+                        }}
+                        className={`w-full flex items-start space-x-4 p-4 rounded-xl transition-all
+      ${
+        selectedIndex === index
+          ? "bg-blue-50 text-blue-600"
+          : "hover:bg-gray-50"
+      }`}
+                      >
+                        <div className="flex-shrink-0 text-2xl">
+                          {tool.icon}
+                        </div>
+                        <div className="flex-1 text-left">
+                          <h3 className="font-medium text-gray-900">
+                            {tool.title}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {tool.description}
+                          </p>
+                        </div>
+                        {tool.isNew && (
+                          <span className="px-2 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs rounded-full">
+                            Recomended
+                          </span>
+                        )}
+                        {tool.comingSoon && (
+                          <span className="px-2 py-1 bg-gray-400 text-white text-xs rounded-full">
+                            Soon
+                          </span>
+                        )}
+                      </Link>
                     ))}
 
                     {filteredTools.length === 0 && (
