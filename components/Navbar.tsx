@@ -19,7 +19,7 @@ interface NavbarProps {
 }
 
 const navItems: NavItem[] = [
-  { name: "Features", href: "#", hasDropdown: true },
+  { name: "Models", href: "#", hasDropdown: true },
   { name: "Pricing", href: "/pricing" },
   { name: "About us", href: "/about-us" },
 ];
@@ -122,9 +122,19 @@ export default function Navbar({ className }: NavbarProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden relative z-50 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="lg:hidden flex relative  gap-2 z-50 p-2 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Toggle Menu"
           >
+            <div>
+              <Link
+                // onClick={() => setMenuOpen(!menuOpen)}
+                className="lg:hidden relative z-50 p-1 rounded-xl text-sm font-medium bg-black text-white px-6 py-1.5 transition-colors hover:bg-gray-900 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+                // aria-label="Toggle Menu"
+                href={"/login"}
+              >
+                Sign in
+              </Link>
+            </div>
             {menuOpen ? (
               <X className="text-gray-900" size={24} />
             ) : (

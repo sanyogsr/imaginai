@@ -4,14 +4,31 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MaxWidthWrapper } from "./MaxWidthWrapper";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import FeatureDropdown from "./FeatureDropdown";
+import { cn } from "@/utils/cn";
 
-const navItems = [{ name: "Pricing", href: "/pricing" }];
+type NavItem = {
+  name: string;
+  href: string;
+  hasDropdown?: boolean;
+};
 
-export default function LoginNavbar() {
+interface NavbarProps {
+  className?: string;
+}
+
+const navItems: NavItem[] = [
+  { name: "Models", href: "#", hasDropdown: true },
+  { name: "Pricing", href: "/pricing" },
+  { name: "About us", href: "/about-us" },
+];
+
+export default function Navbar({ className }: NavbarProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showProductDropdown, setShowProductDropdown] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -20,79 +37,119 @@ export default function LoginNavbar() {
   }, []);
 
   return (
-    <div className="sticky top-0 z-50 w-full transition-all border-b">
+    <nav
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        scrolled ? "border-b border-gray-100" : "border-transparent",
+        className as string
+      )}
+    >
       <div
-        className={`absolute inset-0 transition-all ${
-          scrolled ? "bg-white/80 backdrop-blur-md" : ""
-        }`}
+        className={cn(
+          "absolute inset-0 transition-all duration-300",
+          scrolled
+            ? "bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60"
+            : "bg-transparent"
+        )}
       />
 
       <MaxWidthWrapper className="relative">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo aligned to the left */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">Ai</span>
+        <div className="flex h-20 items-center justify-between">
+          {/* Brand Logo */}
+          <Link
+            href="/"
+            className="flex items-center space-x-3 transition-opacity hover:opacity-90"
+          >
+            <div className="relative w-10 h-10 overflow-hidden rounded-xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-indigo-600 animate-gradient" />
+              <span className="relative flex items-center justify-center h-full text-white font-bold text-xl">
+                Ai
+              </span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
               ImaginAi
             </span>
           </Link>
-
-          {/* Desktop Links aligned to the right */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map(({ name, href }) => (
-              <div key={name} className="relative group">
-                <Link
-                  href={href}
-                  className={`text-sm font-medium transition-colors rounded-md px-3 py-2 ${
-                    pathname === href
-                      ? "text-black dark:text-white"
-                      : "text-gray-700 hover:text-black dark:hover:text-gray-400"
-                  }`}
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex flex-1 items-center justify-center">
+            <div className="flex items-center space-x-1 bg-gray-50/50 backdrop-blur-sm px-2 py-1.5 rounded-full border border-gray-100">
+              {navItems.map(({ name, href, hasDropdown }) => (
+                <div
+                  key={name}
+                  className=""
+                  onMouseEnter={() =>
+                    setShowProductDropdown(hasDropdown ?? false)
+                  }
+                  onMouseLeave={() => setShowProductDropdown(false)}
                 >
-                  {name}
-                </Link>
+                  <Link
+                    href={href}
+                    className={cn(
+                      "flex items-center space-x-1.5 text-sm font-medium transition-all duration-200 rounded-full px-4 py-2",
+                      pathname === href
+                        ? "text-white bg-black shadow-sm"
+                        : "text-gray-700 hover:bg-gray-100/70"
+                    )}
+                  >
+                    <span>{name}</span>
+                    {hasDropdown && (
+                      <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                    )}
+                  </Link>
 
-         
-              </div>
-            ))}
+                  {hasDropdown && (
+                    <FeatureDropdown
+                      isVisible={showProductDropdown}
+                      isMobile={false}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-
-          {/* Mobile Menu Icon */}
+          {/* Desktop Auth Buttons */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden p-2 rounded-md focus:outline-none z-50"
+            className="lg:hidden flex relative  gap-2 z-50 p-2 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Toggle Menu"
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {menuOpen ? (
+              <X className="text-gray-900" size={24} />
+            ) : (
+              <Menu className="text-gray-900" size={24} />
+            )}
           </button>
         </div>
 
         {/* Mobile Menu */}
         <div
-          className={`lg:hidden fixed inset-0 bg-white text-black dark:text-white z-40 transition-transform duration-300 transform ${
-            menuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={cn(
+            "lg:hidden fixed inset-0 bg-white z-40 transition-all duration-300",
+            menuOpen
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-full pointer-events-none"
+          )}
         >
-          <div className="flex flex-col items-center justify-center h-full space-y-6">
-            {navItems.map(({ name, href }) => (
-              <Link
-                key={name}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className={`text-xl font-medium transition-colors ${
-                  pathname === href
-                    ? "text-black dark:text-white"
-                    : "text-gray-700 hover:text-black dark:hover:text-gray-400"
-                }`}
-              >
-                {name}
-              </Link>
+          <div className="flex flex-col h-full pt-24 pb-6 px-6 space-y-2">
+            {navItems.map(({ name, href, hasDropdown }) => (
+              <div key={name}>
+                {hasDropdown ? (
+                  <FeatureDropdown isVisible={true} isMobile={true} />
+                ) : (
+                  <Link
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-3 text-lg font-medium text-gray-900 hover:bg-gray-50 rounded-xl transition-colors"
+                  >
+                    {name}
+                  </Link>
+                )}
+              </div>
             ))}
           </div>
         </div>
       </MaxWidthWrapper>
-    </div>
+    </nav>
   );
 }

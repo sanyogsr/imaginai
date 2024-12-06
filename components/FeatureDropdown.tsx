@@ -27,8 +27,38 @@ const FeatureDropdown = ({
 
   const features = [
     {
-      name: "AI Image Generator",
-      description: "Create stunning images with AI technology",
+      name: "Flux schnell",
+      description: "Create stunning images with flux schnell - Recomended",
+      href: "/login",
+      icon: "🎨",
+    },
+    {
+      name: "FLux dev",
+      description: "Create high quality images with flux dev",
+      href: "/login",
+      icon: "🎨",
+    },
+    {
+      name: "Flux pro v1.1",
+      description: "Create extreme high quality images with flux pro",
+      href: "/login",
+      icon: "🎨",
+    },
+    {
+      name: "Recraft v3",
+      description: "Create vector realistic images with recraft v3",
+      href: "/login",
+      icon: "🎨",
+    },
+    {
+      name: "Kling Ai",
+      description: "Create text to videor kling ai",
+      href: "/login",
+      icon: "🎨",
+    },
+    {
+      name: "Face to sticker",
+      description: "Create stunning sticker from your image",
       href: "/login",
       icon: "🎨",
     },

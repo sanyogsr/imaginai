@@ -8,6 +8,7 @@ import GoogleIcon from "@/assets/google.svg";
 import LoginNavbar from "@/components/LoginNavbar";
 import LoadingOverlay from "@/components/loader/Loader";
 import { AnimatedContainer } from "@/components/AnimatedContainer";
+import Navbar from "@/components/Navbar";
 
 interface LoadingState {
   isLoading: boolean;
