@@ -127,8 +127,8 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Basic",
-      price: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 1 : 60,
-      credits: session.data?.user?.id === "cm37fw1by0000sjnf3v87agtv" ? 2 : 120,
+      price: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 1 : 60,
+      credits: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 2 : 120,
       features: [
         "60 Flux Schnell images",
         "or 5 Flux pro v1.1 images",
