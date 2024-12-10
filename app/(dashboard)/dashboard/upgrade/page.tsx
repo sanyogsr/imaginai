@@ -114,7 +114,7 @@ const PricingPage = () => {
       rzp1.on("payment.failed", function (response: any) {
         // redirect("https://imaginai/art/dashboard/payment/failure");
 
-        alert(response.error.description);
+        alert("refresh the pageto see the added credits");
       });
       rzp1.open();
     } catch (error) {
