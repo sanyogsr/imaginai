@@ -65,8 +65,6 @@ const PricingPage = () => {
           if (verifyData.success) {
             alert("Payment Verified and Successful!");
             // Redirect or update UI
-          } else {
-            alert("Payment Verification Failed");
           }
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
