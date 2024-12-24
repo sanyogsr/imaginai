@@ -126,7 +126,22 @@ const PricingPage = () => {
 
   const plans = [
     {
-      name: "Basic",
+      name: "ultra standard",
+      price: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 1 : 2,
+      credits: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 2 : 2,
+      features: [
+        "1 Flux Schnell images",
+        "best quality artworks",
+        "Basic style controls",
+        "24/7 email support",
+        "Commercial usage rights",
+      ],
+      cta: "Get Started",
+      popular: false,
+      icon: <Palette className="w-8 h-8 text-purple-400" />,
+    },
+    {
+      name: "standard",
       price: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 1 : 60,
       credits: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 2 : 120,
       features: [
@@ -142,7 +157,7 @@ const PricingPage = () => {
       icon: <Palette className="w-8 h-8 text-purple-400" />,
     },
     {
-      name: "Standard",
+      name: "Pro",
       price: 200,
       credits: 500,
       features: [

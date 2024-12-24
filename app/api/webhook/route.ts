@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handlePaymentCaptured(payload: any) {
   const userId = payload.payment.entity.notes?.user_id;
   const amount = payload.payment.entity.amount / 100;
@@ -244,7 +244,7 @@ async function handlePaymentCaptured(payload: any) {
     );
   }
 }
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handlePaymentFailed(payload: any) {
   const failureReason = payload.payment.entity.error_reason;
   const userId = payload.payment.entity.notes?.user_id;
@@ -280,6 +280,7 @@ async function handlePaymentFailed(payload: any) {
 function calculateCredits(amount: number): number {
   const creditMap: { [key: number]: number } = {
     1: 2,
+    2: 2,
     60: 120,
     190: 500,
     200: 500,
