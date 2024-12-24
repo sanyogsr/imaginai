@@ -66,7 +66,7 @@ export default function Navbar({ className }: NavbarProps) {
                 Ai
               </span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="text-3xl font-extrabold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
               ImaginAi
             </span>
           </Link>
@@ -125,7 +125,7 @@ export default function Navbar({ className }: NavbarProps) {
             className="lg:hidden flex relative  gap-2 z-50 p-2 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Toggle Menu"
           >
-            <div>
+            {/* <div>
               <Link
                 // onClick={() => setMenuOpen(!menuOpen)}
                 className="lg:hidden relative z-50 p-1 rounded-xl text-sm font-medium bg-black text-white px-6 py-1.5 transition-colors hover:bg-gray-900 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
@@ -134,7 +134,7 @@ export default function Navbar({ className }: NavbarProps) {
               >
                 Sign in
               </Link>
-            </div>
+            </div> */}
             {menuOpen ? (
               <X className="text-gray-900" size={24} />
             ) : (

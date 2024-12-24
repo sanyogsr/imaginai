@@ -13,7 +13,7 @@ export function MaxWidthWrapper({
   return (
     <div
       className={cn(
-        "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8",
+        "mx-auto px-4 sm:px-6 lg:px-8",
         className // Allows additional custom styles to be passed
       )}
     >
