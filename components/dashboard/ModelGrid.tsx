@@ -75,7 +75,7 @@ export default function ModelGrid() {
     },
 
     {
-      name: "Face to Sticker Ai",
+      name: "Face to Sticker Ai - coming soon",
       category: "Image Generation",
       description: "Generate fun stickers from any face in seconds.",
       tier: "Pro",
