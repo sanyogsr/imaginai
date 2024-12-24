@@ -266,13 +266,20 @@ const Header = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo and Desktop Navigation */}
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold">
-                <Link href="/dashboard" className="flex items-center space-x-2">
-                  <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-                    ImaginAI
+              <Link
+                href="/"
+                className="flex items-center space-x-3 transition-opacity hover:opacity-90"
+              >
+                <div className="relative w-10 h-10 overflow-hidden rounded-xl">
+                  <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-indigo-600 animate-gradient" />
+                  <span className="relative flex items-center justify-center h-full text-white font-bold text-xl">
+                    Ai
                   </span>
-                </Link>
-              </h1>
+                </div>
+                <span className="text-3xl font-extrabold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                  ImaginAi
+                </span>
+              </Link>
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex space-x-2">
