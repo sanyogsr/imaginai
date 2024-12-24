@@ -23,12 +23,8 @@ interface Category {
 
 export default function ModelGrid() {
   const categories: Category[] = [
-    { name: "Text to Image", icon: "🖼️", activeColor: "border-blue-500" },
+    { name: "Image Generation", icon: "🖼️", activeColor: "border-blue-500" },
     { name: "Text to Video", icon: "🎥", activeColor: "border-green-500" },
-    { name: "Anime ID", icon: "👾", activeColor: "border-purple-500" },
-    { name: "Sticker AI", icon: "🌟", activeColor: "border-pink-500" },
-    { name: "3D Model Gen", icon: "🌀", activeColor: "border-cyan-500" },
-    { name: "Voice AI", icon: "🎙️", activeColor: "border-red-500" },
   ];
 
   const modelOptions = [
@@ -38,43 +34,27 @@ export default function ModelGrid() {
   const models: Model[] = [
     {
       name: "FLux/Schnell",
-      category: "Text to Image",
+      category: "Image Generation",
       description: "High-quality text-to-image generation.",
       tier: "Basic",
       preview:
         "https://replicate.delivery/yhqm/pNZ3A6l9B35dB9VxE0eGqkGfBGe401MjUttdOyzvpfWbEb6NB/out-0.webp", // Add preview image path here
       href: `/dashboard/text-to-image?model=${modelOptions[0].value}`, // Add link here
     },
-    {
-      name: "Flux/dev",
-      category: "Text to Image",
-      description: "LoRA-powered image generation.",
-      tier: "Pro",
-      preview:
-        "https://replicate.delivery/yhqm/xU3wLlAQcGpZLVQipTVxaZMaL4omk9n7d1suU0byMnngfQvJA/out-0.webp", // Add preview image path here
-      href: `/dashboard/textToImage/flux/dev`, // Add link here
-    },
+
     {
       name: "Flux/Pro",
-      category: "Text to Image",
+      category: "Image Generation",
       description: "LoRA-powered image generation.",
       tier: "Pro",
       preview:
         "https://bflapistorage.blob.core.windows.net/public/547e601710b343da95b72a9e4038bd70/sample.jpg", // Add preview image path here
       href: `/dashboard/text-to-image?model=${modelOptions[1].value}`, // Add link here
     },
-    {
-      name: "ReCraft V3",
-      category: "Text to Image",
-      description: "Redefine creative workflows.",
-      tier: "Pro",
-      preview:
-        "https://replicate.delivery/czjl/76zoOfWaVAQLBKkcnQGMDNwOntaGbhLW1JL0XvwTY3T3uB2JA/output.webp", // Add preview image path here
-      href: "/dashboard/textToImage/recraft/v3", // Add link here
-    },
+
     {
       name: "Train your model  -  coming soon",
-      category: "Text to Image",
+      category: "Image Generation",
       description: "image to image generation.",
       tier: "Pro",
       preview:
@@ -82,43 +62,6 @@ export default function ModelGrid() {
       href: "", // Add link here
     },
 
-    {
-      name: "Bytedance/SDXL Lightning - coming soon",
-      category: "Text to Image",
-      description: "Fast and efficient text-to-image AI.",
-      tier: "Pro",
-      preview:
-        "https://replicate.delivery/yhqm/VyD24fDyzM2nQSg0nQc58W2EIj16hGcWKrXJozjAMR1BeidTA/out-0.png", // Add preview image path here
-      href: "", // Add link here
-    },
-    {
-      name: "Stable Diffusion SDXL - soon",
-      category: "Text to Image",
-      description: "High-quality text-to-image generation.",
-      tier: "Pro",
-      preview:
-        "https://pbxt.replicate.delivery/YXbcLudoHBIYHV6L0HbcTx5iRzLFMwygLr3vhGpZI35caXbE/out-0.png", // Add preview image path here
-      href: "", // Add link here
-    },
-    {
-      name: "Stable Diffusion - coming soon",
-      category: "Text to Image",
-      description: "High-quality text-to-image generation.",
-      tier: "Pro",
-      preview:
-        "https://replicate.delivery/pbxt/sWeZFZou6v3CPKuoJbqX46ugPaHT1DcsWYx0srPmGrMOCPYIA/out-0.png", // Add preview image path here
-      href: "", // Add link here
-    },
-    // {
-    //   name: "Hailuo AI -  Coming Soon",
-    //   category: "Text to Video",
-    //   description: "Advanced video generation.",
-    //   tier: "Pro",
-    //   preview: "", // Add preview image path here
-    //   videoPreview: "https://example.com/kling-video.mp4", // Add video URL
-
-    //   href: "/dashboard/text-to-video/hailuo-ai/", // Add link here
-    // },
     {
       name: "Kling AI ",
       category: "Text to Video",
@@ -130,38 +73,15 @@ export default function ModelGrid() {
 
       href: "/dashboard/text-to-video/kling-ai/", // Add link here
     },
-    {
-      name: "Chroma Anime -  Coming Soon",
-      category: "Anime ID",
-      description: "Identify anime characters instantly.",
-      tier: "Basic",
-      preview: "", // Add preview image path here
-      href: "", // Add link here
-    },
+
     {
       name: "Face to Sticker Ai",
-      category: "Sticker AI",
+      category: "Image Generation",
       description: "Generate fun stickers from any face in seconds.",
       tier: "Pro",
       preview:
         "https://storage.googleapis.com/falserverless/model_tests/face_to_sticker/elon_output_2.png", // Add preview image path here
       href: "/dashboard/face-to-sticker", // Add link here
-    },
-    {
-      name: "3D Vision Pro -  Coming Soon",
-      category: "3D Model Gen",
-      description: "Generate complex 3D models.",
-      tier: "Pro",
-      preview: "", // Add preview image path here
-      href: "", // Add link here
-    },
-    {
-      name: "VocalSynth -  Coming Soon",
-      category: "Voice AI",
-      description: "Create realistic voice transformations.",
-      tier: "Pro",
-      preview: "", // Add preview image path here
-      href: "", // Add link here
     },
   ];
 
