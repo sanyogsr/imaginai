@@ -283,7 +283,6 @@ function calculateCredits(amount: number): number {
     2: 2,
     89: 120,
     199: 420,
-    200: 500,
     399: 900,
   };
   return creditMap[amount] || 0; // Default to 0 credits for unknown amounts

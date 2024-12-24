@@ -18,8 +18,23 @@ const PricingPage = () => {
 
   const plans = [
     {
-      name: "Basic",
-      price: 60,
+      name: "ultra standard",
+      price: 2,
+      credits: 2,
+      features: [
+        "1 Flux Schnell images",
+        "best quality artworks",
+        "Basic style controls",
+        "24/7 email support",
+        "Commercial usage rights",
+      ],
+      cta: "Get Started",
+      popular: false,
+      icon: <Palette className="w-8 h-8 text-purple-400" />,
+    },
+    {
+      name: "standard",
+      price:  89,
       credits: 120,
       features: [
         "60 Flux Schnell images",
@@ -34,12 +49,11 @@ const PricingPage = () => {
       icon: <Palette className="w-8 h-8 text-purple-400" />,
     },
     {
-      name: "Standard",
-      price: 200,
-      credits: 500,
+      name: "Pro",
+      price: 199,
+      credits: 420,
       features: [
-        "250 FLux Schnell images",
-        "or 20 Flux pro v1.1 images",
+        "210 FLux Schnell images",
         "best quality artworks",
         "24/7 email support",
         "New Feature Access: Early",
@@ -52,11 +66,10 @@ const PricingPage = () => {
     },
     {
       name: "Creators choice",
-      price: 400,
-      credits: 1000,
+      price: 399,
+      credits: 900,
       features: [
-        "500 FLux Schnell images",
-        "or 41 FLux pro v1.1 images",
+        "450 FLux Schnell images",
         "Commercial usage rights",
         "New Feature Access: Early",
         " Priority creative support",
