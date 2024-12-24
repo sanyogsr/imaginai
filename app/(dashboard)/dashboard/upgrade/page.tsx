@@ -142,7 +142,7 @@ const PricingPage = () => {
     },
     {
       name: "standard",
-      price: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 1 : 60,
+      price: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 1 : 89,
       credits: session.data?.user?.id === "cm3ivcppq0000t0ut2yadv8vr" ? 2 : 120,
       features: [
         "60 Flux Schnell images",
@@ -158,11 +158,10 @@ const PricingPage = () => {
     },
     {
       name: "Pro",
-      price: 200,
-      credits: 500,
+      price: 199,
+      credits: 420,
       features: [
-        "250 FLux Schnell images",
-        "or 20 Flux pro v1.1 images",
+        "210 FLux Schnell images",
         "best quality artworks",
         "24/7 email support",
         "New Feature Access: Early",
@@ -175,11 +174,10 @@ const PricingPage = () => {
     },
     {
       name: "Creators choice",
-      price: 400,
-      credits: 1000,
+      price: 399,
+      credits: 900,
       features: [
-        "500 FLux Schnell images",
-        "or 41 FLux pro v1.1 images",
+        "450 FLux Schnell images",
         "Commercial usage rights",
         "New Feature Access: Early",
         " Priority creative support",

@@ -281,11 +281,10 @@ function calculateCredits(amount: number): number {
   const creditMap: { [key: number]: number } = {
     1: 2,
     2: 2,
-    60: 120,
-    190: 500,
+    89: 120,
+    199: 420,
     200: 500,
-    380: 1000,
-    400: 1000,
+    399: 900,
   };
   return creditMap[amount] || 0; // Default to 0 credits for unknown amounts
 }
