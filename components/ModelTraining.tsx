@@ -244,7 +244,7 @@ export const ModelTraining = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
 
-      router.push(`/training/${data.trainingId}`);
+      router.push(`/text-to-image`);
     } catch (error) {
       setState((prev) => ({
         ...prev,
