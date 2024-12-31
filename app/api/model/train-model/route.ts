@@ -1,104 +1,69 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import Replicate from "replicate";
-
-// const replicate = new Replicate({
-//   auth: process.env.REPLICATE_API_TOKEN,
-// });
-// export async function POST(req: NextRequest) {
-//   const reqData = await req.json();
-
-//   try {
-//     const training = await replicate.trainings.create(
-//       "ostris",
-//       "flux-dev-lora-trainer",
-//       "e440909d3512c31646ee2e0c7d6f6f4923224863a6a10c494606e79fb5844497",
-//       {
-//         // You need to create a model on Replicate that will be the destination for the trained version.
-//         destination: `sanyogsr/${reqData.modelName}`,
-//         input: {
-//           steps: 1000,
-//           lora_rank: 16,
-//           optimizer: "adamw8bit",
-//           batch_size: 1,
-//           resolution: "512,768,1024",
-//           autocaption: true,
-//           input_images: reqData.images,
-//           trigger_word: "joker",
-//           learning_rate: 0.0004,
-//           wandb_project: "flux_train_replicate",
-//           wandb_save_interval: 100,
-//           caption_dropout_rate: 0.05,
-//           cache_latents_to_disk: false,
-//           wandb_sample_interval: 100,
-//         },
-//       }
-//     );
-
-//     return NextResponse.json(
-//       { message: "training successful", training },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error("error:", error);
-//     return NextResponse.json(
-//       { message: "internal server error" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// pages/api/train.ts
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import { prisma } from "@/utils/prisma";
+import { auth } from "@/auth";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
-
+const WEBHOOK_URL =
+  process.env.SITE_URL ??
+  "https://4d60-2409-40d6-101e-3bc7-b5b1-c016-30ab-65b0.ngrok-free.app";
 export async function POST(req: NextRequest) {
   const { modelName, zipUrl } = await req.json();
+  const user = await auth();
 
   try {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+    }
+
+    const modelId = `${user.user?.id}_${Date.now()}_${modelName
+      .toLowerCase()
+      .replaceAll(" ", "_")}`;
+    console.log(modelId);
+    // create the model
+    await replicate.models.create("suraua", modelId, {
+      visibility: "private",
+      hardware: "gpu-a100-large",
+    });
+
     const training = await replicate.trainings.create(
       "ostris",
       "flux-dev-lora-trainer",
       "e440909d3512c31646ee2e0c7d6f6f4923224863a6a10c494606e79fb5844497",
       {
-        destination: `sanyogsr/${modelName}`,
+        destination: `suraua/${modelId}`,
         input: {
           steps: 1000,
-          lora_rank: 16,
-          optimizer: "adamw8bit",
-          batch_size: 1,
-          resolution: "512,768,1024",
-          autocaption: true,
+          resolution: "1024",
           input_images: zipUrl,
-          trigger_word: "joker",
-          learning_rate: 0.0004,
-          wandb_project: "flux_train_replicate",
-          wandb_save_interval: 100,
-          caption_dropout_rate: 0.05,
-          cache_latents_to_disk: false,
-          wandb_sample_interval: 100,
+          trigger_word: "sigma",
         },
+        webhook: `${WEBHOOK_URL}/api/model/train-model/webhook?userId=${
+          user.user?.id
+        }&modelName=${encodeURIComponent(
+          modelId
+        )}&fileName=${encodeURIComponent(zipUrl)}`,
+        webhook_events_filter: ["completed"],
       }
     );
+    console.log(training);
 
     // Save training info to database
     await prisma.training.create({
       data: {
-        id: training.id,
-        modelName: modelName,
-        status: "training",
-        modelUrl: training.urls,
+        user_id: user.user?.id,
+        training_status: training.status,
+        model_name: modelName,
+        trigger_word: "sigma",
+        training_steps: 1200,
+        model_id: modelId,
+        training_id: training.id,
       },
     });
 
-    return NextResponse.json(
-      { message: "training started", training },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "training started" }, { status: 200 });
   } catch (error) {
     console.error("error:", error);
     return NextResponse.json(

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "../DashboardFooter";
+import MyModels from "../MyModels";
 
 interface Model {
   name: string;
@@ -59,7 +60,7 @@ export default function ModelGrid() {
       tier: "Pro",
       preview:
         "https://replicate.delivery/yhqm/GveeAfJpuDGdnJqA0grhfZeQWuedoFNTTAKvw7oF7MJkGb50E/out-0.webp", // Add preview image path here
-      href: "", // Add link here
+      href: "/dashboard/train-model", // Add link here
     },
 
     {
@@ -168,7 +169,9 @@ export default function ModelGrid() {
             ))}
         </div>
       </div>
-      <Footer />
+      {/* <MyModels /> */}
+
+   
     </section>
   );
 }

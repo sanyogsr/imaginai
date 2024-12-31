@@ -32,12 +32,12 @@ const featuredNavTools = [
   },
   {
     id: "image-pro",
-    title: "flux Pro v1.1",
-    icon: "💻",
+    title: "My Trained Models",
+    icon: "🎨",
     description: "Generate very high quality image with flux pro",
     isNew: true,
     comingSoon: false,
-    url: "/dashboard/text-to-image?model=black-forest-labs/FLUX.1.1-pro",
+    url: "/dashboard/my-models",
   },
 ];
 

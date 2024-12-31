@@ -140,12 +140,28 @@ model UserCredit {
 
 model Training {
   id        String   @id @default(cuid())
-  modelName String
-  modelUrl  Json
-  status    String
+  user_id   String? 
+  model_name String?
+  model_id  String?
+  training_status    TrainingStatus?
+  zipUrl    String?
+  trigger_word String?
+  training_steps Int?
+  training_time String?
+  training_id String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum TrainingStatus {
+  NULL
+  starting
+  processing
+  canceled
+  failed
+  succeeded
+}
+
 
 enum SubscriptionStatus {
   ACTIVE
