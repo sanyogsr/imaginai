@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
-const WEBHOOK_URL = "https://imaginai.art";
+const WEBHOOK_URL = "https://www.imaginai.art";
 // process.env.SITE_URL ??
 
 // "https://7ce9-2409-40d6-1012-ad1f-ed21-b45b-43b9-8e7b.ngrok-free.app";
