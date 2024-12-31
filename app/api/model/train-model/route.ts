@@ -6,9 +6,7 @@ import { auth } from "@/auth";
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
-const WEBHOOK_URL =
-  process.env.SITE_URL ??
-  "https://4d60-2409-40d6-101e-3bc7-b5b1-c016-30ab-65b0.ngrok-free.app";
+const WEBHOOK_URL = process.env.SITE_URL;
 export async function POST(req: NextRequest) {
   const { modelName, zipUrl } = await req.json();
   const user = await auth();
